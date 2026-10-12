@@ -14,6 +14,8 @@
 ##     - .read.WFO() (reads via WFO.read(), or the remembered backbone), %||%,
 ##       .file.ok(), .as.dt() (no copy of a data.table backbone; 1.0.0),
 ##       .no.dates.deprecated().
+##     - .parallel.lapply(): parallel processing that recomputes the results of failed
+##       processes (1.0.2).
 ##   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 ## --------------------------------------------------------------------------------------
 
@@ -76,4 +78,22 @@
 .no.dates.deprecated <- function() {
   warning("Argument 'no.dates' is deprecated and ignored: columns 'created' and 'modified' ",
           "are always left out. It will be removed in a later version.", call. = FALSE)
+}
+
+## lapply(X, FUN), in parallel with `cores` processes where possible (parallel::mclapply,
+## not on Windows). A worker process can fail without a result (for example when the
+## system kills it for lack of memory); mclapply() then returns NULL or an error for all
+## elements of that worker. Such elements are computed again in this R session, with a
+## warning, so that results are always complete.
+.parallel.lapply <- function(X, FUN, cores = 1) {
+  if (cores <= 1 || .Platform$OS.type != "unix" || length(X) < 2) return(lapply(X, FUN))
+  r <- suppressWarnings(parallel::mclapply(X, FUN, mc.cores = cores))
+  failed <- which(!vapply(r, is.list, logical(1)))
+  if (length(failed) > 0) {
+    warning(length(failed), " of ", length(X), " names could not be matched by the parallel processes ",
+            "(a process failed, for example for lack of memory); they were matched again without ",
+            "parallel processing. Use fewer cores to avoid this.", call. = FALSE)
+    r[failed] <- lapply(X[failed], FUN)
+  }
+  r
 }

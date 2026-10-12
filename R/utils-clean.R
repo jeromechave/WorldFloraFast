@@ -10,7 +10,7 @@
 ##     - Vectorised: all records at once instead of a loop per record.
 ##     - tolower is applied to the squished name (NEWS 4).
 ##   New in WorldFloraFast:
-##     - none
+##     - .is.placeholder(): names made only of placeholder words (1.0.2).
 ##   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 ## --------------------------------------------------------------------------------------
 
@@ -58,4 +58,20 @@
   }
   spec.data[[spec.name]] <- x
   spec.data
+}
+
+## TRUE for names made only of placeholder words ("indet.", "sp.", "cf.", "spp.", "indet",
+## "unknown"): the words of sub.pattern without punctuation, and a few others. Such names
+## are not fuzzy-matched (Fuzzy.skip.placeholder), because they are not plant names:
+## WorldFlora matched "indet." with "Opuntia coindetti", found within that name.
+.is.placeholder <- function(x, sub.pattern) {
+  words <- unlist(strsplit(sub.pattern, " ", fixed = TRUE))
+  ph <- unique(c(tolower(gsub("[^[:alpha:]]", "", words)),
+                 "indet", "indeterminate", "indetermined", "unknown", "sp", "spp", "cf", "aff", "nd"))
+  ph <- ph[nchar(ph) > 0]
+  vapply(strsplit(tolower(x), " ", fixed = TRUE), function(w) {
+    w <- gsub("[^[:alpha:]]", "", w)
+    w <- w[nchar(w) > 0]
+    length(w) > 0 && all(w %in% ph)
+  }, logical(1))
 }

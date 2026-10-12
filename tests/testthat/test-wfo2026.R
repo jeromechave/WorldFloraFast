@@ -123,7 +123,7 @@ test_that("fuzzy matches only in another family are not accepted for an existing
   r <- q(WFO.match.ff("Sindora assamica", WFO.data = B, verbose = FALSE))
   expect_equal(r$scientificName, "Sindora")
   expect_equal(r$Fuzzy.alternatives, "Lindera assamica")
-  r0 <- q(WFO.match("Sindora assamica", WFO.data = B, Fuzzy.keep.genus = FALSE, verbose = FALSE))
+  r0 <- q(WFO.match("Sindora assamica", WFO.data = B, Fuzzy.keep.genus = FALSE, Fuzzy.epithet.check = FALSE, verbose = FALSE))
   expect_equal(r0$scientificName, "Lindera assamica")       # WorldFlora behaviour
 })
 
@@ -198,9 +198,55 @@ test_that("a correctly spelled genus is kept (Fuzzy.keep.genus, default)", {
   expect_equal(r$scientificName, c("Trema tomentosum", "Ulmus", "Trema tomentosum"))
   expect_equal(r$taxonRank[2], "genus")
   ## WorldFlora behaviour
-  r0 <- q(WFO.match("Ulmus parviflora", WFO.data = B, Fuzzy.keep.genus = FALSE, verbose = FALSE))
+  r0 <- q(WFO.match("Ulmus parviflora", WFO.data = B, Fuzzy.keep.genus = FALSE, Fuzzy.epithet.check = FALSE, verbose = FALSE))
   expect_equal(r0$scientificName, "Tamus parviflora")
   ## the candidates that were not kept are reported when the optional columns are used
-  r1 <- q(WFO.match("Ulmus parviflora", WFO.data = B, Fuzzy.epithet.check = TRUE, verbose = FALSE))
+  r1 <- q(WFO.match("Ulmus parviflora", WFO.data = B, Fuzzy.one.strict = TRUE, verbose = FALSE))
   expect_equal(r1$Fuzzy.alternatives, "Tamus parviflora")
+})
+
+## ---- 1.0.2: placeholders, epithet check by default, parallel processing ----
+
+test_that("placeholders are not fuzzy-matched (Fuzzy.skip.placeholder, default)", {
+  B <- bb(c("Opuntia", "Opuntia coindetti", "Acacia", "Acacia albida"), c("Cactaceae", "Cactaceae", "Fabaceae", "Fabaceae"))
+  r <- q(WFO.match(c("indet.", "sp.", "Indet", "cf.", "Acacia sp."), WFO.data = B, verbose = FALSE))
+  expect_equal(r$Matched, c(FALSE, FALSE, FALSE, FALSE, TRUE))
+  expect_equal(r$scientificName[5], "Acacia")
+  expect_equal(r$spec.name.ORIG[1], "indet.")
+  r0 <- q(WFO.match("indet.", WFO.data = B, Fuzzy.skip.placeholder = FALSE, verbose = FALSE))
+  expect_equal(r0$scientificName, "Opuntia coindetti")      # WorldFlora behaviour
+  expect_equal(q(WFO.one(r, spec.name = "spec.name", verbose = FALSE))$scientificName[1], "indet.")
+})
+
+test_that("the epithet check is on by default and adds no columns", {
+  B <- bb(c("Drypetes", "Drypetes kwangtungensis", "Ocotea", "Ocotea lucida"),
+          c("Putranjivaceae", "Putranjivaceae", "Lauraceae", "Lauraceae"))
+  r <- q(WFO.match(c("Drypetes likwa", "Ocotea luis", "Ocotea lucidda"), WFO.data = B, verbose = FALSE))
+  expect_equal(r$scientificName, c("Drypetes", "Ocotea", "Ocotea lucida"))
+  expect_false(any(c("Fuzzy.genus", "Fuzzy.transfer", "Fuzzy.alternatives") %in% names(r)))
+  r0 <- q(WFO.match("Drypetes likwa", WFO.data = B, Fuzzy.epithet.check = FALSE, verbose = FALSE))
+  expect_equal(r0$scientificName, "Drypetes kwangtungensis")   # WorldFlora behaviour
+})
+
+test_that("the epithet check accepts epithets run together with a rank", {
+  B <- bb(c("Phragmites", "Phragmites australis", "Phragmites australis subsp. americanus",
+            "Dichondra", "Dichondra repens", "Dichondra repens var. sericea"),
+          c("Poaceae", "Poaceae", "Poaceae", "Convolvulaceae", "Convolvulaceae", "Convolvulaceae"))
+  r <- q(WFO.match(c("Phragmites australissubsp. americanus", "Dichondramrepens var. sericea"), WFO.data = B, verbose = FALSE))
+  expect_equal(r$scientificName, c("Phragmites australis subsp. americanus", "Dichondra repens var. sericea"))
+})
+
+test_that("results of failed parallel processes are computed again", {
+  skip_on_os("windows")
+  ns <- asNamespace("WorldFloraFast")
+  parent <- Sys.getpid()
+  f <- function(i) if (Sys.getpid() != parent && i %% 3 == 0) NULL else list(rows = i)   # workers 'lose' every third result
+  expect_warning(r <- ns$.parallel.lapply(1:12, f, cores = 2), "matched again")
+  expect_equal(vapply(r, `[[`, 0L, "rows"), 1:12)
+})
+
+test_that("WFO.one returns each submitted record once, in order", {
+  r <- q(WFO.match(c("Acacia albida", "indet.", "", NA, "Acacia albida", "Gambeya boiviniana"), WFO.data = E, verbose = FALSE))
+  o <- q(WFO.one(r, verbose = FALSE))
+  expect_equal(o$OriSeq, 1:6)
 })

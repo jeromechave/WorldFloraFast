@@ -12,6 +12,8 @@
 ##       candidates (NEWS 9).
 ##     - Selections use which(), so NA distances cannot add empty rows; a group can never
 ##       disappear.
+##     - Stops with an error if the result does not have each submitted record exactly once
+##       (1.0.2).
 ##   New in WorldFloraFast:
 ##     - none
 ##   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
@@ -175,6 +177,12 @@ WFO.one <- function(
     drop <- c(drop, setdiff(g, keep))
   }
   WFO.new <- if (length(drop)) WFO.result[-drop, , drop = FALSE] else WFO.result
+  ## guarantee: each submitted record (OriSeq) exactly once, in the order of WFO.result
+  if (nrow(WFO.new) != length(unique(WFO.result$OriSeq)) || anyDuplicated(WFO.new$OriSeq) > 0) {
+    stop("WFO.one() did not obtain one row per submitted record (", nrow(WFO.new), " rows for ",
+         length(unique(WFO.result$OriSeq)), " records); please report this with the names concerned.",
+         call. = FALSE)
+  }
 
   if (!is.null(spec.name)) {
     sn <- as.character(WFO.new$scientificName)

@@ -98,13 +98,13 @@ all.cand[, c("Subseq", "Fuzzy.dist", "scientificName", "taxonomicStatus", "Old.n
 
 ## 5. Names that need more than spelling corrections
 
-By default, `WFO.match()` uses the matching steps of WorldFlora: when neither a name nor
-its first two words are found, it falls back to the genus. WorldFloraFast offers four
-optional steps for such names, switched off by default so that results stay those of
-WorldFlora:
+By default, `WFO.match()` uses the matching steps of WorldFlora, with three corrections
+that can each be switched off: a correctly spelled genus is not replaced by another one
+(`Fuzzy.keep.genus`), fuzzy matches must have a similar epithet (`Fuzzy.epithet.check`), and
+placeholders such as "indet." or "sp." are not matched (`Fuzzy.skip.placeholder`). When
+neither a name nor its first two words are found, it falls back to the genus.
+WorldFloraFast offers three optional steps for such names, switched off by default:
 
-* **epithet check** (`Fuzzy.epithet.check`): fuzzy matches must have a similar epithet and
-  a similar genus of the same family;
 * **genus, then epithet** (`Fuzzy.genus`): for truncated or misspelled genera;
 * **genus transfer** (`Fuzzy.transfer`): the same epithet in another genus of the family,
   when the backbone shows that species moved from the submitted genus to that genus;
@@ -115,8 +115,7 @@ WorldFlora:
 x <- c("Reinwardtiod cinerum", "Chrysophyllum madagascariensis", "Palma colorada")
 default <- WFO.one(WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE), verbose = FALSE)
 edge <- WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE,
-                  Fuzzy.genus = TRUE, Fuzzy.transfer = TRUE,
-                  Fuzzy.one.strict = TRUE, Fuzzy.epithet.check = TRUE)
+                  Fuzzy.genus = TRUE, Fuzzy.transfer = TRUE, Fuzzy.one.strict = TRUE)
 data.frame(submitted = x, default = default$scientificName,
            optional.steps = ifelse(edge$Matched, edge$scientificName, "(not matched)"))
 ```
@@ -174,9 +173,9 @@ With the WFO Plant List 2026-06 (1.66 million names), matching 50,000 records ta
   a fraction of a second. Keep the backbone as the data.table returned by `WFO.read()` or
   `WFO.remember()`: a data.frame is copied at each call.
 
-With the new matching steps switched off (`Fuzzy.genus`, `Fuzzy.transfer`,
-`Fuzzy.one.strict` and `Fuzzy.epithet.check` set to `FALSE`), results are those of
-WorldFlora 1.14-5 apart from the corrections listed in `news(package = "WorldFloraFast")`.
+With `Fuzzy.keep.genus`, `Fuzzy.epithet.check` and `Fuzzy.skip.placeholder` set to `FALSE`
+(the optional steps are off by default), results are those of WorldFlora 1.14-5 apart from
+the corrections listed in `news(package = "WorldFloraFast")`.
 
 ## Reference
 

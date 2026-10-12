@@ -1,3 +1,32 @@
+# WorldFloraFast 1.0.2 (pre-release)
+
+Tested on a forest inventory of the Democratic Republic of the Congo (113,432 trees, 1,240
+distinct names): 3 distinct names change, for 7,611 trees; all other results are unchanged.
+
+* Parallel processing (`cores`) is reliable: when a parallel process fails (for example for
+  lack of memory), `parallel::mclapply()` returns no result for all names of that process,
+  which could make `WFO.match()` fail or leave names unmatched. These names are now matched
+  again without parallel processing, with a warning. (Few names usually need fuzzy
+  matching, so `cores` is rarely needed; the inventory above takes 15 s without it.)
+* `WFO.one()` stops with an error if its result does not have each submitted record exactly
+  once, in the submitted order.
+* New argument `Fuzzy.skip.placeholder` of `WFO.match()`, `TRUE` by default: names made only
+  of placeholder words ("indet.", "sp.", "spp.", "cf.", "aff.", "unknown", and the words of
+  `sub.pattern`) are not fuzzy-matched. WorldFlora matched "indet." with *Opuntia coindetti*
+  (= *Opuntia streptacantha*, a cactus), in which "indet" occurs: 7,574 trees of the
+  inventory above. `FALSE` gives the results of WorldFlora.
+* `Fuzzy.epithet.check` is now `TRUE` by default (a correction): fuzzy matches must have an
+  epithet within the fuzzy distance of the submitted epithet, computed on the epithet alone.
+  "Drypetes likwa" was matched with *Drypetes kwangtungensis* ("likwa" found within the
+  epithet), "Xylopia pilosa" with *Xylopia villosa*; both now give the genus. The check
+  accepts epithets written together with the next word ("australissubsp.") and does not
+  judge names whose second word is a rank ("Dichondramrepens var. sericea"). On a sample of
+  the WFO Plant List 2026-06, all 1,000 exact names and all 60 names with one typo are still
+  matched correctly. `FALSE` gives the results of WorldFlora. The result columns
+  `Fuzzy.genus`, `Fuzzy.transfer` and `Fuzzy.alternatives` are now only added when one of
+  the optional steps (`Fuzzy.genus`, `Fuzzy.transfer`, `Fuzzy.one.strict`) is used, so that
+  the default result has the columns of WorldFlora.
+
 # WorldFloraFast 1.0.1 (pre-release)
 
 * New argument `Fuzzy.keep.genus` of `WFO.match()`, `TRUE` by default: when the genus of a

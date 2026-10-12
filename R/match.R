@@ -19,9 +19,11 @@
 ##     - Ranks and hybrid notation of WFO 2026-06 (utils-rank.R); empty authors give Inf.
 ##     - The argument no.dates is deprecated (it had no effect).
 ##   New in WorldFloraFast:
-##     - Argument Fuzzy.keep.genus (TRUE by default, a correction; 1.0.1).
+##     - Arguments Fuzzy.keep.genus (1.0.1), Fuzzy.skip.placeholder and default TRUE of
+##       Fuzzy.epithet.check (1.0.2): corrections, on by default; failed parallel processes
+##       are recomputed (.parallel.lapply(), 1.0.2).
 ##     - Arguments cores and (optional, FALSE by default) Fuzzy.genus, Fuzzy.transfer,
-##       Fuzzy.one.strict, Fuzzy.epithet.check; columns Fuzzy.genus, Fuzzy.transfer, Fuzzy.alternatives
+##       Fuzzy.one.strict; columns Fuzzy.genus, Fuzzy.transfer, Fuzzy.alternatives
 ##       (steps in utils-edgecases.R); index and matching context cached between calls
 ##       (utils-index.R).
 ##   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
@@ -104,10 +106,30 @@
 #'   (Dioscoreaceae). This corrects matches of WorldFlora that replaced a correct genus by an
 #'   unrelated one; `FALSE` gives the results of WorldFlora. The names that were not kept
 #'   are listed in `Fuzzy.alternatives` when one of the optional steps below is used.
-#' @param Fuzzy.genus,Fuzzy.transfer,Fuzzy.one.strict,Fuzzy.epithet.check Optional matching
+#' @param Fuzzy.epithet.check If `TRUE` (default), fuzzy matches found by [agrep()] for
+#'   names of two or more words are kept only if (1) the epithet is within the `Fuzzy`
+#'   distance of the submitted epithet, computed on the epithet alone (at least 1 edit;
+#'   gender endings ignored), or the submitted epithet is the beginning of it ("Quercus
+#'   cornelius" -> *Quercus cornelius-mulleri*); and (2) its genus is the submitted genus, or
+#'   a genus with a similar name in the same family. [agrep()] allows a distance relative to
+#'   the whole name, so that without this check a short epithet can be replaced ("Ocotea
+#'   luis" -> *Ocotea lucida*), and a name can be found within an unrelated longer name
+#'   ("Inga ferrea" within "Coumarouna ferrea"). Rejected names are listed in
+#'   `Fuzzy.alternatives`. This corrects matches of WorldFlora such as "Drypetes likwa" ->
+#'   *Drypetes kwangtungensis* (now the genus *Drypetes*); `FALSE` gives the results of
+#'   WorldFlora. Names whose second word is a rank (genus and epithet written together,
+#'   "Dichondramrepens var. sericea") are not checked, and an epithet written together with
+#'   the next word ("australissubsp.") is accepted.
+#' @param Fuzzy.skip.placeholder If `TRUE` (default), names made only of placeholder words
+#'   ("indet.", "sp.", "spp.", "cf.", "aff.", "unknown", and the words of `sub.pattern`) are
+#'   not fuzzy-matched and remain unmatched. WorldFlora matched "indet." with *Opuntia
+#'   coindetti*, in which "indet" occurs; `FALSE` gives the results of WorldFlora. With
+#'   `WFO.one(..., spec.name = "spec.name")`, such names keep the submitted text.
+#' @param Fuzzy.genus,Fuzzy.transfer,Fuzzy.one.strict Optional matching
 #'   steps of WorldFloraFast for difficult names, described below. All are `FALSE` by
 #'   default, which keeps the matching steps and the result columns of WorldFlora; they can
-#'   be used together or separately.
+#'   be used together or separately. When one of them is used, the result has the columns
+#'   `Fuzzy.genus`, `Fuzzy.transfer` and `Fuzzy.alternatives`.
 #'
 #'   `Fuzzy.genus`: if `TRUE` and the name was not found, match the genus first (genera
 #'   that start with the submitted genus, or within the `Fuzzy` distance), then the epithet
@@ -143,18 +165,6 @@
 #'   fall-back of WorldFlora is used (any exact or fuzzy match of the first word). When the
 #'   first word is a synonym genus and nothing is matched, its accepted genus is listed in
 #'   `Fuzzy.alternatives` ("Altingia fargesii": *Liquidambar*).
-#'
-#'   `Fuzzy.epithet.check`: if `TRUE`, fuzzy matches found by [agrep()] for names of two or
-#'   more words are kept only if (1) the epithet is within the `Fuzzy` distance of the
-#'   submitted epithet, computed on the epithet alone (at least 1 edit; gender endings
-#'   ignored), or the submitted epithet is the beginning of it ("Quercus cornelius" ->
-#'   *Quercus cornelius-mulleri*); and (2) its genus is the submitted genus, or a genus with
-#'   a similar name in the same family. [agrep()] allows a distance relative to the whole
-#'   name, so that without this check a short epithet can be replaced ("Ocotea luis" ->
-#'   *Ocotea lucida*), and a name can be found within an unrelated longer name ("Inga
-#'   ferrea" within "Coumarouna ferrea"). Rejected names are listed in
-#'   `Fuzzy.alternatives`.
-#'
 #' @details
 #' \strong{Preparation of names.} When `spec.name` is used, names are first cleaned in this
 #' order: `squish`, `spec.name.tolower`, `spec.name.sub`, `spec.name.nobrackets`,
@@ -172,7 +182,8 @@
 #'     with their standard names (Asteraceae, Fabaceae, ...);
 #'   \item fuzzy matches of the full name with [agrep()], then of its first two words
 #'     (`Fuzzy.two`), restricted to a correctly spelled genus (`Fuzzy.keep.genus`) and
-#'     checked by `Fuzzy.epithet.check` (optional);
+#'     checked by `Fuzzy.epithet.check`; names that are only placeholders are skipped
+#'     (`Fuzzy.skip.placeholder`);
 #'   \item genus then epithet (`Fuzzy.genus`, optional), also when the fuzzy matches of the previous
 #'     step all belong to unrelated genera; if the submitted genus exists in the backbone and
 #'     these matches are all in other families, they are not accepted ("Schizolobium
@@ -209,10 +220,11 @@
 #' \strong{Differences with WorldFlora 1.14-5} are listed in the NEWS file: notably,
 #' `Unique` is `FALSE` for names with several exact matches, and conserved family names and
 #' unmatched names are no longer replaced by other records, and a correctly spelled genus is
-#' not replaced by another genus (`Fuzzy.keep.genus`). Results are
-#' unchanged otherwise: by default the matching steps, result columns and their formats are
-#' those of WorldFlora (the optional steps `Fuzzy.genus`, `Fuzzy.transfer`,
-#' `Fuzzy.one.strict` and `Fuzzy.epithet.check` are switched off).
+#' not replaced by another genus (`Fuzzy.keep.genus`), short epithets are not replaced
+#' (`Fuzzy.epithet.check`) and placeholders are not matched (`Fuzzy.skip.placeholder`); each of
+#' these corrections can be switched off. Results are unchanged otherwise: by default the
+#' result columns and their formats are those of WorldFlora, and the optional steps
+#' `Fuzzy.genus`, `Fuzzy.transfer` and `Fuzzy.one.strict` are switched off.
 #'
 #' @return A data.frame with the columns of `spec.data`, followed by:
 #' \describe{
@@ -284,7 +296,7 @@
 #'        "Palma colorada")                  # local name
 #' m <- WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE,
 #'                Fuzzy.genus = TRUE, Fuzzy.transfer = TRUE,             # non-default
-#'                Fuzzy.one.strict = TRUE, Fuzzy.epithet.check = TRUE)   # non-default
+#'                Fuzzy.one.strict = TRUE)                               # non-default
 #' m[, c("spec.name", "Matched", "Fuzzy.genus", "Fuzzy.transfer", "scientificName", "Old.name")]
 #' # with the default settings, these names are matched with genera only
 #' WFO.one(WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE))$scientificName
@@ -330,8 +342,9 @@ WFO.match <- function(
     verbose=TRUE, counter=1000,
     cores=1,
     Fuzzy.genus=FALSE, Fuzzy.transfer=FALSE, Fuzzy.one.strict=FALSE,
-    Fuzzy.epithet.check=FALSE,
-    Fuzzy.keep.genus=TRUE
+    Fuzzy.epithet.check=TRUE,
+    Fuzzy.keep.genus=TRUE,
+    Fuzzy.skip.placeholder=TRUE
 )
 {
     if (!missing(no.dates)) .no.dates.deprecated()
@@ -362,7 +375,7 @@ WFO.match <- function(
     spec.data$Fuzzy.one <- rep(FALSE, n)
     ## columns of the matching steps of WorldFloraFast, only when one of them is used, so that
     ## the result has the columns of WorldFlora by default
-    extended <- Fuzzy.genus || Fuzzy.transfer || Fuzzy.one.strict || Fuzzy.epithet.check
+    extended <- Fuzzy.genus || Fuzzy.transfer || Fuzzy.one.strict
     if (extended) {
         spec.data$Fuzzy.genus <- rep(FALSE, n)
         spec.data$Fuzzy.transfer <- rep(FALSE, n)
@@ -397,6 +410,8 @@ WFO.match <- function(
         if (length(remain) > 0) message("Checking for fuzzy matches for ", length(remain), " records")
         fz.rec <- setdiff(remain, cons)
         fz.rec <- fz.rec[nchar(nm[fz.rec]) > 0 & Fuzzy > 0]
+        ## names that are only placeholders ("indet.", "sp.", "cf.") are not fuzzy-matched
+        if (Fuzzy.skip.placeholder) fz.rec <- fz.rec[!.is.placeholder(nm[fz.rec], sub.pattern)]
         fz <- NULL
         if (length(fz.rec) > 0) {
             todo <- unique(nm[fz.rec])
@@ -412,11 +427,7 @@ WFO.match <- function(
                     Fuzzy.one.strict = Fuzzy.one.strict, Fuzzy.epithet.check = Fuzzy.epithet.check,
                     Fuzzy.keep.genus = Fuzzy.keep.genus, ctx = ctx)
             }
-            fz <- if (cores > 1 && .Platform$OS.type == "unix") {
-                parallel::mclapply(seq_along(todo), one, mc.cores = cores)
-            } else {
-                lapply(seq_along(todo), one)
-            }
+            fz <- .parallel.lapply(seq_along(todo), one, cores = cores)
             k <- match(nm[fz.rec], todo)
             pick <- function(f) vapply(fz, function(z) z[[f]], FUN.VALUE = fz[[1]][[f]])[k]
             rows[fz.rec] <- lapply(fz, `[[`, "rows")[k]

@@ -47,8 +47,9 @@ WFO.match(
   Fuzzy.genus = FALSE,
   Fuzzy.transfer = FALSE,
   Fuzzy.one.strict = FALSE,
-  Fuzzy.epithet.check = FALSE,
-  Fuzzy.keep.genus = TRUE
+  Fuzzy.epithet.check = TRUE,
+  Fuzzy.keep.genus = TRUE,
+  Fuzzy.skip.placeholder = TRUE
 )
 }
 \arguments{
@@ -141,10 +142,11 @@ matches.}
 
 \item{cores}{Number of cores for fuzzy matching (\code{\link[parallel:mclapply]{parallel::mclapply()}}; not on Windows).}
 
-\item{Fuzzy.genus, Fuzzy.transfer, Fuzzy.one.strict, Fuzzy.epithet.check}{Optional matching
+\item{Fuzzy.genus, Fuzzy.transfer, Fuzzy.one.strict}{Optional matching
 steps of WorldFloraFast for difficult names, described below. All are \code{FALSE} by
 default, which keeps the matching steps and the result columns of WorldFlora; they can
-be used together or separately.
+be used together or separately. When one of them is used, the result has the columns
+\code{Fuzzy.genus}, \code{Fuzzy.transfer} and \code{Fuzzy.alternatives}.
 
 \code{Fuzzy.genus}: if \code{TRUE} and the name was not found, match the genus first (genera
 that start with the submitted genus, or within the \code{Fuzzy} distance), then the epithet
@@ -179,18 +181,22 @@ names from being given a scientific genus, such as "Palma colorada" (\emph{Palma
 synonym of \emph{Phoenix}) or "Cedro rosado" (fuzzy match with \emph{Cedrus}). With \code{FALSE}, the
 fall-back of WorldFlora is used (any exact or fuzzy match of the first word). When the
 first word is a synonym genus and nothing is matched, its accepted genus is listed in
-\code{Fuzzy.alternatives} ("Altingia fargesii": \emph{Liquidambar}).
+\code{Fuzzy.alternatives} ("Altingia fargesii": \emph{Liquidambar}).}
 
-\code{Fuzzy.epithet.check}: if \code{TRUE}, fuzzy matches found by \code{\link[=agrep]{agrep()}} for names of two or
-more words are kept only if (1) the epithet is within the \code{Fuzzy} distance of the
-submitted epithet, computed on the epithet alone (at least 1 edit; gender endings
-ignored), or the submitted epithet is the beginning of it ("Quercus cornelius" ->
-\emph{Quercus cornelius-mulleri}); and (2) its genus is the submitted genus, or a genus with
-a similar name in the same family. \code{\link[=agrep]{agrep()}} allows a distance relative to the whole
-name, so that without this check a short epithet can be replaced ("Ocotea luis" ->
-\emph{Ocotea lucida}), and a name can be found within an unrelated longer name ("Inga
-ferrea" within "Coumarouna ferrea"). Rejected names are listed in
-\code{Fuzzy.alternatives}.}
+\item{Fuzzy.epithet.check}{If \code{TRUE} (default), fuzzy matches found by \code{\link[=agrep]{agrep()}} for
+names of two or more words are kept only if (1) the epithet is within the \code{Fuzzy}
+distance of the submitted epithet, computed on the epithet alone (at least 1 edit;
+gender endings ignored), or the submitted epithet is the beginning of it ("Quercus
+cornelius" -> \emph{Quercus cornelius-mulleri}); and (2) its genus is the submitted genus, or
+a genus with a similar name in the same family. \code{\link[=agrep]{agrep()}} allows a distance relative to
+the whole name, so that without this check a short epithet can be replaced ("Ocotea
+luis" -> \emph{Ocotea lucida}), and a name can be found within an unrelated longer name
+("Inga ferrea" within "Coumarouna ferrea"). Rejected names are listed in
+\code{Fuzzy.alternatives}. This corrects matches of WorldFlora such as "Drypetes likwa" ->
+\emph{Drypetes kwangtungensis} (now the genus \emph{Drypetes}); \code{FALSE} gives the results of
+WorldFlora. Names whose second word is a rank (genus and epithet written together,
+"Dichondramrepens var. sericea") are not checked, and an epithet written together with
+the next word ("australissubsp.") is accepted.}
 
 \item{Fuzzy.keep.genus}{If \code{TRUE} (default), a correctly spelled genus is kept: when the
 first word of a name of two or more words is a name in the backbone, fuzzy matches in
@@ -201,6 +207,12 @@ tomentosa}; "Ulmus parviflora" with the genus \emph{Ulmus}, not with \emph{Tamus
 (Dioscoreaceae). This corrects matches of WorldFlora that replaced a correct genus by an
 unrelated one; \code{FALSE} gives the results of WorldFlora. The names that were not kept
 are listed in \code{Fuzzy.alternatives} when one of the optional steps below is used.}
+
+\item{Fuzzy.skip.placeholder}{If \code{TRUE} (default), names made only of placeholder words
+("indet.", "sp.", "spp.", "cf.", "aff.", "unknown", and the words of \code{sub.pattern}) are
+not fuzzy-matched and remain unmatched. WorldFlora matched "indet." with \emph{Opuntia
+coindetti}, in which "indet" occurs; \code{FALSE} gives the results of WorldFlora. With
+\code{WFO.one(..., spec.name = "spec.name")}, such names keep the submitted text.}
 }
 \value{
 A data.frame with the columns of \code{spec.data}, followed by:
@@ -261,7 +273,8 @@ Palmae, Cruciferae, Guttiferae, Labiatae, Gramineae) not in the backbone, matche
 with their standard names (Asteraceae, Fabaceae, ...);
 \item fuzzy matches of the full name with \code{\link[=agrep]{agrep()}}, then of its first two words
 (\code{Fuzzy.two}), restricted to a correctly spelled genus (\code{Fuzzy.keep.genus}) and
-checked by \code{Fuzzy.epithet.check} (optional);
+checked by \code{Fuzzy.epithet.check}; names that are only placeholders are skipped
+(\code{Fuzzy.skip.placeholder});
 \item genus then epithet (\code{Fuzzy.genus}, optional), also when the fuzzy matches of the previous
 step all belong to unrelated genera; if the submitted genus exists in the backbone and
 these matches are all in other families, they are not accepted ("Schizolobium
@@ -298,10 +311,11 @@ searching the whole backbone.
 \strong{Differences with WorldFlora 1.14-5} are listed in the NEWS file: notably,
 \code{Unique} is \code{FALSE} for names with several exact matches, and conserved family names and
 unmatched names are no longer replaced by other records, and a correctly spelled genus is
-not replaced by another genus (\code{Fuzzy.keep.genus}). Results are
-unchanged otherwise: by default the matching steps, result columns and their formats are
-those of WorldFlora (the optional steps \code{Fuzzy.genus}, \code{Fuzzy.transfer},
-\code{Fuzzy.one.strict} and \code{Fuzzy.epithet.check} are switched off).
+not replaced by another genus (\code{Fuzzy.keep.genus}), short epithets are not replaced
+(\code{Fuzzy.epithet.check}) and placeholders are not matched (\code{Fuzzy.skip.placeholder}); each of
+these corrections can be switched off. Results are unchanged otherwise: by default the
+result columns and their formats are those of WorldFlora, and the optional steps
+\code{Fuzzy.genus}, \code{Fuzzy.transfer} and \code{Fuzzy.one.strict} are switched off.
 }
 \examples{
 ## ---- default settings (those of WorldFlora) ----
@@ -332,7 +346,7 @@ x <- c("Reinwardtiod cinerum",            # truncated genus
        "Palma colorada")                  # local name
 m <- WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE,
                Fuzzy.genus = TRUE, Fuzzy.transfer = TRUE,             # non-default
-               Fuzzy.one.strict = TRUE, Fuzzy.epithet.check = TRUE)   # non-default
+               Fuzzy.one.strict = TRUE)                               # non-default
 m[, c("spec.name", "Matched", "Fuzzy.genus", "Fuzzy.transfer", "scientificName", "Old.name")]
 # with the default settings, these names are matched with genera only
 WFO.one(WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE))$scientificName

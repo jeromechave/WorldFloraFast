@@ -16,8 +16,7 @@ WFO.download(save.dir = "wfo_data")        # latest WFO Plant List (2026-06) fro
 res <- WFO.match(c("Faidherbia albida", "Acacia nilotca", "Compositae"), WFO.data = WFO.data)
 # optional matching steps for difficult names
 res2 <- WFO.match(c("Reinwardtiod cinerum", "Palma colorada"), WFO.data = WFO.data,
-                  Fuzzy.genus = TRUE, Fuzzy.transfer = TRUE,
-                  Fuzzy.one.strict = TRUE, Fuzzy.epithet.check = TRUE)
+                  Fuzzy.genus = TRUE, Fuzzy.transfer = TRUE, Fuzzy.one.strict = TRUE)
 one <- WFO.one(res)                         # one row per submitted name
 
 # later sessions
@@ -26,8 +25,9 @@ WFO.download(save.dir = "wfo_data", update = TRUE)   # check for a newer release
 ```
 
 Works with the WFO Plant List 2026-06 and earlier releases. By default it behaves as
-WorldFlora (same arguments, defaults and result columns), with errors corrected. Optional
-matching steps (`Fuzzy.genus`, `Fuzzy.transfer`, `Fuzzy.one.strict`, `Fuzzy.epithet.check`)
+WorldFlora (same arguments and result columns), with errors corrected: a correctly spelled
+genus is kept, short epithets are not replaced, and placeholders such as "indet." are not
+matched. Optional matching steps (`Fuzzy.genus`, `Fuzzy.transfer`, `Fuzzy.one.strict`)
 handle truncated genera ("Reinwardtiod cinerum"), species moved to another genus
 ("Chrysophyllum madagascariensis" -> *Gambeya boiviniana*), short epithets, and local
 names such as "Palma colorada", which are then not given a scientific genus.

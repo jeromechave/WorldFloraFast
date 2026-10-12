@@ -38,9 +38,10 @@ corrections listed in the NEWS file (\code{news(package = "WorldFloraFast")}).
 
 By default, functions behave as in WorldFlora 1.14-5: same arguments, defaults, result
 columns (names, order, types) and example data set. Only errors of WorldFlora are
-corrected (listed in the NEWS file). The matching steps added by WorldFloraFast
-(\code{Fuzzy.genus}, \code{Fuzzy.transfer}, \code{Fuzzy.one.strict}, \code{Fuzzy.epithet.check} in
-\code{\link[=WFO.match]{WFO.match()}}) are optional and switched off by default.
+corrected (listed in the NEWS file); in \code{\link[=WFO.match]{WFO.match()}}, three of these corrections can be
+switched off (\code{Fuzzy.keep.genus}, \code{Fuzzy.epithet.check}, \code{Fuzzy.skip.placeholder}). The
+matching steps added by WorldFloraFast (\code{Fuzzy.genus}, \code{Fuzzy.transfer},
+\code{Fuzzy.one.strict}) are optional and switched off by default.
 }
 
 \section{Cache}{

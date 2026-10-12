@@ -199,6 +199,9 @@
   ## one- or two-letter second words (a mistyped hybrid sign, "Dryopteris e asturiensis")
   ## are not judged
   if (length(w) < 2 || nchar(w[2]) < 3) return(seq_along(cand))
+  ## a rank as second word: genus and epithet were probably written together
+  ## ("Dichondramrepens var. sericea"); the epithet cannot be compared
+  if (grepl("^(var|subsp|ssp|f|fo|forma|cv|subvar|subf|nothosubsp|nothovar)[.]*$", tolower(w[2]))) return(seq_along(cand))
   e <- .norm.epithet(w[2])
   e.raw <- tolower(w[2])
   ke <- max(1, .agrep.k(e.raw, Fuzzy))
@@ -211,7 +214,9 @@
     ce <- .norm.epithet(ce.raw)
     ## raw or normalised spelling: a typo in the ending (obovatxm) prevents normalisation
     ok.ep <- min(as.numeric(utils::adist(e, ce)), as.numeric(utils::adist(e.raw, ce.raw))) <= ke ||
-             (nchar(w[2]) >= 4 && startsWith(tolower(sub(paste0("^", .HYBRID), "", cw[2])), tolower(w[2])))
+             (nchar(w[2]) >= 4 && startsWith(tolower(sub(paste0("^", .HYBRID), "", cw[2])), tolower(w[2]))) ||
+             ## submitted epithet run together with the next word ("australissubsp. americanus")
+             (nchar(ce.raw) >= 4 && startsWith(e.raw, ce.raw))
     ## another genus must have a related name (starting with the submitted genus, or within
     ## the agrep() distance) and, for an
     ## existing submitted genus, the same family; otherwise it is a genus transfer, which

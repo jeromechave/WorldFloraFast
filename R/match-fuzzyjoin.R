@@ -119,8 +119,7 @@ WFO.match.fuzzyjoin <- function(
             r <- .rows.of(index, h$ids)
             list(rows = r, dist = rep(h$dist, index$cnt[h$ids]))
         }
-        fz <- if (cores > 1 && .Platform$OS.type == "unix") parallel::mclapply(todo, one, mc.cores = cores)
-              else lapply(todo, one)
+        fz <- .parallel.lapply(todo, one, cores = cores)
         k <- match(nm[remain], todo)
         for (j in seq_along(remain)) {
             z <- fz[[k[j]]]

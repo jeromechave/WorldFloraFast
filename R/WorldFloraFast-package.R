@@ -41,9 +41,10 @@
 #' @section Compatibility with WorldFlora:
 #' By default, functions behave as in WorldFlora 1.14-5: same arguments, defaults, result
 #' columns (names, order, types) and example data set. Only errors of WorldFlora are
-#' corrected (listed in the NEWS file). The matching steps added by WorldFloraFast
-#' (`Fuzzy.genus`, `Fuzzy.transfer`, `Fuzzy.one.strict`, `Fuzzy.epithet.check` in
-#' [WFO.match()]) are optional and switched off by default.
+#' corrected (listed in the NEWS file); in [WFO.match()], three of these corrections can be
+#' switched off (`Fuzzy.keep.genus`, `Fuzzy.epithet.check`, `Fuzzy.skip.placeholder`). The
+#' matching steps added by WorldFloraFast (`Fuzzy.genus`, `Fuzzy.transfer`,
+#' `Fuzzy.one.strict`) are optional and switched off by default.
 #'
 #' @section Cache:
 #' The index of the backbone and the context used by the matching steps (about 5 s to
