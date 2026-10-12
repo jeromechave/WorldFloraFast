@@ -12,6 +12,7 @@
 ##       contain a match), stringdist hits with a length window (.stringdist.hits()), and
 ##       distances for vectors of name pairs (.pair.adist(); WorldFlora called adist()
 ##       per row).
+##     - .keep.genus(): a correctly spelled genus is kept (Fuzzy.keep.genus; 1.0.1).
 ##   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 ## --------------------------------------------------------------------------------------
 
@@ -90,4 +91,21 @@
     out[ok] <- d[match(key, key[uk])]
   }
   out
+}
+
+## Correctly spelled genus (Fuzzy.keep.genus): when the first word of a name of two or more
+## words is a name of the backbone (the genus is spelled correctly), fuzzy candidates of that
+## genus are kept and candidates of other genera are dropped; without candidates of the
+## genus, none are kept, and the genus-only fall-back (Fuzzy.one) gives the genus.
+## "Trema tomentosa": Premna tomentosa, Urena tomentosa and Trema tomentosum are equally
+## close; only Trema tomentosum is kept. Returns the candidate ids to keep.
+.keep.genus <- function(s, ids, index, msg = function(...) NULL) {
+  g <- sub(" .*$", "", s)
+  if (length(ids) == 0 || g == s || is.na(match(g, index$u))) return(ids)
+  cand.genus <- sub(" .*$", "", sub(paste0("^", .HYBRID, " ?"), "", index$u[ids]))
+  same <- cand.genus == g
+  if (all(same)) return(ids)
+  msg("Fuzzy matches for ", s, " in other genera than ", g, " were not kept")
+  dropped <- index$u[ids[!same]]
+  structure(ids[same], dropped = dropped[order(as.numeric(utils::adist(s, dropped)))])
 }

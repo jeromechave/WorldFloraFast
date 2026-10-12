@@ -75,7 +75,7 @@ against the World Flora Online taxonomic backbone data. Applications in Plant Sc
 World Flora Online. An Online Flora of All Known Plants. \url{https://www.worldfloraonline.org}
 }
 \author{
-\strong{Maintainer}: Your Name \email{you@example.org}
+\strong{Maintainer}: J<c3><a9>r<c3><b4>me Chave \email{jerome.chave@cnrs.fr}
 
 Authors:
 \itemize{

@@ -2,8 +2,8 @@ Package: WorldFloraFast
 Type: Package
 Title: Fast Standardization of Plant Names Against the World Flora
         Online Taxonomic Backbone
-Version: 1.0.0
-Date: 2026-10-11
+Version: 1.0.1
+Date: 2026-10-12
 Authors@R: 
     c(person(given = "Jérôme", family = "Chave",
              role = c("aut", "cre"),

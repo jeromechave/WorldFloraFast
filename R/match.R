@@ -19,6 +19,7 @@
 ##     - Ranks and hybrid notation of WFO 2026-06 (utils-rank.R); empty authors give Inf.
 ##     - The argument no.dates is deprecated (it had no effect).
 ##   New in WorldFloraFast:
+##     - Argument Fuzzy.keep.genus (TRUE by default, a correction; 1.0.1).
 ##     - Arguments cores and (optional, FALSE by default) Fuzzy.genus, Fuzzy.transfer,
 ##       Fuzzy.one.strict, Fuzzy.epithet.check; columns Fuzzy.genus, Fuzzy.transfer, Fuzzy.alternatives
 ##       (steps in utils-edgecases.R); index and matching context cached between calls
@@ -94,6 +95,15 @@
 #' @param counter Progress is reported every `counter` distinct names checked for fuzzy
 #'   matches.
 #' @param cores Number of cores for fuzzy matching ([parallel::mclapply()]; not on Windows).
+#' @param Fuzzy.keep.genus If `TRUE` (default), a correctly spelled genus is kept: when the
+#'   first word of a name of two or more words is a name in the backbone, fuzzy matches in
+#'   other genera are not accepted. Matches in that genus are kept; if there are none, the
+#'   genus-only fall-back (`Fuzzy.one`) gives the genus. "Trema tomentosa" is matched with
+#'   *Trema tomentosum*, not with the equally close *Premna tomentosa* or *Urena
+#'   tomentosa*; "Ulmus parviflora" with the genus *Ulmus*, not with *Tamus parviflora*
+#'   (Dioscoreaceae). This corrects matches of WorldFlora that replaced a correct genus by an
+#'   unrelated one; `FALSE` gives the results of WorldFlora. The names that were not kept
+#'   are listed in `Fuzzy.alternatives` when one of the optional steps below is used.
 #' @param Fuzzy.genus,Fuzzy.transfer,Fuzzy.one.strict,Fuzzy.epithet.check Optional matching
 #'   steps of WorldFloraFast for difficult names, described below. All are `FALSE` by
 #'   default, which keeps the matching steps and the result columns of WorldFlora; they can
@@ -161,7 +171,8 @@
 #'     Palmae, Cruciferae, Guttiferae, Labiatae, Gramineae) not in the backbone, matched
 #'     with their standard names (Asteraceae, Fabaceae, ...);
 #'   \item fuzzy matches of the full name with [agrep()], then of its first two words
-#'     (`Fuzzy.two`), checked by `Fuzzy.epithet.check` (optional);
+#'     (`Fuzzy.two`), restricted to a correctly spelled genus (`Fuzzy.keep.genus`) and
+#'     checked by `Fuzzy.epithet.check` (optional);
 #'   \item genus then epithet (`Fuzzy.genus`, optional), also when the fuzzy matches of the previous
 #'     step all belong to unrelated genera; if the submitted genus exists in the backbone and
 #'     these matches are all in other families, they are not accepted ("Schizolobium
@@ -197,7 +208,8 @@
 #'
 #' \strong{Differences with WorldFlora 1.14-5} are listed in the NEWS file: notably,
 #' `Unique` is `FALSE` for names with several exact matches, and conserved family names and
-#' unmatched names are no longer replaced by other records. Results are
+#' unmatched names are no longer replaced by other records, and a correctly spelled genus is
+#' not replaced by another genus (`Fuzzy.keep.genus`). Results are
 #' unchanged otherwise: by default the matching steps, result columns and their formats are
 #' those of WorldFlora (the optional steps `Fuzzy.genus`, `Fuzzy.transfer`,
 #' `Fuzzy.one.strict` and `Fuzzy.epithet.check` are switched off).
@@ -318,7 +330,8 @@ WFO.match <- function(
     verbose=TRUE, counter=1000,
     cores=1,
     Fuzzy.genus=FALSE, Fuzzy.transfer=FALSE, Fuzzy.one.strict=FALSE,
-    Fuzzy.epithet.check=FALSE
+    Fuzzy.epithet.check=FALSE,
+    Fuzzy.keep.genus=TRUE
 )
 {
     if (!missing(no.dates)) .no.dates.deprecated()
@@ -397,7 +410,7 @@ WFO.match <- function(
                     Fuzzy.within = Fuzzy.within, Fuzzy.two = Fuzzy.two, Fuzzy.one = Fuzzy.one,
                     verbose = verbose, Fuzzy.genus = Fuzzy.genus, Fuzzy.transfer = Fuzzy.transfer,
                     Fuzzy.one.strict = Fuzzy.one.strict, Fuzzy.epithet.check = Fuzzy.epithet.check,
-                    ctx = ctx)
+                    Fuzzy.keep.genus = Fuzzy.keep.genus, ctx = ctx)
             }
             fz <- if (cores > 1 && .Platform$OS.type == "unix") {
                 parallel::mclapply(seq_along(todo), one, mc.cores = cores)
@@ -487,7 +500,7 @@ WFO.match <- function(
 .fuzzy.one.name <- function(s, index, Fuzzy, Fuzzy.force, Fuzzy.max, Fuzzy.min, Fuzzy.shortest,
                             Fuzzy.within, Fuzzy.two, Fuzzy.one, verbose,
                             Fuzzy.genus = FALSE, Fuzzy.transfer = FALSE, Fuzzy.one.strict = FALSE,
-                            Fuzzy.epithet.check = FALSE, ctx = NULL) {
+                            Fuzzy.epithet.check = FALSE, Fuzzy.keep.genus = FALSE, ctx = NULL) {
   s1 <- s
   res <- list(rows = integer(0), fuzzy = FALSE, Fuzzy.two = FALSE, Fuzzy.one = FALSE,
               Fuzzy.genus = FALSE, Fuzzy.transfer = FALSE, Fuzzy.toomany = 0L, s = s,
@@ -497,12 +510,25 @@ WFO.match <- function(
   nraw <- function(ids) sum(index$cnt[ids])   # backbone rows, duplicated names included
 
   ids <- .agrep.ids(s, index$u, Fuzzy, u.nchar = index$u.nchar)
+  if (Fuzzy.keep.genus) {
+    ids <- .keep.genus(s, ids, index, msg)
+    if (!is.null(attr(ids, "dropped"))) res$Fuzzy.alternatives <- .alternatives(attr(ids, "dropped"))
+    ids <- as.vector(ids)
+  }
 
   if (length(ids) == 0 && Fuzzy.two) {
     terms <- strsplit(s, split = " ", fixed = TRUE)[[1]]
     if (length(terms) > 2) {
       s2 <- paste(terms[1], terms[2])
       ids <- .agrep.ids(s2, index$u, Fuzzy, u.nchar = index$u.nchar)
+      if (Fuzzy.keep.genus) {
+        ids <- .keep.genus(s2, ids, index, msg)
+        if (!is.null(attr(ids, "dropped"))) {
+          res$Fuzzy.alternatives <- paste(setdiff(c(res$Fuzzy.alternatives, .alternatives(attr(ids, "dropped"))), ""),
+                                          collapse = "; ")
+        }
+        ids <- as.vector(ids)
+      }
       res$Fuzzy.two <- TRUE
       if (length(ids) > 0) {
         msg("Fuzzy matches for ", s, " were only found for first 2 terms (", s2, ")")
@@ -523,7 +549,7 @@ WFO.match <- function(
       rejected <- index$u[ids[setdiff(seq_along(ids), keep)]]
       rejected <- rejected[order(as.numeric(utils::adist(s, rejected)))]   # closest first
       msg("Fuzzy matches for ", s, " rejected by the epithet check: ", paste(utils::head(rejected, 5), collapse = ", "))
-      res$Fuzzy.alternatives <- .alternatives(rejected)
+      res$Fuzzy.alternatives <- paste(setdiff(c(res$Fuzzy.alternatives, .alternatives(rejected)), ""), collapse = "; ")
       ids <- ids[keep]
     }
   }

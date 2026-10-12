@@ -1,3 +1,17 @@
+# WorldFloraFast 1.0.1 (pre-release)
+
+* New argument `Fuzzy.keep.genus` of `WFO.match()`, `TRUE` by default: when the genus of a
+  submitted name is spelled correctly (it is a name in the backbone), fuzzy matches in other
+  genera are not accepted; matches in that genus are kept, and without them the genus-only
+  fall-back gives the genus. This corrects matches of WorldFlora that replaced a correct
+  genus: "Trema tomentosa" was matched with *Premna tomentosa* (equally close as *Trema
+  tomentosum*, 2 edits), "Ulmus parviflora" with *Dioscorea communis* (via *Tamus
+  parviflora*), "Brenania nitida" with *Stellaria congesta*, "Sindora assamica" with *Lindera
+  assamica*. On the WFO Plant List 2026-06, this changes 15 of the 70 names of the benchmark
+  (all to the submitted genus or one of its species) and none of a sample of 1,137 names
+  with known answers. `Fuzzy.keep.genus = FALSE` gives the results of WorldFlora. Names that
+  were not kept are listed in `Fuzzy.alternatives` when the optional steps are used.
+
 # WorldFloraFast 1.0.0 (pre-release)
 
 First version intended for general use. Compared with WorldFlora 1.14-5, WorldFloraFast:
@@ -14,7 +28,8 @@ First version intended for general use. Compared with WorldFlora 1.14-5, WorldFl
 
 ## Backward compatibility with WorldFlora
 
-By default, WorldFloraFast behaves as WorldFlora 1.14-5: same functions, arguments,
+By default, WorldFloraFast behaves as WorldFlora 1.14-5 (see 1.0.1 for one further
+correction, `Fuzzy.keep.genus`): same functions, arguments,
 defaults, result columns (names, order and types) and data set `WFO.example`. Only errors
 of WorldFlora are corrected; everything else that WorldFloraFast adds is optional.
 Compared with 0.12.0, this restores:

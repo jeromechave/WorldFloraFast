@@ -123,7 +123,7 @@ test_that("fuzzy matches only in another family are not accepted for an existing
   r <- q(WFO.match.ff("Sindora assamica", WFO.data = B, verbose = FALSE))
   expect_equal(r$scientificName, "Sindora")
   expect_equal(r$Fuzzy.alternatives, "Lindera assamica")
-  r0 <- q(WFO.match.ff("Sindora assamica", WFO.data = B, Fuzzy.genus = FALSE, Fuzzy.epithet.check = FALSE, verbose = FALSE))
+  r0 <- q(WFO.match("Sindora assamica", WFO.data = B, Fuzzy.keep.genus = FALSE, verbose = FALSE))
   expect_equal(r0$scientificName, "Lindera assamica")       # WorldFlora behaviour
 })
 
@@ -189,4 +189,18 @@ test_that("an unmatched name in a synonym genus lists the accepted genus", {
   r <- q(WFO.match.ff("Altingia fargesii", WFO.data = B, verbose = FALSE))
   expect_false(r$Matched)
   expect_equal(r$Fuzzy.alternatives, "Liquidambar (Altingia is a synonym)")
+})
+
+test_that("a correctly spelled genus is kept (Fuzzy.keep.genus, default)", {
+  B <- bb(c("Trema", "Trema tomentosum", "Premna", "Premna tomentosa", "Ulmus", "Ulmus pumila", "Tamus parviflora"),
+          c("Cannabaceae", "Cannabaceae", "Lamiaceae", "Lamiaceae", "Ulmaceae", "Ulmaceae", "Dioscoreaceae"))
+  r <- q(WFO.match(c("Trema tomentosa", "Ulmus parviflora", "Tremma tomentosum"), WFO.data = B, verbose = FALSE))
+  expect_equal(r$scientificName, c("Trema tomentosum", "Ulmus", "Trema tomentosum"))
+  expect_equal(r$taxonRank[2], "genus")
+  ## WorldFlora behaviour
+  r0 <- q(WFO.match("Ulmus parviflora", WFO.data = B, Fuzzy.keep.genus = FALSE, verbose = FALSE))
+  expect_equal(r0$scientificName, "Tamus parviflora")
+  ## the candidates that were not kept are reported when the optional columns are used
+  r1 <- q(WFO.match("Ulmus parviflora", WFO.data = B, Fuzzy.epithet.check = TRUE, verbose = FALSE))
+  expect_equal(r1$Fuzzy.alternatives, "Tamus parviflora")
 })

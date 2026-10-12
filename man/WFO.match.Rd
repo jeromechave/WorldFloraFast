@@ -47,7 +47,8 @@ WFO.match(
   Fuzzy.genus = FALSE,
   Fuzzy.transfer = FALSE,
   Fuzzy.one.strict = FALSE,
-  Fuzzy.epithet.check = FALSE
+  Fuzzy.epithet.check = FALSE,
+  Fuzzy.keep.genus = TRUE
 )
 }
 \arguments{
@@ -190,6 +191,16 @@ name, so that without this check a short epithet can be replaced ("Ocotea luis" 
 \emph{Ocotea lucida}), and a name can be found within an unrelated longer name ("Inga
 ferrea" within "Coumarouna ferrea"). Rejected names are listed in
 \code{Fuzzy.alternatives}.}
+
+\item{Fuzzy.keep.genus}{If \code{TRUE} (default), a correctly spelled genus is kept: when the
+first word of a name of two or more words is a name in the backbone, fuzzy matches in
+other genera are not accepted. Matches in that genus are kept; if there are none, the
+genus-only fall-back (\code{Fuzzy.one}) gives the genus. "Trema tomentosa" is matched with
+\emph{Trema tomentosum}, not with the equally close \emph{Premna tomentosa} or \emph{Urena
+tomentosa}; "Ulmus parviflora" with the genus \emph{Ulmus}, not with \emph{Tamus parviflora}
+(Dioscoreaceae). This corrects matches of WorldFlora that replaced a correct genus by an
+unrelated one; \code{FALSE} gives the results of WorldFlora. The names that were not kept
+are listed in \code{Fuzzy.alternatives} when one of the optional steps below is used.}
 }
 \value{
 A data.frame with the columns of \code{spec.data}, followed by:
@@ -249,7 +260,8 @@ previous steps did not match:
 Palmae, Cruciferae, Guttiferae, Labiatae, Gramineae) not in the backbone, matched
 with their standard names (Asteraceae, Fabaceae, ...);
 \item fuzzy matches of the full name with \code{\link[=agrep]{agrep()}}, then of its first two words
-(\code{Fuzzy.two}), checked by \code{Fuzzy.epithet.check} (optional);
+(\code{Fuzzy.two}), restricted to a correctly spelled genus (\code{Fuzzy.keep.genus}) and
+checked by \code{Fuzzy.epithet.check} (optional);
 \item genus then epithet (\code{Fuzzy.genus}, optional), also when the fuzzy matches of the previous
 step all belong to unrelated genera; if the submitted genus exists in the backbone and
 these matches are all in other families, they are not accepted ("Schizolobium
@@ -285,7 +297,8 @@ searching the whole backbone.
 
 \strong{Differences with WorldFlora 1.14-5} are listed in the NEWS file: notably,
 \code{Unique} is \code{FALSE} for names with several exact matches, and conserved family names and
-unmatched names are no longer replaced by other records. Results are
+unmatched names are no longer replaced by other records, and a correctly spelled genus is
+not replaced by another genus (\code{Fuzzy.keep.genus}). Results are
 unchanged otherwise: by default the matching steps, result columns and their formats are
 those of WorldFlora (the optional steps \code{Fuzzy.genus}, \code{Fuzzy.transfer},
 \code{Fuzzy.one.strict} and \code{Fuzzy.epithet.check} are switched off).
