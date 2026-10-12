@@ -7,7 +7,9 @@ arguments, 10-15x faster fuzzy matching, and much faster exact matching on large
 (see below), plus the corrections listed in `NEWS.md`.
 
 ```r
-install.packages("WorldFloraFast_1.0.0.tar.gz", repos = NULL, type = "source")
+install.packages("remotes")
+remotes::install_github("jeromechave/WorldFloraFast",
+                        dependencies = TRUE, build_vignettes = TRUE)
 library(WorldFloraFast)
 
 WFO.download(save.dir = "wfo_data")        # latest WFO Plant List (2026-06) from Zenodo; loads WFO.data
