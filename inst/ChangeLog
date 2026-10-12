@@ -1,0 +1,330 @@
+
+WorldFlora versions
+
+	Note that a static copy of the Taxonomic Backbone data can be downloaded from:
+	<http://www.worldfloraonline.org/downloadData>. This can be done with function
+	WFO.download(). If the function fails to download the entire, manually download the zip
+	file and then use WFO.remember().
+
+	The suggested citation of World Flora Online (WFO) is:
+	WFO ([Year]): World Flora Online. Version [Year].[Month]. Published on the Internet;
+	http://www.worldfloraonline.org. Accessed on:[Date]".
+
+	The suggested citation of the WorldFlora package is:
+	Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names
+	against the World Flora Online taxonomic backbone data. Applications in Plant
+	Sciences 8(9): e11388.
+
+	Various examples of using WorldFlora are available via
+	<https://rpubs.com/Roeland-KINDT>
+
+
+Version 1.14-5 (September 2024)
+
+  * Recently updated function WFO.one() did not match current names correctly in version
+  1.14-4. The error has been corrected now.
+
+
+Version 1.14-4 (August 2024)
+
+  * Updated function WFO.one() to check the Authorship distance with synonym matches first,
+  then to check for the Authorship distance with the final match.
+
+Version 1.14-3 (May 2024)
+
+  * Corrected error in WFO.prepare and WFO.preprepare() to deal with situations where the
+  submitted taxon name was not in a variable named 'spec.full'.
+
+
+Version 1.14-2 (March 2024)
+
+  * New function WFO.preprepare() to deal with situations where authorities are provided
+  at different taxonomic levels.
+  
+  * New argument of 'authors.ending.f' for WFO.prepare() to deal with situations where
+  the name of the author ends with ' f.'.
+  
+  * Modified function WFO.synonyms() to deal with situations where the accepted name
+  of a species is not found (error reported by Jason Best on 18-JAN-24)
+
+
+Version 1.14-1 (January 2024)
+
+  * Modified function WFO.acceptable.match() to deal with a larger set of acceptable
+  differences such as -is vs. -e, *dd* vs *d* and hybrid vs. non-hybrid names
+
+  * Modified function new.backbone() to deal with self-references in the
+  'acceptedNameUsageID' field. This change was implemented to deal with changes in the
+  WCVP version 11.
+
+
+Version 1.13-2 (May 2023)
+
+  * Modified function WFO.download() to change the default location of the taxonomic
+  backbone data set to its new URL:
+  https://files.worldfloraonline.org/files/WFO_Backbone/
+  _WFOCompleteBackbone/WFO_Backbone.zip
+  
+
+Version 1.13 (March 2023)
+
+  * A new function WFO.acceptable.match() that checks whether fuzzy matches could be a
+  result from differences in gender between submitted names and names in the taxonomic
+  backbone.
+
+  * Corrected an error in WFO.match() to correctly handle Fuzzy <= 0 to skip fuzzy
+  matching. (Corrected after the error was reported by Karina Banda.)
+
+  * Modified function WFO.download() to work with new format of the World Flora Online
+  backbone data file of 'classification.csv'. A timeout argument was added also.
+  
+  * Modified function WFO.download() to explicitly use the argument 'save.dir'.
+  (Suggested by Nicolas Casajus, 24-MAR-2023).
+
+  * Included a link to an application of WFO.match.fuzzyjoin() with a large data set from
+  GlobalTreeSearch, especially to show how large data sets can be handled.
+  <https://rpubs.com/Roeland-KINDT/996500>
+
+
+Version 1.12 (January 2023)
+
+  * A new function WFO.match.fuzzyjoin() was added that internally uses function
+  fuzzyjoin::stringdist_left_join(). For some data sets, this results in significant
+  improvement in speeds, particularly where a relative large number of records remain
+  that could not be directly matched. In addition, the new function allows for alternative
+  methods of calculating the fuzzy distance (via the internal fuzzyjoin function).
+
+  * Modified function WFO.match() to first use a subset of the WFO.data. Also direct
+  matching is now first done internally via dplyr::left_join(). These changes resulted
+  in some improvements in execution speeds, especially where many taxa could be directly
+  matched.
+
+  * Internally WFO.match() converts spec.data data.tables to the data.frame format.
+
+  * Corrected a new error in WFO.one() when no matches were found.
+
+
+Version 1.11 (September 2022)
+
+	* Made necessary corrections when checking package before uploading
+
+	* Changed author email from previous CGIAR.org domain (as a new CIFOR-ICRAF domain
+	will be created)
+
+
+Version 1.10 (December 2021)
+
+	* Modified functions WFO.one and WFO.browse to deal with capitalized taxonomic ranks
+	of the DEC 2021 version of the taxonomic backbone.
+
+	* Expanded the options for argument 'infraspecific.excluded' for WFO.match to include
+	the new levels available from the DEC 2021 version of the taxonomic backbone.
+
+
+Verson 1.9 (September 2021)
+
+	* Variables of 'created' and 'modified' are deleted from the WFO.data in function
+	WFO.match. Implemented based on a communication from Pavel Pipek (August 2021) that
+	processing of these variables did significantly slow down the function.
+
+	* Changed processing of the IDs in function WFO.one to be compatible with alternative
+	taxonomic backbone data, especially when choosing between different options based on
+	the smallest ID.
+
+	* Yet another alternative example than shown in the documentation of using the
+	new.backbone function to standardize plant species names with the World Checklist of
+	Vascular Plants (https://wcvp.science.kew.org/) is provided in the following RPub:
+
+	Kindt, R. 2021. Standardizing GlobalTreeSearch tree species names with World Flora
+	Online and the World Checklist of Vascular Plants.
+	https://rpubs.com/Roeland-KINDT
+
+
+Verson 1.8 (August 2021)
+
+	* New function new.backbone that allows to standardize names with a user-created
+	taxonomic backbone data set.
+
+	* An alternative example than shown in the documentation of using the
+	new.backbone function to standardize mammal species names with the Mammal Diversity
+	Database (https://www.mammaldiversity.org) is provided in the following RPub:
+
+	Kindt, R. 2021. Standardizing mammal species names with the Mammal Species Database
+	via exact and fuzzy matching functions from the WorldFlora package.
+	https://rpubs.com/Roeland-KINDT
+
+
+Verson 1.7 (September 2020)
+
+	* Included reference to the article published in Applications in Plant Sciences
+
+	* Forced fields of WFO.data$created and WFO.data$modified to be of the 'date' format.
+	Where WFO.data had an empty date field, the date of 1000-01-01 was inserted. Where
+	there were no matches, the date of 1000-01-02 was inserted. A problem had been
+	reported by Lauri Vesa (10-Sep-2020)
+
+
+Version 1.6 (7 May 2020)
+
+	* New function WFO.download that downloads the Taxonomic Backbone data from the
+	website (<http://www.worldfloraonline.org/downloadData>) and unzips the file in the
+	working directory.
+
+	* New function WFO.remember that remembers the location where the Taxonomic Backbone
+	data were saved and reads in the data, default as 'WFO.data'
+
+	* Function WFO.match now recognizes alternative family names (Compositae,
+	Leguminosae, Umbelliferae, Palmae, Cruciferae, Guttiferae, Labiatae and Gramineae).
+
+	* New argument 'squish' of WFO.match that removes white space from start and end of
+	the submitted plant name and flags its earlier presence. Repeated whitespace inside
+	the plant name is also removed. Feature was suggested by an external reviewer of the
+	submitted article.
+
+	* New arguments 'spec.name.sub' and 'sub.pattern' of WFO.prepare that aim to remove
+	semi-standardized qualifiers in plant names such as 'aff.' and 'cf.'
+
+	* New argument 'spec.name.nonumber' of WFO.prepare that results in only retaining the
+	first word if there are numbers in the submitted plant name.
+
+	* New argument 'genus.2.flag' of WFO.prepare that results in flagging submitted
+	plant names where the first word only has 2 characters (this function is intended
+	to flag qualifiers in plant names that were wrongly interpreted as genus names).
+
+	* New argument 'species.2.flag' of WFO.prepare that results in flagging submitted
+	plant names where the second word only has 2 characters (this function is intended
+	to flag qualifiers in plant names that were wrongly interpreted as species names).
+
+	* New argument 'punctuation.flag' of WFO.prepare that results in flagging punctuation
+	marks
+
+	* New argument 'pointless.flag' of WFO.prepare that results in flagging parts of
+	submitted plant names that flags if there is a sub.pattern without the punctuation
+	mark (for example, if the plant name included 'aff' which is sub.pattern 'aff.'
+	without the punctuation mark).
+
+
+Version 1.5 (28 March 2020)
+
+	* New argument 'First.dist' of WFO.match and WFO.one results in calculating the
+	Levenshtein distance between the first word of the submitted and matched plant names.
+	Typically this applies to the genus name. WFO.one will select the matches with the
+	smallest 'First.dist'.
+
+	* Modified the behaviour of WFO.match when matches were only found via Fuzzy.two. In
+	these cases, only matches with 2 words are retained.
+
+	* Avoided an error when no name is submitted to WFO.match.
+
+
+Version 1.4 (20 February 2020)
+
+	* New function WFO.prepare that attempts to split a list of plant names into the
+	botanical name and the naming authority.
+
+	* Corrected a bug in function WFO.match to fail when there were missing values in the
+	acceptedNameUsageID (error reported by Sandeep Pulla).
+
+	* Allowed function WFO.match to deal with situations where there were several sections
+	between brackets in the plant name.
+
+	* Included a reference to the preprint of Kindt R. 2020. WorldFlora: An R package for
+	exact and fuzzy matching of plant names against the World Flora Online Taxonomic
+	Backbone data. https://www.biorxiv.org/content/10.1101/2020.02.02.930719v1
+
+
+Version 1.3 (1 February 2020)
+
+	* New function WFO.browse that shows all taxa at a next hierarchical level from the
+	submitted and matched plant name (submitting a family results in a list of genera,
+	a genus in a list of species and a species in a list of records at infraspecific
+	levels). If no taxon is submitted, the function returns a list of all families.
+
+	* New function WFO.synonyms that gives all taxa that have the same acceptedNameUsageID
+	as the submitted and matched plant name.
+
+	* New data.set 'vascular.families' that gives information about orders and major clades
+	documented by the fourth update of the Angiosperm Phylogeny Group (APG IV,
+	https://doi.org/10.1111/boj.12385). For gymnosperm and pteridophyte taxa, orders were
+	obtained from <http://www.mobot.org/MOBOT/research/APweb/>.
+
+	* New function WFO.family that provides information from the 'vascular.families' for
+	vascular families (angiosperms, gymnosperms and pteridophytes). For bryophytes, the
+	function returns 'bryophytes' based on an internal list of bryophyte families.
+
+	* Modified WFO.match to handle the problem where authorities are not available for all
+	submitted taxa (this caused a problem in WFO.one to select a unique best match).
+
+
+Version 1.2 (4 January 2020)
+
+	* New function WFO.one that results in a one-to-one match between the submitted
+	plant names and the matched plant names. Where there were various candidates for a
+	match, users can specify whether accepted names or names that are not synonyms are
+	given priority. Where multiple candidates still exist, the matched name with the
+	smallest ID is selected.
+
+	* Yet another priority is invoked for function WFO.one when the Authorship is given.
+	In that case, first priority is given to records with the best match in Authorship.
+
+	* The pattern ' x ' is now interpreted as marking of a hybrid plant name.
+
+	* Sections in plant names that follow bracket '(' are now removed from the checked
+	plant name, invoked by new argument 'Fuzzy.nobrackets' in WFO.match. This feature
+	is expected to remove part of authorities that are not part of the names to be
+	matched (a match is searched in WFO column of 'scientificName', not
+	'scientificNameAuthorship').
+
+	* New arguments of 'Fuzzy.two' and 'Fuzzy.one' in function WFO.match that limit names
+	to be matched to respectively the first two or first terms of that name. These
+	options are expected to eliminate parts of names that are authorities, which are not
+	part of names to be matched (see also argument 'Fuzzy.nobrackets').
+
+	* New argument 'Authorship' for the WFO.match function that allows the user to
+	specify the Authorship. The function will calculate the Levenshtein distance between
+	the submitted and matched Authorships.
+
+	* With a too large number of fuzzy matches, the message now gives one of the matched
+	plant names, allowing the user to potentially verify the correctedness of a genus
+	name.
+
+	* The behaviour of 'spec.name.nonumber' now changed to limits searches to the first
+	term in case a submitted name contained any numbers (in the previous version, the
+	behaviour was to searh for numbers at the end of submitted names).
+
+
+Version 1.1 (15 December 2019)
+
+	* New function WFO.url that creates urls for matched plant names, with an option to
+	open a selection of urls in an HTML browser.
+
+	* It is possible now to only match the Genus name.
+
+	* New argument 'Fuzzy.force' to always use Fuzzy matching, even when an exact match
+	was found for the spec.name.
+
+	* New argument 'Fuzzy.max' to limit the number of fuzzy matches.
+
+	* New argument 'Fuzzy.min' to limit the fuzzy matches to those with the smallest
+	Levenshtein distance.
+
+	* Output from function WFO.match gives the Levenshtein distance for fuzzy matches.
+
+	* New argument spec.name.tolower that changes submitted species names to lower case
+	characters, except the first character
+
+	* New argument 'spec.name.nonumber' that interpretes submitted names as unidentified
+	species and seeks matches at generic level
+
+	* New argument 'exclude.infraspecific' that removes matched records with the specified
+	infraspecific levels. Note that these matched records are removed both from matched
+	plant names (including synonyms) and matched accepted plant names (excluding
+	synonyms)
+
+	* New argument spec.name.sub that removes sections in the submitted plant name
+
+
+Version 1.0 (December 2019)
+
+	* Package developed and submitted to CRAN
+

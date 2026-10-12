@@ -1,0 +1,39 @@
+Package: WorldFloraFast
+Type: Package
+Title: Fast Standardization of Plant Names Against the World Flora
+        Online Taxonomic Backbone
+Version: 1.0.0
+Date: 2026-10-11
+Authors@R: 
+    c(person(given = "Jérôme", family = "Chave",
+             role = c("aut", "cre"),
+             email = "jerome.chave@cnrs.fr"),
+      person(given = "Roeland", family = "Kindt",
+             role = c("aut", "cph"),
+             comment = c(ORCID = "0000-0002-7672-0712",
+                         "author of the WorldFlora package from which this package is derived")))
+Description: A faster, refactored derivative of the 'WorldFlora' package (Kindt 2020,
+    <doi:10.1002/aps3.11388>). Matches lists of plant names, exactly or with fuzzy
+    matching, against a static copy of the World Flora Online taxonomic backbone, which
+    it downloads from Zenodo, and returns the accepted names. Works with the WFO Plant
+    List 2026-06 and earlier releases. By default, functions, arguments and results are
+    those of 'WorldFlora', with its errors corrected; optional matching steps handle
+    truncated genera, species transferred to another genus, short epithets and local
+    names.
+License: GPL-3
+Depends: R (>= 4.0.0)
+Imports: data.table, jsonlite, parallel, stringr, tools, utils
+Suggests: knitr, rmarkdown, stringdist, testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
+NeedsCompilation: no
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Packaged: 2026-10-12 14:08:54 UTC; root
+Author: Jérôme Chave [aut, cre],
+  Roeland Kindt [aut, cph] (<https://orcid.org/0000-0002-7672-0712>,
+    author of the WorldFlora package from which this package is
+    derived)
+Maintainer: Jérôme Chave <jerome.chave@cnrs.fr>
