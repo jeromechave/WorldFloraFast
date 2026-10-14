@@ -1,0 +1,50 @@
+url: https://jeromechave.github.io/WorldFloraFast/
+
+template:
+  bootstrap: 5
+
+home:
+  title: "WorldFloraFast: fast standardization of plant names against the World Flora Online"
+
+navbar:
+  structure:
+    left: [intro, reference, news]
+    right: [search, github]
+
+reference:
+- title: Matching plant names
+  desc: >
+    Match names against the World Flora Online backbone, keep one match per name, and
+    check fuzzy matches.
+  contents:
+  - WFO.match
+  - WFO.one
+  - WFO.spelling.check
+- title: Preparing names
+  desc: Separate names and authors before matching.
+  contents:
+  - WFO.prepare
+- title: Getting the backbone
+  desc: Download, read and remember the World Flora Online Plant List.
+  contents:
+  - WFO.download
+  - WFO.read
+- title: Other backbones
+  contents:
+  - WFO.backbone
+- title: Exploring the backbone
+  contents:
+  - WFO.browse
+- title: Data
+  contents:
+  - WFO.example2026
+  - WFO.example
+  - vascular.families
+- title: Deprecated
+  desc: These functions still work, with a warning, and will be removed in a later version.
+  contents:
+  - WFO.match.fuzzyjoin
+  - WFO.acceptable.match
+- title: Package
+  contents:
+  - WorldFloraFast-package

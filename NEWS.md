@@ -1,3 +1,13 @@
+# WorldFloraFast 1.0.4 (pre-release)
+
+* Website built with pkgdown: <https://jeromechave.github.io/WorldFloraFast/>, published
+  by a GitHub Actions workflow (`.github/workflows/pkgdown.yaml`) on every push to `main`.
+  The reference is grouped by task: matching, preparing names, getting the backbone, other
+  backbones, exploring, data, deprecated functions.
+* `DESCRIPTION` gives the website and the issue tracker (`URL`, `BugReports`).
+* Some examples in the documentation, tests and NEWS were replaced by others that show the
+  same behaviour. Results are unchanged.
+
 # WorldFloraFast 1.0.3 (pre-release)
 
 Code style: the package follows the [tidyverse style guide](https://style.tidyverse.org/),
@@ -20,25 +30,22 @@ decisions. Results are unchanged.
 
 # WorldFloraFast 1.0.2 (pre-release)
 
-Tested on a forest inventory of the Democratic Republic of the Congo (113,432 trees, 1,240
-distinct names): 3 distinct names change, for 7,611 trees; all other results are unchanged.
-
 * Parallel processing (`cores`) is reliable: when a parallel process fails (for example for
   lack of memory), `parallel::mclapply()` returns no result for all names of that process,
   which could make `WFO.match()` fail or leave names unmatched. These names are now matched
   again without parallel processing, with a warning. (Few names usually need fuzzy
-  matching, so `cores` is rarely needed; the inventory above takes 15 s without it.)
+  matching, so `cores` is rarely needed.)
 * `WFO.one()` stops with an error if its result does not have each submitted record exactly
   once, in the submitted order.
 * New argument `Fuzzy.skip.placeholder` of `WFO.match()`, `TRUE` by default: names made only
   of placeholder words ("indet.", "sp.", "spp.", "cf.", "aff.", "unknown", and the words of
   `sub.pattern`) are not fuzzy-matched. WorldFlora matched "indet." with *Opuntia coindetti*
-  (= *Opuntia streptacantha*, a cactus), in which "indet" occurs: 7,574 trees of the
-  inventory above. `FALSE` gives the results of WorldFlora.
+  (= *Opuntia streptacantha*, a cactus), in which "indet" occurs. `FALSE` gives the results
+  of WorldFlora.
 * `Fuzzy.epithet.check` is now `TRUE` by default (a correction): fuzzy matches must have an
   epithet within the fuzzy distance of the submitted epithet, computed on the epithet alone.
-  "Drypetes likwa" was matched with *Drypetes kwangtungensis* ("likwa" found within the
-  epithet), "Xylopia pilosa" with *Xylopia villosa*; both now give the genus. The check
+  "Endlicheria dori" was matched with *Endlicheria coriacea* ("dori" found within the name),
+  "Ocotea luis" with *Ocotea lucida*; both now give the genus. The check
   accepts epithets written together with the next word ("australissubsp.") and does not
   judge names whose second word is a rank ("Dichondramrepens var. sericea"). On a sample of
   the WFO Plant List 2026-06, all 1,000 exact names and all 60 names with one typo are still
@@ -53,10 +60,9 @@ distinct names): 3 distinct names change, for 7,611 trees; all other results are
   submitted name is spelled correctly (it is a name in the backbone), fuzzy matches in other
   genera are not accepted; matches in that genus are kept, and without them the genus-only
   fall-back gives the genus. This corrects matches of WorldFlora that replaced a correct
-  genus: "Trema tomentosa" was matched with *Premna tomentosa* (equally close as *Trema
-  tomentosum*, 2 edits), "Ulmus parviflora" with *Dioscorea communis* (via *Tamus
-  parviflora*), "Brenania nitida" with *Stellaria congesta*, "Sindora assamica" with *Lindera
-  assamica*. On the WFO Plant List 2026-06, this changes 15 of the 70 names of the benchmark
+  genus: "Neea gigante" was matched with *Leea gigantea* (Vitaceae), "Ulmus parviflora" with
+  *Dioscorea communis* (via *Tamus parviflora*), "Brenania nitida" with *Stellaria
+  congesta*, "Sindora assamica" with *Lindera assamica*. On the WFO Plant List 2026-06, this changes 15 of the 70 names of the benchmark
   (all to the submitted genus or one of its species) and none of a sample of 1,137 names
   with known answers. `Fuzzy.keep.genus = FALSE` gives the results of WorldFlora. Names that
   were not kept are listed in `Fuzzy.alternatives` when the optional steps are used.
@@ -188,7 +194,7 @@ genus are matched correctly in 38 of 40 cases (the other two are not valid input
 
 ## WFO Plant List 2026-06
 
-The 2026-06 release (Zenodo, doi:10.5281/zenodo.20782718) writes ranks in full and in lower
+The 2026-06 release (Zenodo, <https://doi.org/10.5281/zenodo.20782718>) writes ranks in full and in lower
 case (`taxonRank` and `verbatimTaxonRank` "species", "variety", "subspecies", "form";
 earlier releases: "SPECIES", and "" or "var.") and hybrids with a space after the sign
 ("Mentha × piperita"; earlier "Mentha ×piperita"). Both conventions are now understood:

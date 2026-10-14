@@ -82,6 +82,15 @@ data. Applications in Plant Sciences 8(9): e11388. \doi{10.1002/aps3.11388}
 World Flora Online. An Online Flora of All Known Plants.
 \url{https://www.worldfloraonline.org}
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://jeromechave.github.io/WorldFloraFast/}
+  \item \url{https://github.com/jeromechave/WorldFloraFast}
+  \item Report bugs at \url{https://github.com/jeromechave/WorldFloraFast/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Jérôme Chave \email{jerome.chave@cnrs.fr}
 

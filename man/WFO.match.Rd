@@ -209,8 +209,8 @@ relative to the whole name, so that without this check a short epithet can
 be replaced ("Ocotea luis" -> \emph{Ocotea lucida}), and a name can be found
 within an unrelated longer name ("Inga ferrea" within "Coumarouna ferrea").
 Rejected names are listed in \code{Fuzzy.alternatives}. This corrects matches of
-WorldFlora such as "Drypetes likwa" -> \emph{Drypetes kwangtungensis} (now the
-genus \emph{Drypetes}); \code{FALSE} gives the results of WorldFlora. Names whose
+WorldFlora such as "Endlicheria dori" -> \emph{Endlicheria coriacea} (now the
+genus \emph{Endlicheria}); \code{FALSE} gives the results of WorldFlora. Names whose
 second word is a rank (genus and epithet written together,
 "Dichondramrepens var. sericea") are not checked, and an epithet written
 together with the next word ("australissubsp.") is accepted.}
@@ -219,13 +219,12 @@ together with the next word ("australissubsp.") is accepted.}
 kept: when the first word of a name of two or more words is a name in the
 backbone, fuzzy matches in other genera are not accepted. Matches in that
 genus are kept; if there are none, the genus-only fall-back (\code{Fuzzy.one})
-gives the genus. "Trema tomentosa" is matched with \emph{Trema tomentosum}, not
-with the equally close \emph{Premna tomentosa} or \emph{Urena tomentosa}; "Ulmus
-parviflora" with the genus \emph{Ulmus}, not with \emph{Tamus parviflora}
-(Dioscoreaceae). This corrects matches of WorldFlora that replaced a
-correct genus by an unrelated one; \code{FALSE} gives the results of WorldFlora.
-The names that were not kept are listed in \code{Fuzzy.alternatives} when one of
-the optional steps below is used.}
+gives the genus. "Ulmus parviflora" is matched with the genus \emph{Ulmus}, not
+with \emph{Tamus parviflora} (Dioscoreaceae); "Neea gigante" with the genus
+\emph{Neea}, not with \emph{Leea gigantea} (Vitaceae). This corrects matches of
+WorldFlora that replaced a correct genus by an unrelated one; \code{FALSE} gives
+the results of WorldFlora. The names that were not kept are listed in
+\code{Fuzzy.alternatives} when one of the optional steps below is used.}
 
 \item{Fuzzy.skip.placeholder}{If \code{TRUE} (default), names made only of
 placeholder words ("indet.", "sp.", "spp.", "cf.", "aff.", "unknown", and

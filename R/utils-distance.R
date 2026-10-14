@@ -131,9 +131,9 @@
 # two or more words is a name of the backbone (the genus is spelled correctly),
 # fuzzy candidates of that genus are kept and candidates of other genera are
 # dropped; without candidates of the genus, none are kept, and the genus-only
-# fall-back (Fuzzy.one) gives the genus. "Trema tomentosa": Premna tomentosa,
-# Urena tomentosa and Trema tomentosum are equally close; only Trema tomentosum
-# is kept. Returns the candidate ids to keep.
+# fall-back (Fuzzy.one) gives the genus. "Neea gigante": Leea gigantea
+# (Vitaceae) is not kept, and the genus Neea is the result. Returns the
+# candidate ids to keep.
 .keep.genus <- function(s, ids, index, msg = function(...) NULL) {
   g <- sub(" .*$", "", s)
   if (length(ids) == 0 || g == s || is.na(match(g, index$u))) {

@@ -1,5 +1,7 @@
 # WorldFloraFast
 
+Website: <https://jeromechave.github.io/WorldFloraFast/>
+
 Fast matching of plant names against the World Flora Online (WFO) taxonomic backbone.
 A refactored derivative of [WorldFlora](https://CRAN.R-project.org/package=WorldFlora)
 (Kindt 2020, *Applications in Plant Sciences* 8: e11388) with the same functions and

@@ -114,13 +114,12 @@
 #'   kept: when the first word of a name of two or more words is a name in the
 #'   backbone, fuzzy matches in other genera are not accepted. Matches in that
 #'   genus are kept; if there are none, the genus-only fall-back (`Fuzzy.one`)
-#'   gives the genus. "Trema tomentosa" is matched with *Trema tomentosum*, not
-#'   with the equally close *Premna tomentosa* or *Urena tomentosa*; "Ulmus
-#'   parviflora" with the genus *Ulmus*, not with *Tamus parviflora*
-#'   (Dioscoreaceae). This corrects matches of WorldFlora that replaced a
-#'   correct genus by an unrelated one; `FALSE` gives the results of WorldFlora.
-#'   The names that were not kept are listed in `Fuzzy.alternatives` when one of
-#'   the optional steps below is used.
+#'   gives the genus. "Ulmus parviflora" is matched with the genus *Ulmus*, not
+#'   with *Tamus parviflora* (Dioscoreaceae); "Neea gigante" with the genus
+#'   *Neea*, not with *Leea gigantea* (Vitaceae). This corrects matches of
+#'   WorldFlora that replaced a correct genus by an unrelated one; `FALSE` gives
+#'   the results of WorldFlora. The names that were not kept are listed in
+#'   `Fuzzy.alternatives` when one of the optional steps below is used.
 #' @param Fuzzy.epithet.check If `TRUE` (default), fuzzy matches found by
 #'   [agrep()] for names of two or more words are kept only if (1) the epithet
 #'   is within the `Fuzzy` distance of the submitted epithet, computed on the
@@ -132,8 +131,8 @@
 #'   be replaced ("Ocotea luis" -> *Ocotea lucida*), and a name can be found
 #'   within an unrelated longer name ("Inga ferrea" within "Coumarouna ferrea").
 #'   Rejected names are listed in `Fuzzy.alternatives`. This corrects matches of
-#'   WorldFlora such as "Drypetes likwa" -> *Drypetes kwangtungensis* (now the
-#'   genus *Drypetes*); `FALSE` gives the results of WorldFlora. Names whose
+#'   WorldFlora such as "Endlicheria dori" -> *Endlicheria coriacea* (now the
+#'   genus *Endlicheria*); `FALSE` gives the results of WorldFlora. Names whose
 #'   second word is a rank (genus and epithet written together,
 #'   "Dichondramrepens var. sericea") are not checked, and an epithet written
 #'   together with the next word ("australissubsp.") is accepted.

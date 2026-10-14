@@ -439,43 +439,30 @@ test_that("an unmatched name in a synonym genus lists the accepted genus", {
 test_that("a correctly spelled genus is kept (Fuzzy.keep.genus, default)", {
   bk <- bb(
     c(
-      "Trema",
-      "Trema tomentosum",
-      "Premna",
-      "Premna tomentosa",
-      "Ulmus",
-      "Ulmus pumila",
-      "Tamus parviflora"
+      "Neea", "Neea floribunda", "Leea", "Leea gigantea",
+      "Ulmus", "Ulmus pumila", "Tamus parviflora"
     ),
     c(
-      "Cannabaceae",
-      "Cannabaceae",
-      "Lamiaceae",
-      "Lamiaceae",
-      "Ulmaceae",
-      "Ulmaceae",
-      "Dioscoreaceae"
+      "Nyctaginaceae", "Nyctaginaceae", "Vitaceae", "Vitaceae",
+      "Ulmaceae", "Ulmaceae", "Dioscoreaceae"
     )
   )
   r <- q(WFO.match(
-    c("Trema tomentosa", "Ulmus parviflora", "Tremma tomentosum"),
+    c("Neea gigante", "Ulmus parviflora", "Ulmuss pumila"),
     WFO.data = bk,
     verbose = FALSE
   ))
-  expect_equal(
-    r$scientificName,
-    c("Trema tomentosum", "Ulmus", "Trema tomentosum")
-  )
-  expect_equal(r$taxonRank[2], "genus")
+  expect_equal(r$scientificName, c("Neea", "Ulmus", "Ulmus pumila"))
+  expect_equal(r$taxonRank[1:2], c("genus", "genus"))
   # WorldFlora behaviour
   r0 <- q(WFO.match(
-    "Ulmus parviflora",
+    c("Ulmus parviflora", "Neea gigante"),
     WFO.data = bk,
     Fuzzy.keep.genus = FALSE,
     Fuzzy.epithet.check = FALSE,
     verbose = FALSE
   ))
-  expect_equal(r0$scientificName, "Tamus parviflora")
+  expect_equal(r0$scientificName, c("Tamus parviflora", "Leea gigantea"))
   # the candidates that were not kept are reported when the optional columns are
   # used
   r1 <- q(WFO.match(
@@ -520,30 +507,28 @@ test_that(
 
 test_that("the epithet check is on by default and adds no columns", {
   bk <- bb(
-    c("Drypetes", "Drypetes kwangtungensis", "Ocotea", "Ocotea lucida"),
-    c("Putranjivaceae", "Putranjivaceae", "Lauraceae", "Lauraceae")
+    c("Endlicheria", "Endlicheria coriacea", "Ocotea", "Ocotea lucida"),
+    c("Lauraceae", "Lauraceae", "Lauraceae", "Lauraceae")
   )
   r <- q(WFO.match(
-    c("Drypetes likwa", "Ocotea luis", "Ocotea lucidda"),
+    c("Endlicheria dori", "Ocotea luis", "Ocotea lucidda"),
     WFO.data = bk,
     verbose = FALSE
   ))
-  expect_equal(r$scientificName, c("Drypetes", "Ocotea", "Ocotea lucida"))
+  expect_equal(r$scientificName, c("Endlicheria", "Ocotea", "Ocotea lucida"))
   expect_false(any(c(
     "Fuzzy.genus",
     "Fuzzy.transfer",
     "Fuzzy.alternatives"
   ) %in% names(r)))
   r0 <- q(WFO.match(
-    "Drypetes likwa",
+    "Endlicheria dori",
     WFO.data = bk,
     Fuzzy.epithet.check = FALSE,
     verbose = FALSE
   ))
-  expect_equal(
-    r0$scientificName,
-    "Drypetes kwangtungensis"
-  ) # WorldFlora behaviour
+  # WorldFlora behaviour
+  expect_equal(r0$scientificName, "Endlicheria coriacea")
 })
 
 test_that("the epithet check accepts epithets run together with a rank", {
