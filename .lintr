@@ -1,0 +1,12 @@
+linters: linters_with_defaults(
+    line_length_linter(80),
+    object_name_linter(
+      styles = c("snake_case", "symbols", "dotted.case"),
+      regexes = c(
+        worldflora_api = "^(?:WFO\\..*|Authorship|Genus|Species|Infraspecific|Infraspecific\\.rank|First\\.dist|Auth\\.dist|Old\\.author\\.dist|acceptedNameUsageID|acceptedNameUsageID\\.match|scientificName|scientificNameAuthorship|taxonID|taxonomicStatus|Fuzzy|Fuzzy\\.[a-z.]+)$",
+        internal = "^(?:\\.[A-Za-z].*|X|FUN)$"
+      )
+    ),
+    cyclocomp_linter(complexity_limit = 75)
+  )
+encoding: "UTF-8"

@@ -5,10 +5,10 @@
 \alias{WFO.example}
 \title{Example subset of the World Flora Online taxonomic backbone (WorldFlora)}
 \format{
-A data.frame with 13 rows and the columns of the WFO backbone of that release
-(\code{taxonID}, \code{scientificName}, \code{scientificNameAuthorship}, \code{taxonRank}, \code{family},
-\code{genus}, \code{specificEpithet}, \code{infraspecificEpithet}, \code{verbatimTaxonRank},
-\code{taxonomicStatus}, \code{acceptedNameUsageID}, ...).
+A data.frame with 13 rows and the columns of the WFO backbone of that
+release (\code{taxonID}, \code{scientificName}, \code{scientificNameAuthorship},
+\code{taxonRank}, \code{family}, \code{genus}, \code{specificEpithet}, \code{infraspecificEpithet},
+\code{verbatimTaxonRank}, \code{taxonomicStatus}, \code{acceptedNameUsageID}, ...).
 }
 \source{
 World Flora Online. \url{https://www.worldfloraonline.org}
@@ -17,10 +17,10 @@ World Flora Online. \url{https://www.worldfloraonline.org}
 WFO.example
 }
 \description{
-The example data set of WorldFlora, unchanged: a small subset of an earlier release of the
-World Flora Online taxonomic backbone. Kept so that code written for WorldFlora keeps
-working; the examples of this package use \link{WFO.example2026}, an extract of the WFO Plant
-List 2026-06.
+The example data set of WorldFlora, unchanged: a small subset of an earlier
+release of the World Flora Online taxonomic backbone. Kept so that code
+written for WorldFlora keeps working; the examples of this package use
+\link{WFO.example2026}, an extract of the WFO Plant List 2026-06.
 }
 \examples{
 data(WFO.example)

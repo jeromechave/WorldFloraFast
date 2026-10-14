@@ -20,19 +20,21 @@ A data.frame with 476 rows and 10 columns:
 }
 }
 \source{
-The Angiosperm Phylogeny Group et al. (2016). An update of the Angiosperm
-Phylogeny Group classification for the orders and families of flowering plants:
-APG IV. Botanical Journal of the Linnean Society 181: 1-20. \doi{10.1111/boj.12385}
+The Angiosperm Phylogeny Group et al. (2016). An update of the
+Angiosperm Phylogeny Group classification for the orders and families of
+flowering plants: APG IV. Botanical Journal of the Linnean Society 181:
+1-20. \doi{10.1111/boj.12385}
 }
 \usage{
 vascular.families
 }
 \description{
-Orders of the families of vascular plants (angiosperms, gymnosperms and pteridophytes).
-For angiosperms, orders and higher levels of classification follow the fourth update of
-the Angiosperm Phylogeny Group (APG IV, \doi{10.1111/boj.12385}); higher levels are the
-names of nodes of the consensus tree (Figure 1 of APG IV). Orders of gymnosperms and
-pteridophytes were obtained from the website of the Missouri Botanical Garden. Used by
+Orders of the families of vascular plants (angiosperms, gymnosperms and
+pteridophytes). For angiosperms, orders and higher levels of classification
+follow the fourth update of the Angiosperm Phylogeny Group (APG IV,
+\doi{10.1111/boj.12385}); higher levels are the names of nodes of the
+consensus tree (Figure 1 of APG IV). Orders of gymnosperms and pteridophytes
+were obtained from the website of the Missouri Botanical Garden. Used by
 \code{\link[=WFO.family]{WFO.family()}} and \code{\link[=WFO.browse]{WFO.browse()}}.
 }
 \examples{

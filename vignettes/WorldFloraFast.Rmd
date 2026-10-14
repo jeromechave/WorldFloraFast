@@ -27,7 +27,8 @@ is and loads it as `WFO.data`:
 ```{r, eval = FALSE}
 WFO.download(save.dir = "wfo_data")              # first time: about 1 GB
 WFO.download(save.dir = "wfo_data", update = TRUE)  # later: newer release?
-WFO.remember()                                   # new session: load WFO.data again
+# new session: load WFO.data again
+WFO.remember()
 WFO.data <- WFO.read("wfo_data", core.only = TRUE)  # or read fewer columns
 ```
 
@@ -36,7 +37,9 @@ included in the package.
 
 ```{r}
 data(WFO.example2026)
-head(WFO.example2026[, c("taxonID", "scientificName", "taxonRank", "taxonomicStatus")])
+head(WFO.example2026[, c(
+  "taxonID", "scientificName", "taxonRank", "taxonomicStatus"
+)])
 ```
 
 ## 2. Prepare names that include authors
@@ -45,7 +48,10 @@ Names in field data or literature often include authors. `WFO.prepare()` separat
 the `Authorship` column then helps to choose between homonyms.
 
 ```{r}
-x <- c("Faidherbia albida (Delile) A.Chev.", "Acacia albida Delile", "Pygeum afric Hook. f.")
+x <- c(
+  "Faidherbia albida (Delile) A.Chev.", "Acacia albida Delile",
+  "Pygeum afric Hook. f."
+)
 prep <- WFO.prepare(x, verbose = FALSE)
 prep[, c("spec.full", "spec.name", "Authorship")]
 ```
@@ -54,7 +60,10 @@ prep[, c("spec.full", "spec.name", "Authorship")]
 
 ```{r}
 m <- WFO.match(prep, WFO.data = WFO.example2026, verbose = FALSE)
-m[, c("spec.name", "Subseq", "Fuzzy", "scientificName", "scientificNameAuthorship", "Old.name", "Old.author")]
+m[, c(
+  "spec.name", "Subseq", "Fuzzy", "scientificName",
+  "scientificNameAuthorship", "Old.name", "Old.author"
+)]
 ```
 
 * *Faidherbia albida* is matched exactly.
@@ -74,7 +83,10 @@ Names can also be given as a character vector, or in separate columns `Genus`, `
 matched authors, the homonym *A. albida* Delile is chosen:
 
 ```{r}
-one <- WFO.one(m, Auth.dist = "Auth.dist", Old.author.dist = "Old.author.dist", verbose = FALSE)
+one <- WFO.one(m,
+  Auth.dist = "Auth.dist", Old.author.dist = "Old.author.dist",
+  verbose = FALSE
+)
 one[, c("spec.name", "Authorship", "scientificName", "Old.name", "One.Reason")]
 ```
 
@@ -89,8 +101,13 @@ default only the closest candidates are kept (`Fuzzy.min = TRUE`); with
 `Fuzzy.min = FALSE`, all candidates within the distance are returned, one row each:
 
 ```{r}
-all.cand <- WFO.match("Omalanthus populneus", WFO.data = WFO.example2026, Fuzzy.min = FALSE, verbose = FALSE)
-all.cand[, c("Subseq", "Fuzzy.dist", "scientificName", "taxonomicStatus", "Old.name")]
+all.cand <- WFO.match("Omalanthus populneus",
+  WFO.data = WFO.example2026,
+  Fuzzy.min = FALSE, verbose = FALSE
+)
+all.cand[, c(
+  "Subseq", "Fuzzy.dist", "scientificName", "taxonomicStatus", "Old.name"
+)]
 ```
 
 `Fuzzy.dist` is the distance to the name that was matched, which for replaced synonyms is
@@ -112,12 +129,19 @@ WorldFloraFast offers three optional steps for such names, switched off by defau
   accepted genus name, so that local names are not given a scientific name.
 
 ```{r}
-x <- c("Reinwardtiod cinerum", "Chrysophyllum madagascariensis", "Palma colorada")
-default <- WFO.one(WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE), verbose = FALSE)
-edge <- WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE,
-                  Fuzzy.genus = TRUE, Fuzzy.transfer = TRUE, Fuzzy.one.strict = TRUE)
-data.frame(submitted = x, default = default$scientificName,
-           optional.steps = ifelse(edge$Matched, edge$scientificName, "(not matched)"))
+x <- c(
+  "Reinwardtiod cinerum", "Chrysophyllum madagascariensis", "Palma colorada"
+)
+m0 <- WFO.match(x, WFO.data = WFO.example2026, verbose = FALSE)
+default <- WFO.one(m0, verbose = FALSE)
+edge <- WFO.match(x,
+  WFO.data = WFO.example2026, verbose = FALSE,
+  Fuzzy.genus = TRUE, Fuzzy.transfer = TRUE, Fuzzy.one.strict = TRUE
+)
+data.frame(
+  submitted = x, default = default$scientificName,
+  optional.steps = ifelse(edge$Matched, edge$scientificName, "(not matched)")
+)
 ```
 
 * "Reinwardtiod cinerum" is *Reinwardtiodendron cinereum*: the epithet is found in the
@@ -139,7 +163,10 @@ name, giving a large `Fuzzy.dist`.
 
 ```{r}
 WFO.synonyms("Gambeya boiviniana", WFO.data = WFO.example2026, verbose = FALSE)
-WFO.family("Gambeya boiviniana", WFO.data = WFO.example2026, verbose = FALSE)[, c("Family", "Order", "Node.1")]
+fam <- WFO.family("Gambeya boiviniana",
+  WFO.data = WFO.example2026, verbose = FALSE
+)
+fam[, c("Family", "Order", "Node.1")]
 WFO.url(edge[1, ])
 ```
 
@@ -152,11 +179,16 @@ Any taxonomic list with identifiers, names, authors and accepted-name identifier
 used instead of the WFO:
 
 ```{r}
-mammals <- data.frame(id = c("M1", "M2"), name = c("Felis catus", "Felis domesticus"),
-                      author = c("Linnaeus, 1758", "Erxleben, 1777"), accepted = c("", "M1"))
-bb <- new.backbone(mammals, taxonID = "id", scientificName = "name",
-                   scientificNameAuthorship = "author", acceptedNameUsageID = "accepted")
-WFO.match("Felis domestica", WFO.data = bb, verbose = FALSE)[, c("spec.name", "scientificName", "Old.name")]
+mammals <- data.frame(
+  id = c("M1", "M2"), name = c("Felis catus", "Felis domesticus"),
+  author = c("Linnaeus, 1758", "Erxleben, 1777"), accepted = c("", "M1")
+)
+bb <- WFO.backbone(mammals,
+  taxonID = "id", scientificName = "name",
+  scientificNameAuthorship = "author", acceptedNameUsageID = "accepted"
+)
+m <- WFO.match("Felis domestica", WFO.data = bb, verbose = FALSE)
+m[, c("spec.name", "scientificName", "Old.name")]
 ```
 
 ## Performance

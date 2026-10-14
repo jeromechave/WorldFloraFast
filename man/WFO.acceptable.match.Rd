@@ -17,9 +17,9 @@ WFO.acceptable.match(x, spec.name = "spec.name", no.vowels = FALSE)
 A logical vector (\code{NA} where no name was matched).
 }
 \description{
-\code{WFO.acceptable.match()} (from WorldFlora) returns \code{TRUE} when the submitted and matched
-names are identical or differ only by common misspellings, i.e. when
-\code{\link[=WFO.spelling.check]{WFO.spelling.check()}} gives "identical" or "spelling corrected". It is kept for
-compatibility and will be removed in a later version.
+\code{WFO.acceptable.match()} (from WorldFlora) returns \code{TRUE} when the submitted
+and matched names are identical or differ only by common misspellings, i.e.
+when \code{\link[=WFO.spelling.check]{WFO.spelling.check()}} gives "identical" or "spelling corrected". It is
+kept for compatibility and will be removed in a later version.
 }
 \keyword{internal}

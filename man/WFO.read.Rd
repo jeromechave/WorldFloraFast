@@ -24,47 +24,49 @@ WFO.remember(WFO.file = NULL, WFO.data = "WFO.data", WFO.pos = 1, ...)
 }
 \arguments{
 \item{WFO.file, path}{Path to the backbone (\code{classification.csv} or
-\code{classification.txt}), or a directory that contains it. For \code{WFO.read()} and
-\code{WFO.remember()}, \code{NULL} uses the remembered location.}
+\code{classification.txt}), or a directory that contains it. For \code{WFO.read()}
+and \code{WFO.remember()}, \code{NULL} uses the remembered location.}
 
 \item{select}{Names of columns to read (saves time and memory).}
 
-\item{core.only}{If \code{TRUE}, read only the columns used by this package: \code{taxonID},
-\code{scientificName}, \code{scientificNameAuthorship}, \code{taxonRank}, \code{taxonomicStatus},
-\code{nomenclaturalStatus}, \code{acceptedNameUsageID}, \code{family}, \code{genus}, \code{specificEpithet},
-\code{verbatimTaxonRank} and \code{infraspecificEpithet}. Ignored if \code{select} is given.}
+\item{core.only}{If \code{TRUE}, read only the columns used by this package:
+\code{taxonID}, \code{scientificName}, \code{scientificNameAuthorship}, \code{taxonRank},
+\code{taxonomicStatus}, \code{nomenclaturalStatus}, \code{acceptedNameUsageID}, \code{family},
+\code{genus}, \code{specificEpithet}, \code{verbatimTaxonRank} and \code{infraspecificEpithet}.
+Ignored if \code{select} is given.}
 
-\item{as.data.frame, as_data_frame}{If \code{TRUE}, return a data.frame instead of a
-data.table.}
+\item{as.data.frame, as_data_frame}{If \code{TRUE}, return a data.frame instead of
+a data.table.}
 
 \item{WFO.data}{Name of the object created by \code{WFO.remember()}.}
 
-\item{WFO.pos}{Environment position for that object, as argument \code{pos} of \code{\link[=assign]{assign()}}
-(1: the global environment).}
+\item{WFO.pos}{Environment position for that object, as argument \code{pos} of
+\code{\link[=assign]{assign()}} (1: the global environment).}
 
 \item{...}{Further arguments for \code{WFO.read()}, such as \code{core.only}.}
 }
 \value{
-\code{WFO.read()}: a data.table (or data.frame). \code{WFO.remember()}: the path of the
-backbone (invisibly); the backbone is assigned to \code{WFO.data}.
+\code{WFO.read()}: a data.table (or data.frame). \code{WFO.remember()}: the
+path of the backbone (invisibly); the backbone is assigned to \code{WFO.data}.
 }
 \description{
-\code{WFO.read()} reads the backbone file. \code{WFO.remember()} remembers where the file is and
-loads it, so that later sessions need neither the path nor a new download.
+\code{WFO.read()} reads the backbone file. \code{WFO.remember()} remembers where the
+file is and loads it, so that later sessions need neither the path nor a new
+download.
 }
 \details{
-\code{WFO.read()} uses \code{\link[data.table:fread]{data.table::fread()}}. All columns are read as character, so
-that identifiers such as "wfo-0000000001" and codes such as "NA" are never changed or
-turned into missing values. The separator is detected (the WFO file is tab-separated
-despite its extension). Selected columns that are not in the file are skipped with a
-warning.
+\code{WFO.read()} uses \code{\link[data.table:fread]{data.table::fread()}}. All columns are read as
+character, so that identifiers such as "wfo-0000000001" and codes such as
+"NA" are never changed or turned into missing values. The separator is
+detected (the WFO file is tab-separated despite its extension). Selected
+columns that are not in the file are skipped with a warning.
 
 \code{WFO.remember()} saves the location in the user configuration directory
 (\code{\link[tools:userdir]{tools::R_user_dir()}}); a location saved by WorldFlora is also found. With
 \code{WFO.file = NULL}, the matching functions use the remembered backbone too.
 
-\code{read_classification()} uses the argument names of the stand-alone script from which
-these functions were derived.
+\code{read_classification()} is deprecated: use \code{WFO.read()}. It used the argument
+names of the stand-alone download script, unlike the other functions.
 }
 \examples{
 f <- tempfile(fileext = ".csv")
@@ -73,8 +75,8 @@ data.table::fwrite(WFO.example2026, f, sep = "\t")
 bb <- WFO.read(f, core.only = TRUE)
 str(bb)
 \dontrun{
-WFO.remember("wfo_data/classification.csv")   # remember and load as WFO.data
-WFO.remember()                                 # in a later session
+WFO.remember("wfo_data/classification.csv") # remember and load as WFO.data
+WFO.remember() # in a later session
 }
 }
 \seealso{

@@ -18,67 +18,82 @@ WFO.one(
 \arguments{
 \item{WFO.result}{Results of \code{\link[=WFO.match]{WFO.match()}}.}
 
-\item{priority}{\code{"Accepted"}: prefer accepted names, then names that are not synonyms.
-\code{"Synonym"}: prefer names that were not synonyms, then accepted names.}
+\item{priority}{\code{"Accepted"}: prefer accepted names, then names that are not
+synonyms. \code{"Synonym"}: prefer names that were not synonyms, then accepted
+names.}
 
-\item{spec.name}{Name of the column with the submitted names. If given, submitted names
-without a match are copied to \code{scientificName} (with \code{One.Reason} "no match found").}
+\item{spec.name}{Name of the column with the submitted names. If given,
+submitted names without a match are copied to \code{scientificName} (with
+\code{One.Reason} "no match found").}
 
-\item{Auth.dist}{Name of the column with the distance between submitted and matched
-authors (usually \code{"Auth.dist"}); if given, candidates with the closest authors are
+\item{Auth.dist}{Name of the column with the distance between submitted and
+matched authors (usually \code{"Auth.dist"}); if given, candidates with the
+closest authors are preferred.}
+
+\item{Old.author.dist}{Name of the column with the distance between submitted
+authors and those of replaced synonyms (usually \code{"Old.author.dist"}); if
+given, synonym candidates with closer authors than any current-name
+candidate are preferred first.}
+
+\item{First.dist}{Name of the column with the distance between first words
+(usually \code{"First.dist"}); if given, candidates with the closest genus are
 preferred.}
-
-\item{Old.author.dist}{Name of the column with the distance between submitted authors and
-those of replaced synonyms (usually \code{"Old.author.dist"}); if given, synonym candidates
-with closer authors than any current-name candidate are preferred first.}
-
-\item{First.dist}{Name of the column with the distance between first words (usually
-\code{"First.dist"}); if given, candidates with the closest genus are preferred.}
 
 \item{verbose}{If \code{TRUE}, report the choices made.}
 
-\item{counter}{Progress is reported every \code{counter} submitted names with several
-candidates.}
+\item{counter}{Progress is reported every \code{counter} submitted names with
+several candidates.}
 }
 \value{
-\code{WFO.result} with one row per submitted name, and column \code{One.Reason}.
+\code{WFO.result} with one row per submitted name, and column
+\code{One.Reason}.
 }
 \description{
-Reduces the results of \code{\link[=WFO.match]{WFO.match()}} to one row per
-submitted name, choosing among several candidates with a fixed sequence of criteria.
+Reduces the results of \code{\link[=WFO.match]{WFO.match()}} to one row per submitted name, choosing
+among several candidates with a fixed sequence of criteria.
 }
 \details{
-For each submitted name with several candidates, the criteria are applied in
-this order, each only while several candidates remain: authorship of synonyms
-(\code{Old.author.dist}), authorship of current names (\code{Auth.dist}), genus distance
-(\code{First.dist}), \code{priority}, and finally the smallest numeric part of \code{taxonID}.
-Column \code{One.Reason} gives the criterion that decided.
+For each submitted name with several candidates, the criteria are
+applied in this order, each only while several candidates remain: authorship
+of synonyms (\code{Old.author.dist}), authorship of current names (\code{Auth.dist}),
+genus distance (\code{First.dist}), \code{priority}, and finally the smallest numeric
+part of \code{taxonID}. Column \code{One.Reason} gives the criterion that decided.
 
-Unlike WorldFlora 1.14-5, the authorship step compares the candidates that were not
-replaced by accepted names, rather than a recycled selection of all candidates; the
-chosen records were the same in our comparisons, but \code{One.Reason} can differ.
+Unlike WorldFlora 1.14-5, the authorship step compares the candidates that
+were not replaced by accepted names, rather than a recycled selection of all
+candidates; the chosen records were the same in our comparisons, but
+\code{One.Reason} can differ.
 }
 \examples{
 data(WFO.example2026)
-m <- WFO.match(c("Omalanthus populneus", "World agroforestry"), WFO.data = WFO.example2026,
-               Fuzzy.min = FALSE)        # non-default (of WFO.match): all fuzzy candidates
-nrow(m)   # several candidates for the first name
+m <- WFO.match(c("Omalanthus populneus", "World agroforestry"),
+  WFO.data = WFO.example2026,
+  Fuzzy.min = FALSE
+) # non-default (of WFO.match): all fuzzy candidates
+nrow(m) # several candidates for the first name
 
 ## ---- default settings (those of WorldFlora) ----
 WFO.one(m)[, c("spec.name", "scientificName", "One.Reason")]
 
-# homonyms of "Acacia albida": with the default settings, authors are not used
-aa <- data.frame(spec.name = "Acacia albida", Authorship = c("Delile", "Lindl."))
+# homonyms of "Acacia albida": with the default settings, authors are not
+# used
+aa <- data.frame(
+  spec.name = "Acacia albida",
+  Authorship = c("Delile", "Lindl.")
+)
 m2 <- WFO.match(aa, WFO.data = WFO.example2026)
-WFO.one(m2)[, c("Authorship", "scientificName", "scientificNameAuthorship", "One.Reason")]
+WFO.one(m2)[, c(
+  "Authorship", "scientificName", "scientificNameAuthorship",
+  "One.Reason"
+)]
 
 ## ---- non-default settings, marked "non-default" ----
 # the authors decide between homonyms
-o <- WFO.one(m2, Old.author.dist = "Old.author.dist")      # non-default
+o <- WFO.one(m2, Old.author.dist = "Old.author.dist") # non-default
 o[, c("Authorship", "scientificName")]
 
 # unmatched names keep the submitted name
-o <- WFO.one(m, spec.name = "spec.name")                   # non-default
+o <- WFO.one(m, spec.name = "spec.name") # non-default
 o[, c("spec.name", "scientificName", "One.Reason")]
 }
 \seealso{

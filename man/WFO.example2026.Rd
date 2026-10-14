@@ -3,29 +3,36 @@
 \docType{data}
 \name{WFO.example2026}
 \alias{WFO.example2026}
-\title{Example subset of the World Flora Online taxonomic backbone (Plant List 2026-06)}
+\title{Example subset of the World Flora Online taxonomic backbone (Plant List
+2026-06)}
 \format{
-A data.frame with 48 rows and the 12 columns read by \code{WFO.read(core.only = TRUE)}: \code{taxonID}, \code{scientificName}, \code{scientificNameAuthorship}, \code{taxonRank},
-\code{taxonomicStatus}, \code{nomenclaturalStatus}, \code{acceptedNameUsageID}, \code{family}, \code{genus},
-\code{specificEpithet}, \code{verbatimTaxonRank} and \code{infraspecificEpithet}. As in the 2026-06
-release, ranks are written in full and in lower case ("species", "variety"), and
-hybrids as "Mentha × piperita".
+A data.frame with 48 rows and the 12 columns read by
+\code{WFO.read(core.only = TRUE)}: \code{taxonID}, \code{scientificName},
+\code{scientificNameAuthorship}, \code{taxonRank}, \code{taxonomicStatus},
+\code{nomenclaturalStatus}, \code{acceptedNameUsageID}, \code{family}, \code{genus},
+\code{specificEpithet}, \code{verbatimTaxonRank} and \code{infraspecificEpithet}. As in
+the 2026-06 release, ranks are written in full and in lower case
+("species", "variety"), and hybrids as "Mentha × piperita".
 }
 \source{
-The World Flora Online Consortium et al. (2026). World Flora Online Plant List
-June 2026. Zenodo. \doi{10.5281/zenodo.20782718}
+The World Flora Online Consortium et al. (2026). World Flora Online
+Plant List June 2026. Zenodo. \doi{10.5281/zenodo.20782718}
 }
 \usage{
 WFO.example2026
 }
 \description{
-A small extract of the WFO Plant List 2026-06, used in the examples. It contains the
-names of the examples, the edge cases discussed in \code{\link[=WFO.match]{WFO.match()}} (a truncated genus, a
-species transferred to another genus, a local name) and every accepted name that these
-names refer to. For real work, download the complete backbone with \code{\link[=WFO.download]{WFO.download()}}.
+A small extract of the WFO Plant List 2026-06, used in the examples. It
+contains the names of the examples, the edge cases discussed in \code{\link[=WFO.match]{WFO.match()}}
+(a truncated genus, a species transferred to another genus, a local name) and
+every accepted name that these names refer to. For real work, download the
+complete backbone with \code{\link[=WFO.download]{WFO.download()}}.
 }
 \examples{
 data(WFO.example2026)
-WFO.example2026[, c("scientificName", "taxonomicStatus", "acceptedNameUsageID")]
+WFO.example2026[, c(
+  "scientificName", "taxonomicStatus",
+  "acceptedNameUsageID"
+)]
 }
 \keyword{datasets}

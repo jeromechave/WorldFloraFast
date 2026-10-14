@@ -42,7 +42,7 @@ names such as "Palma colorada", which are then not given a scientific genus.
 | One match per name | `WFO.one()` |
 | Explore | `WFO.browse()`, `WFO.synonyms()`, `WFO.family()`, `WFO.url()` |
 | Check fuzzy matches | `WFO.spelling.check()` |
-| Other backbones | `new.backbone()` |
+| Other backbones | `WFO.backbone()` (WorldFlora name: `new.backbone()`) |
 
 Start with `vignette("WorldFloraFast")`; `news(package = "WorldFloraFast")` lists the
 differences with WorldFlora.

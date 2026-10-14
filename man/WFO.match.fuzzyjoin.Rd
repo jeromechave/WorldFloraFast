@@ -31,86 +31,98 @@ WFO.match.fuzzyjoin(
 )
 }
 \arguments{
-\item{spec.data}{A data.frame with the names to match, or a character vector (or
-factor) of names, which becomes column \code{spec.name}.}
+\item{spec.data}{A data.frame with the names to match, or a character vector
+(or factor) of names, which becomes column \code{spec.name}.}
 
 \item{WFO.file}{Path to the backbone file (\code{classification.csv}), read with
-\code{\link[=WFO.read]{WFO.read()}}. Ignored if \code{WFO.data} is given. If both are \code{NULL}, the backbone at the
-location remembered by \code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=WFO.download]{WFO.download()}} is read.}
+\code{\link[=WFO.read]{WFO.read()}}. Ignored if \code{WFO.data} is given. If both are \code{NULL}, the
+backbone at the location remembered by \code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=WFO.download]{WFO.download()}}
+is read.}
 
-\item{WFO.data}{The backbone as a data.frame or data.table (from \code{\link[=WFO.read]{WFO.read()}},
-\code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=new.backbone]{new.backbone()}}).}
+\item{WFO.data}{The backbone as a data.frame or data.table (from
+\code{\link[=WFO.read]{WFO.read()}}, \code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=WFO.backbone]{WFO.backbone()}}).}
 
-\item{no.dates}{Deprecated and ignored (columns \code{created} and \code{modified} of the backbone
-are always left out of the results); giving it produces a warning.}
+\item{no.dates}{Deprecated and ignored (columns \code{created} and \code{modified} of
+the backbone are always left out of the results); giving it produces a
+warning.}
 
-\item{spec.name}{Name of the column with full plant names (without authors). If this
-column is absent, names are matched via \code{Genus}, \code{Species}, \code{Infraspecific.rank} and
-\code{Infraspecific}.}
+\item{spec.name}{Name of the column with full plant names (without authors).
+If this column is absent, names are matched via \code{Genus}, \code{Species},
+\code{Infraspecific.rank} and \code{Infraspecific}.}
 
-\item{Authorship}{Name of the column with the naming authors. If present, column
-\code{Auth.dist} gives the Levenshtein distance between the submitted and matched authors.
-As in WorldFlora, an empty author ("") gives the number of characters of the matched
-authors; use \code{NA} for unknown authors (distance \code{Inf}).}
+\item{Authorship}{Name of the column with the naming authors. If present,
+column \code{Auth.dist} gives the Levenshtein distance between the submitted and
+matched authors. As in WorldFlora, an empty author ("") gives the number of
+characters of the matched authors; use \code{NA} for unknown authors (distance
+\code{Inf}).}
 
-\item{stringdist.method}{Distance method of \code{\link[stringdist:stringdist]{stringdist::stringdist()}}, such as \code{"lv"}
-(Levenshtein), \code{"osa"}, \code{"dl"}, \code{"jw"} or \code{"qgram"}.}
+\item{stringdist.method}{Distance method of \code{\link[stringdist:stringdist]{stringdist::stringdist()}}, such
+as \code{"lv"} (Levenshtein), \code{"osa"}, \code{"dl"}, \code{"jw"} or \code{"qgram"}.}
 
 \item{fuzzydist.max}{Maximum distance of fuzzy matches.}
 
-\item{Fuzzy.min}{If \code{TRUE}, keep only the fuzzy matches with the smallest distance.}
+\item{Fuzzy.min}{If \code{TRUE}, keep only the fuzzy matches with the smallest
+distance.}
 
-\item{acceptedNameUsageID.match}{If \code{TRUE}, replace matched synonyms by their accepted
-names (via \code{acceptedNameUsageID}), keeping the synonym in columns \verb{Old.*}.}
+\item{acceptedNameUsageID.match}{If \code{TRUE}, replace matched synonyms by their
+accepted names (via \code{acceptedNameUsageID}), keeping the synonym in columns
+\verb{Old.*}.}
 
-\item{squish}{If \code{TRUE}, remove repeated white space and white space at the start and
-end of names (as \code{\link[stringr:str_trim]{stringr::str_squish()}}).}
+\item{squish}{If \code{TRUE}, remove repeated white space and white space at the
+start and end of names (as \code{\link[stringr:str_trim]{stringr::str_squish()}}).}
 
-\item{spec.name.tolower}{If \code{TRUE}, convert names to lower case, with a capital first
-letter.}
+\item{spec.name.tolower}{If \code{TRUE}, convert names to lower case, with a
+capital first letter.}
 
-\item{spec.name.nonumber}{If \code{TRUE}, names that contain numbers are interpreted as genera
-(only the first word is kept, without trailing digits).}
+\item{spec.name.nonumber}{If \code{TRUE}, names that contain numbers are
+interpreted as genera (only the first word is kept, without trailing
+digits).}
 
-\item{spec.name.nobrackets}{If \code{TRUE}, remove the part of names from the first \code{"("}
-onwards (such as authors in brackets).}
+\item{spec.name.nobrackets}{If \code{TRUE}, remove the part of names from the
+first \code{"("} onwards (such as authors in brackets).}
 
-\item{spec.name.sub}{If \code{TRUE}, delete sections of names that match \code{sub.pattern}.}
+\item{spec.name.sub}{If \code{TRUE}, delete sections of names that match
+\code{sub.pattern}.}
 
-\item{sub.pattern}{Regular expressions of sections to delete, such as \code{" sp[.]"},
-\code{" cf[.]"} or \code{" nom[.] illeg[.]"}.}
+\item{sub.pattern}{Regular expressions of sections to delete, such as \code{" sp[.]"}, \code{" cf[.]"} or \code{" nom[.] illeg[.]"}.}
 
-\item{cores}{Number of cores for fuzzy matching (\code{\link[parallel:mclapply]{parallel::mclapply()}}; not on Windows).}
+\item{cores}{Number of cores for fuzzy matching (\code{\link[parallel:mclapply]{parallel::mclapply()}}; not
+on Windows).}
 }
 \value{
-As \code{\link[=WFO.match]{WFO.match()}}, without columns \code{Fuzzy.toomany}, \code{Fuzzy.two}, \code{Fuzzy.one} and
-\code{First.dist}. \code{Fuzzy.dist} is the distance of \code{stringdist.method}. Candidates are
-numbered 1, 2, ... in \code{Subseq} (WorldFlora kept the numbers from before \code{Fuzzy.min}).
+As \code{\link[=WFO.match]{WFO.match()}}, without columns \code{Fuzzy.toomany}, \code{Fuzzy.two},
+\code{Fuzzy.one} and \code{First.dist}. \code{Fuzzy.dist} is the distance of
+\code{stringdist.method}. Candidates are numbered 1, 2, ... in \code{Subseq}
+(WorldFlora kept the numbers from before \code{Fuzzy.min}).
 }
 \description{
-\strong{Deprecated}: use \code{\link[=WFO.match]{WFO.match()}}. On a test of 100 misspelled names against the WFO
-Plant List 2026-06, \code{WFO.match.fuzzyjoin()} took 2.7 times longer than \code{\link[=WFO.match]{WFO.match()}} and
-matched fewer names with a truncated genus correctly (33 against 38 of 40); it has none
-of the matching steps added in WorldFloraFast (\code{Fuzzy.genus}, \code{Fuzzy.transfer},
-\code{Fuzzy.one.strict}, \code{Fuzzy.epithet.check}). It will be removed in a later version.
+\strong{Deprecated}: use \code{\link[=WFO.match]{WFO.match()}}. On a test of 100 misspelled names against
+the WFO Plant List 2026-06, \code{WFO.match.fuzzyjoin()} took 2.7 times longer
+than \code{\link[=WFO.match]{WFO.match()}} and matched fewer names with a truncated genus correctly
+(33 against 38 of 40); it has none of the matching steps added in
+WorldFloraFast (\code{Fuzzy.genus}, \code{Fuzzy.transfer}, \code{Fuzzy.one.strict},
+\code{Fuzzy.epithet.check}). It will be removed in a later version.
 }
 \details{
-An alternative to \code{\link[=WFO.match]{WFO.match()}} that finds fuzzy matches by a string distance of
-package \pkg{stringdist} (Levenshtein by default) within a maximum distance, rather than
-by \code{\link[=agrep]{agrep()}}. In WorldFlora this function used \code{fuzzyjoin::stringdist_left_join()};
-WorldFloraFast computes the same matches with \code{\link[stringdist:stringdist]{stringdist::stringdist()}} directly.
+An alternative to \code{\link[=WFO.match]{WFO.match()}} that finds fuzzy matches by a string distance
+of package \pkg{stringdist} (Levenshtein by default) within a maximum
+distance, rather than by \code{\link[=agrep]{agrep()}}. In WorldFlora this function used
+\code{fuzzyjoin::stringdist_left_join()}; WorldFloraFast computes the same matches
+with \code{\link[stringdist:stringdist]{stringdist::stringdist()}} directly.
 
-Names are cleaned as in \code{\link[=WFO.match]{WFO.match()}}. Names without an exact match are compared
-with all backbone names, once per distinct name; for the edit distances \code{"lv"}, \code{"osa"},
-\code{"dl"} and \code{"hamming"}, names whose number of characters differs by more than
-\code{fuzzydist.max} are skipped, which does not change the results. Requires the
-\pkg{stringdist} package.
+Names are cleaned as in \code{\link[=WFO.match]{WFO.match()}}. Names without an exact match
+are compared with all backbone names, once per distinct name; for the edit
+distances \code{"lv"}, \code{"osa"}, \code{"dl"} and \code{"hamming"}, names whose number of
+characters differs by more than \code{fuzzydist.max} are skipped, which does not
+change the results. Requires the \pkg{stringdist} package.
 }
 \examples{
 \dontshow{if (requireNamespace("stringdist", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 data(WFO.example2026)
 m <- suppressWarnings(WFO.match.fuzzyjoin(
-  c("Faidherbia albida", "Omalanthus populneus", "Pygeum africanum"), WFO.data = WFO.example2026))
+  c("Faidherbia albida", "Omalanthus populneus", "Pygeum africanum"),
+  WFO.data = WFO.example2026
+))
 m[, c("spec.name", "Fuzzy.dist", "scientificName")]
 \dontshow{\}) # examplesIf}
 }

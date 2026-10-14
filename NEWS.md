@@ -1,3 +1,23 @@
+# WorldFloraFast 1.0.3 (pre-release)
+
+Code style: the package follows the [tidyverse style guide](https://style.tidyverse.org/),
+checked with lintr (`.lintr`, no lints) and formatted with styler. `STYLE.md` records the
+decisions. Results are unchanged.
+
+* Code and tests formatted with styler; lines of code, comments and documentation wrapped
+  at 80 characters; comments start with a single `#`.
+* `.lintr` records the exceptions to the style guide: the names of the WorldFlora API (15 of
+  17 exported functions and 52 of 80 argument names use dots, 34 with capitals, such as
+  `WFO.match()`, `Fuzzy.min`, `WFO.data`) are kept for backward compatibility; dotted
+  lower-case names and internal names starting with a dot are accepted; cyclomatic
+  complexity is limited to 75 (current maximum 73), to be lowered.
+* New `WFO.backbone()`, the name of `new.backbone()` in line with the other functions;
+  `new.backbone()`, the name in WorldFlora, remains as an alias (it reads like an S3 method
+  `new()` for a class "backbone").
+* `download_classification()` and `read_classification()`, the only snake_case exported
+  functions (names of the stand-alone download script), are deprecated in favour of
+  `WFO.download()` and `WFO.read()`; they still work, with a warning.
+
 # WorldFloraFast 1.0.2 (pre-release)
 
 Tested on a forest inventory of the Democratic Republic of the Congo (113,432 trees, 1,240

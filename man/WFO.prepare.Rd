@@ -42,85 +42,96 @@ WFO.preprepare(
 )
 }
 \arguments{
-\item{spec.data}{A data.frame with a column of full names, or a character vector (or
-factor) of full names.}
+\item{spec.data}{A data.frame with a column of full names, or a character
+vector (or factor) of full names.}
 
 \item{spec.full}{Name of the column with the full names.}
 
-\item{squish}{If \code{TRUE}, remove repeated white space, and white space at the start and
-end of names (\code{\link[stringr:str_trim]{stringr::str_squish()}}).}
+\item{squish}{If \code{TRUE}, remove repeated white space, and white space at the
+start and end of names (\code{\link[stringr:str_trim]{stringr::str_squish()}}).}
 
-\item{spec.name.nonumber}{If \code{TRUE}, names that contain numbers are interpreted as genera
-(only the first word is kept, without trailing digits).}
+\item{spec.name.nonumber}{If \code{TRUE}, names that contain numbers are
+interpreted as genera (only the first word is kept, without trailing
+digits).}
 
-\item{spec.name.sub}{If \code{TRUE}, delete sections of names that match \code{sub.pattern}.}
+\item{spec.name.sub}{If \code{TRUE}, delete sections of names that match
+\code{sub.pattern}.}
 
-\item{sub.pattern}{Regular expressions of sections to delete, such as \code{" sp[.]"} or
-\code{" cf[.]"}.}
+\item{sub.pattern}{Regular expressions of sections to delete, such as \code{" sp[.]"} or \code{" cf[.]"}.}
 
-\item{genus.2.flag}{Flag names of which the first word has fewer than 3 characters.}
+\item{genus.2.flag}{Flag names of which the first word has fewer than 3
+characters.}
 
-\item{species.2.flag}{Flag names of which the second word has fewer than 3 characters.}
+\item{species.2.flag}{Flag names of which the second word has fewer than 3
+characters.}
 
-\item{punctuation.flag}{Flag names that still contain punctuation marks (other than those
-of the infraspecific ranks in \code{trinomial}).}
+\item{punctuation.flag}{Flag names that still contain punctuation marks
+(other than those of the infraspecific ranks in \code{trinomial}).}
 
-\item{pointless.flag}{Flag names that contain one of the \code{sub.pattern} sections written
-without punctuation (for example \code{"cf"} instead of \code{"cf."}).}
+\item{pointless.flag}{Flag names that contain one of the \code{sub.pattern}
+sections written without punctuation (for example \code{"cf"} instead of
+\code{"cf."}).}
 
-\item{trinomial}{Infraspecific ranks; the word after the rank is kept as part of the name.}
+\item{trinomial}{Infraspecific ranks; the word after the rank is kept as part
+of the name.}
 
-\item{authors.ending.f}{Author abbreviations ending in \code{" f."} (filius), which would
-otherwise be mistaken for the rank \code{"f."} (forma).}
+\item{authors.ending.f}{Author abbreviations ending in \code{" f."} (filius),
+which would otherwise be mistaken for the rank \code{"f."} (forma).}
 
 \item{verbose}{If \code{TRUE}, report the changes made to names.}
 
 \item{counter}{Progress is reported every \code{counter} distinct names.}
 
-\item{trinomial.first, trinomial.second}{First and second infraspecific rank used by
-\code{WFO.preprepare()} to split names.}
+\item{trinomial.first, trinomial.second}{First and second infraspecific rank
+used by \code{WFO.preprepare()} to split names.}
 }
 \value{
-\code{WFO.prepare()}: \code{spec.data} (a data.frame) with the added columns \code{spec.name} and
-\code{Authorship} (omitted when no authorship was found) and the requested flag columns.
-Existing columns \code{spec.name} and \code{Authorship} are renamed with suffix \code{.ORIG}.
+\code{WFO.prepare()}: \code{spec.data} (a data.frame) with the added columns
+\code{spec.name} and \code{Authorship} (omitted when no authorship was found) and the
+requested flag columns. Existing columns \code{spec.name} and \code{Authorship} are
+renamed with suffix \code{.ORIG}.
 
-\code{WFO.preprepare()}: \code{spec.data} with logical columns \code{first} (first rank found),
-\code{only.second} (only the second rank found), \code{also.second} (second rank found after the
-first), and the split sections \code{split.before}, \code{split.after} and, when needed,
-\code{second.split.before} and \code{second.split.after}.
+\code{WFO.preprepare()}: \code{spec.data} with logical columns \code{first} (first rank
+found), \code{only.second} (only the second rank found), \code{also.second} (second
+rank found after the first), and the split sections \code{split.before},
+\code{split.after} and, when needed, \code{second.split.before} and
+\code{second.split.after}.
 }
 \description{
-\code{WFO.prepare()} splits full botanical names that include naming authorities (for example
-\code{"Acacia nilotica subsp. kraussiana (Benth.) Brenan"}) into the plant name and its
-authorship, ready for \code{\link[=WFO.match]{WFO.match()}}. It also flags names that probably need checking.
-\code{WFO.preprepare()} splits names around a first and a second infraspecific rank, for
-names that contain two of them.
+\code{WFO.prepare()} splits full botanical names that include naming authorities
+(for example \code{"Acacia nilotica subsp. kraussiana (Benth.) Brenan"}) into the
+plant name and its authorship, ready for \code{\link[=WFO.match]{WFO.match()}}. It also flags names
+that probably need checking. \code{WFO.preprepare()} splits names around a first
+and a second infraspecific rank, for names that contain two of them.
 }
 \details{
-For each distinct full name, \code{WFO.prepare()} successively squishes white space, removes
-\code{sub.pattern} sections, reduces names with numbers to their first word, and then keeps
-the first two words, plus an infraspecific rank from \code{trinomial} and the word after it.
-The remaining words form the authorship. A second set of brackets in the authorship (as
-in \code{"(Benth.) Brenan (1950)"}) and everything after it is removed.
+For each distinct full name, \code{WFO.prepare()} successively squishes
+white space, removes \code{sub.pattern} sections, reduces names with numbers to
+their first word, and then keeps the first two words, plus an infraspecific
+rank from \code{trinomial} and the word after it. The remaining words form the
+authorship. A second set of brackets in the authorship (as in \code{"(Benth.) Brenan (1950)"}) and everything after it is removed.
 
-Flag columns are character columns, as in WorldFlora: \code{"TRUE"} or \code{""} for \code{punctuation}
-and \code{pointless}; the number of characters, and the short word itself, for \code{genus.nchar},
-\code{genus.2}, \code{species.nchar} and \code{species.2}.
+Flag columns are character columns, as in WorldFlora: \code{"TRUE"} or \code{""} for
+\code{punctuation} and \code{pointless}; the number of characters, and the short word
+itself, for \code{genus.nchar}, \code{genus.2}, \code{species.nchar} and \code{species.2}.
 
-Each distinct name is processed once, so messages and warnings are given once per
-distinct name.
+Each distinct name is processed once, so messages and warnings are given once
+per distinct name.
 }
 \examples{
-x <- c("Acacia nilotica subsp. kraussiana (Benth.) Brenan",
-       "Ficus sycomorus L.", "Prunus africana (Hook. f.) Kalkman",
-       "Coffea sp. 3")
+x <- c(
+  "Acacia nilotica subsp. kraussiana (Benth.) Brenan",
+  "Ficus sycomorus L.", "Prunus africana (Hook. f.) Kalkman",
+  "Coffea sp. 3"
+)
 WFO.prepare(x, verbose = FALSE)
 
-WFO.preprepare(c("Acacia nilotica subsp. kraussiana var. major L.",
-                 "Ficus sycomorus L."))
+WFO.preprepare(c(
+  "Acacia nilotica subsp. kraussiana var. major L.",
+  "Ficus sycomorus L."
+))
 }
 \seealso{
-\code{\link[=WFO.match]{WFO.match()}}, which accepts the prepared names, with \code{Authorship} used to
-calculate \code{Auth.dist}.
+\code{\link[=WFO.match]{WFO.match()}}, which accepts the prepared names, with \code{Authorship}
+used to calculate \code{Auth.dist}.
 }

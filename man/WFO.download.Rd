@@ -31,42 +31,47 @@ download_classification(
 
 \item{save.dir, out_dir}{Directory for the backbone (created if needed).}
 
-\item{WFO.remember}{If \code{TRUE}, remember the location of the file and load the backbone
-as \code{WFO.data} with \code{\link[=WFO.remember]{WFO.remember()}}.}
+\item{WFO.remember}{If \code{TRUE}, remember the location of the file and load the
+backbone as \code{WFO.data} with \code{\link[=WFO.remember]{WFO.remember()}}.}
 
 \item{timeout}{Minimum timeout in seconds for the download.}
 
 \item{force}{If \code{TRUE}, download again even if a copy exists.}
 
-\item{update}{If \code{TRUE} and a copy exists, check Zenodo for a newer release and download
-it if there is one. Without it, an existing copy is used and Zenodo is not contacted.
-If Zenodo cannot be reached, the local copy is kept with a warning.}
+\item{update}{If \code{TRUE} and a copy exists, check Zenodo for a newer release
+and download it if there is one. Without it, an existing copy is used and
+Zenodo is not contacted. If Zenodo cannot be reached, the local copy is
+kept with a warning.}
 
-\item{record.id, record_id}{Zenodo record to start from (any version of the WFO Plant
-List).}
+\item{record.id, record_id}{Zenodo record to start from (any version of the
+WFO Plant List).}
 
-\item{pinned}{If \code{TRUE}, use \code{record.id} itself instead of its newest version.}
+\item{pinned}{If \code{TRUE}, use \code{record.id} itself instead of its newest
+version.}
 
-\item{...}{Further arguments for \code{\link[utils:download.file]{utils::download.file()}} (with \code{WFO.url} only).}
+\item{...}{Further arguments for \code{\link[utils:download.file]{utils::download.file()}} (with \code{WFO.url}
+only).}
 }
 \value{
 The path of the backbone file (invisibly), with attributes \code{version},
 \code{record_id} and \code{doi} (\code{NA} when unknown).
 }
 \description{
-Downloads the latest \code{classification.csv} of the World Flora Online (WFO) Plant List
-from Zenodo (\url{https://zenodo.org/records/18007552} and its newer versions), unless a copy
-is already present. Downloads are verified with the published MD5 checksum and retried
-with exponential back-off.
+Downloads the latest \code{classification.csv} of the World Flora Online (WFO)
+Plant List from Zenodo (\url{https://zenodo.org/records/18007552} and its newer
+versions), unless a copy is already present. Downloads are verified with the
+published MD5 checksum and retried with exponential back-off.
 }
 \details{
-Next to the backbone, \code{classification_source.json} records the Zenodo record,
-version, DOI, source file, MD5 checksum and date of the download. A mirror can be used
-by setting the environment variable \code{ZENODO_BASE}; \code{ZENODO_RETRY_WAIT} sets the first
-waiting time (in seconds) between retries.
+Next to the backbone, \code{classification_source.json} records the
+Zenodo record, version, DOI, source file, MD5 checksum and date of the
+download. A mirror can be used by setting the environment variable
+\code{ZENODO_BASE}; \code{ZENODO_RETRY_WAIT} sets the first waiting time (in seconds)
+between retries.
 
-\code{download_classification()} uses the argument names of the stand-alone script from
-which these functions were derived; it does not remember or load the backbone.
+\code{download_classification()} is deprecated: use \code{WFO.download()}. It used the
+argument names of the stand-alone download script, unlike the other
+functions, and does not remember or load the backbone (\code{WFO.remember = FALSE}).
 }
 \examples{
 \dontrun{

@@ -4,79 +4,86 @@
 \name{WorldFloraFast-package}
 \alias{WorldFloraFast}
 \alias{WorldFloraFast-package}
-\title{WorldFloraFast: fast standardization of plant names against the World Flora Online}
+\title{WorldFloraFast: fast standardization of plant names against the World Flora
+Online}
 \description{
-Matches plant names against a static copy of the World Flora Online (WFO) taxonomic
-backbone, exactly or with fuzzy matching, and finds the currently accepted names.
-WorldFloraFast is a faster, refactored derivative of the WorldFlora package (Kindt 2020);
-functions and arguments are the same.
+Matches plant names against a static copy of the World Flora Online (WFO)
+taxonomic backbone, exactly or with fuzzy matching, and finds the currently
+accepted names. WorldFloraFast is a faster, refactored derivative of the
+WorldFlora package (Kindt 2020); functions and arguments are the same.
 }
 \section{Workflow}{
 
 \enumerate{
-\item Obtain the backbone with \code{\link[=WFO.download]{WFO.download()}} (later sessions: \code{\link[=WFO.remember]{WFO.remember()}} or
-\code{\link[=WFO.read]{WFO.read()}}).
+\item Obtain the backbone with \code{\link[=WFO.download]{WFO.download()}} (later sessions:
+\code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=WFO.read]{WFO.read()}}).
 \item Optionally split full names with authors via \code{\link[=WFO.prepare]{WFO.prepare()}}.
 \item Match names with \code{\link[=WFO.match]{WFO.match()}}.
 \item Keep one match per submitted name with \code{\link[=WFO.one]{WFO.one()}}.
-\item Explore with \code{\link[=WFO.browse]{WFO.browse()}}, \code{\link[=WFO.synonyms]{WFO.synonyms()}}, \code{\link[=WFO.family]{WFO.family()}} and \code{\link[=WFO.url]{WFO.url()}};
-check whether fuzzy matches are explained by misspellings with \code{\link[=WFO.spelling.check]{WFO.spelling.check()}}.
+\item Explore with \code{\link[=WFO.browse]{WFO.browse()}}, \code{\link[=WFO.synonyms]{WFO.synonyms()}}, \code{\link[=WFO.family]{WFO.family()}} and
+\code{\link[=WFO.url]{WFO.url()}}; check whether fuzzy matches are explained by misspellings
+with \code{\link[=WFO.spelling.check]{WFO.spelling.check()}}.
 }
-Other taxonomic lists can be used as backbone via \code{\link[=new.backbone]{new.backbone()}}.
+Other taxonomic lists can be used as backbone via \code{\link[=WFO.backbone]{WFO.backbone()}}.
 }
 
 \section{Speed}{
 
-The backbone is indexed once per call, so that exact matches, accepted names and genera
-are found with hash lookups. Fuzzy matching is done once per distinct name, optionally in
-parallel (argument \code{cores}), and each \code{\link[=agrep]{agrep()}} search is preceded by an exact
-prefilter (see \code{\link[=WFO.match]{WFO.match()}}). Results are those of WorldFlora 1.14-5, apart from the
-corrections listed in the NEWS file (\code{news(package = "WorldFloraFast")}).
+The backbone is indexed once per call, so that exact matches, accepted names
+and genera are found with hash lookups. Fuzzy matching is done once per
+distinct name, optionally in parallel (argument \code{cores}), and each \code{\link[=agrep]{agrep()}}
+search is preceded by an exact prefilter (see \code{\link[=WFO.match]{WFO.match()}}). Results are
+those of WorldFlora 1.14-5, apart from the corrections listed in the NEWS
+file (\code{news(package = "WorldFloraFast")}).
 }
 
 \section{Compatibility with WorldFlora}{
 
-By default, functions behave as in WorldFlora 1.14-5: same arguments, defaults, result
-columns (names, order, types) and example data set. Only errors of WorldFlora are
-corrected (listed in the NEWS file); in \code{\link[=WFO.match]{WFO.match()}}, three of these corrections can be
-switched off (\code{Fuzzy.keep.genus}, \code{Fuzzy.epithet.check}, \code{Fuzzy.skip.placeholder}). The
+By default, functions behave as in WorldFlora 1.14-5: same arguments,
+defaults, result columns (names, order, types) and example data set. Only
+errors of WorldFlora are corrected (listed in the NEWS file); in
+\code{\link[=WFO.match]{WFO.match()}}, three of these corrections can be switched off
+(\code{Fuzzy.keep.genus}, \code{Fuzzy.epithet.check}, \code{Fuzzy.skip.placeholder}). The
 matching steps added by WorldFloraFast (\code{Fuzzy.genus}, \code{Fuzzy.transfer},
 \code{Fuzzy.one.strict}) are optional and switched off by default.
 }
 
 \section{Cache}{
 
-The index of the backbone and the context used by the matching steps (about 5 s to
-build for the 1.6 million names of the WFO Plant List 2026-06) are kept for the last
-backbone used, so that further calls with the same \code{WFO.data} take a fraction of a
-second. This works when \code{WFO.data} is a data.table, as returned by \code{\link[=WFO.read]{WFO.read()}} (a
-data.frame is copied at each call). A changed backbone is detected. Set
-\code{options(WorldFloraFast.cache = FALSE)} to switch the cache off.
+The index of the backbone and the context used by the matching steps (about 5
+s to build for the 1.6 million names of the WFO Plant List 2026-06) are kept
+for the last backbone used, so that further calls with the same \code{WFO.data}
+take a fraction of a second. This works when \code{WFO.data} is a data.table, as
+returned by \code{\link[=WFO.read]{WFO.read()}} (a data.frame is copied at each call). A changed
+backbone is detected. Set \code{options(WorldFloraFast.cache = FALSE)} to switch
+the cache off.
 }
 
 \section{Deprecated}{
 
-\code{\link[=WFO.match.fuzzyjoin]{WFO.match.fuzzyjoin()}}, \code{\link[=WFO.acceptable.match]{WFO.acceptable.match()}} (replaced by \code{\link[=WFO.spelling.check]{WFO.spelling.check()}})
-and the argument \code{no.dates} of \code{\link[=WFO.match]{WFO.match()}} still work, with a warning, and will be
-removed in a later version.
+\code{\link[=WFO.match.fuzzyjoin]{WFO.match.fuzzyjoin()}}, \code{\link[=WFO.acceptable.match]{WFO.acceptable.match()}} (replaced by
+\code{\link[=WFO.spelling.check]{WFO.spelling.check()}}) and the argument \code{no.dates} of \code{\link[=WFO.match]{WFO.match()}} still
+work, with a warning, and will be removed in a later version.
 }
 
 \section{Provenance}{
 
-WorldFloraFast is derived from WorldFlora 1.14-5 (Roeland Kindt, GPL-3). Each R source
-file of the package starts with a caption that lists what it inherits from WorldFlora,
-what was changed, and what is new; the NEWS file lists all changes of results.
+WorldFloraFast is derived from WorldFlora 1.14-5 (Roeland Kindt, GPL-3). Each
+R source file of the package starts with a caption that lists what it
+inherits from WorldFlora, what was changed, and what is new; the NEWS file
+lists all changes of results.
 }
 
 \references{
-Kindt, R. (2020). WorldFlora: An R package for exact and fuzzy matching of plant names
-against the World Flora Online taxonomic backbone data. Applications in Plant Sciences
-8(9): e11388. \doi{10.1002/aps3.11388}
+Kindt, R. (2020). WorldFlora: An R package for exact and fuzzy
+matching of plant names against the World Flora Online taxonomic backbone
+data. Applications in Plant Sciences 8(9): e11388. \doi{10.1002/aps3.11388}
 
-World Flora Online. An Online Flora of All Known Plants. \url{https://www.worldfloraonline.org}
+World Flora Online. An Online Flora of All Known Plants.
+\url{https://www.worldfloraonline.org}
 }
 \author{
-\strong{Maintainer}: J<c3><a9>r<c3><b4>me Chave \email{jerome.chave@cnrs.fr}
+\strong{Maintainer}: Jérôme Chave \email{jerome.chave@cnrs.fr}
 
 Authors:
 \itemize{

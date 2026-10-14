@@ -5,7 +5,8 @@
 \alias{WFO.synonyms}
 \alias{WFO.family}
 \alias{WFO.url}
-\title{Browse the taxonomic backbone: lower taxa, synonyms, family and order, web links}
+\title{Browse the taxonomic backbone: lower taxa, synonyms, family and order, web
+links}
 \usage{
 WFO.browse(
   taxon = NULL,
@@ -23,63 +24,72 @@ WFO.family(taxon = NULL, WFO.file = NULL, WFO.data = NULL, ...)
 WFO.url(WFO.result = NULL, browse = FALSE, browse.rows = c(1:1), ...)
 }
 \arguments{
-\item{taxon}{Name of one taxon (matched first with \code{\link[=WFO.match]{WFO.match()}} and \code{\link[=WFO.one]{WFO.one()}}).
-For \code{WFO.browse()}, \code{NULL} lists all families.}
+\item{taxon}{Name of one taxon (matched first with \code{\link[=WFO.match]{WFO.match()}} and
+\code{\link[=WFO.one]{WFO.one()}}). For \code{WFO.browse()}, \code{NULL} lists all families.}
 
 \item{WFO.file}{Path to the backbone file (\code{classification.csv}), read with
-\code{\link[=WFO.read]{WFO.read()}}. Ignored if \code{WFO.data} is given. If both are \code{NULL}, the backbone at the
-location remembered by \code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=WFO.download]{WFO.download()}} is read.}
+\code{\link[=WFO.read]{WFO.read()}}. Ignored if \code{WFO.data} is given. If both are \code{NULL}, the
+backbone at the location remembered by \code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=WFO.download]{WFO.download()}}
+is read.}
 
-\item{WFO.data}{The backbone as a data.frame or data.table (from \code{\link[=WFO.read]{WFO.read()}},
-\code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=new.backbone]{new.backbone()}}).}
+\item{WFO.data}{The backbone as a data.frame or data.table (from
+\code{\link[=WFO.read]{WFO.read()}}, \code{\link[=WFO.remember]{WFO.remember()}} or \code{\link[=WFO.backbone]{WFO.backbone()}}).}
 
 \item{accepted.only}{If \code{TRUE}, list accepted names only.}
 
-\item{acceptedNameUsageID.match}{If \code{TRUE} (and \code{accepted.only = FALSE}), add column
-\code{New.name} with the accepted name of each listed synonym.}
+\item{acceptedNameUsageID.match}{If \code{TRUE} (and \code{accepted.only = FALSE}), add
+column \code{New.name} with the accepted name of each listed synonym.}
 
-\item{...}{Further arguments for \code{\link[=WFO.match]{WFO.match()}} (\code{WFO.browse()}, \code{WFO.synonyms()},
-\code{WFO.family()}) or \code{\link[utils:browseURL]{utils::browseURL()}} (\code{WFO.url()}).}
+\item{...}{Further arguments for \code{\link[=WFO.match]{WFO.match()}} (\code{WFO.browse()},
+\code{WFO.synonyms()}, \code{WFO.family()}) or \code{\link[utils:browseURL]{utils::browseURL()}} (\code{WFO.url()}).}
 
-\item{WFO.result}{Results of \code{\link[=WFO.match]{WFO.match()}} or \code{\link[=WFO.one]{WFO.one()}} (or a vector of \code{taxonID}s).}
+\item{WFO.result}{Results of \code{\link[=WFO.match]{WFO.match()}} or \code{\link[=WFO.one]{WFO.one()}} (or a vector of
+\code{taxonID}s).}
 
-\item{browse}{If \code{TRUE}, open the pages of rows \code{browse.rows} in a web browser.}
+\item{browse}{If \code{TRUE}, open the pages of rows \code{browse.rows} in a web
+browser.}
 
 \item{browse.rows}{Rows of \code{WFO.result} to open.}
 }
 \value{
-\code{WFO.browse()} and \code{WFO.synonyms()}: a data.table with columns \code{taxonID},
-\code{scientificName}, \code{scientificNameAuthorship}, \code{taxonRank}, \code{taxonomicStatus},
-\code{acceptedNameUsageID} (and \code{New.name}), or \code{NULL} when nothing is found. For an order,
-\code{WFO.browse()} returns the matching rows of \link{vascular.families}.
+\code{WFO.browse()} and \code{WFO.synonyms()}: a data.table with columns
+\code{taxonID}, \code{scientificName}, \code{scientificNameAuthorship}, \code{taxonRank},
+\code{taxonomicStatus}, \code{acceptedNameUsageID} (and \code{New.name}), or \code{NULL} when
+nothing is found. For an order, \code{WFO.browse()} returns the matching rows of
+\link{vascular.families}.
 
-\code{WFO.family()}: the row of \link{vascular.families} for the family; an empty data.frame,
-with a warning, for families that are not in this table, such as those of bryophytes
-(WorldFlora returned \code{"bryophytes"} for families in a list kept in its code).
+\code{WFO.family()}: the row of \link{vascular.families} for the family; an empty
+data.frame, with a warning, for families that are not in this table, such
+as those of bryophytes (WorldFlora returned \code{"bryophytes"} for families in
+a list kept in its code).
 
 \code{WFO.url()}: a character vector of web addresses, as in WorldFlora
-("http://worldfloraonline.org/taxon/\if{html}{\out{<taxonID>}}"; \code{NA} for unmatched records).
+("http://worldfloraonline.org/taxon/\if{html}{\out{<taxonID>}}"; \code{NA} for unmatched
+records).
 }
 \description{
 \code{WFO.browse()} lists the genera of a family, the species of a genus or the
-infraspecific taxa of a species. \code{WFO.synonyms()} lists the synonyms of the accepted
-name of a taxon. \code{WFO.family()} gives the order and higher classification of the family
-of a taxon. \code{WFO.url()} gives the World Flora Online web pages of matched names.
+infraspecific taxa of a species. \code{WFO.synonyms()} lists the synonyms of the
+accepted name of a taxon. \code{WFO.family()} gives the order and higher
+classification of the family of a taxon. \code{WFO.url()} gives the World Flora
+Online web pages of matched names.
 }
 \details{
-These functions are kept from WorldFlora, so that code written for WorldFlora
-(and its graphical interface, RcmdrPlugin.WorldFlora) keeps working. With the backbone
-loaded as a data.table, the same results are simple queries; what the functions add is:
+These functions are kept from WorldFlora, so that code written for
+WorldFlora (and its graphical interface, RcmdrPlugin.WorldFlora) keeps
+working. With the backbone loaded as a data.table, the same results are
+simple queries; what the functions add is:
 \itemize{
-\item the submitted taxon is first matched with \code{\link[=WFO.match]{WFO.match()}} and \code{\link[=WFO.one]{WFO.one()}}, so
-misspelled names and synonyms are accepted;
-\item ranks are compared in both the WFO conventions up to 2025 and from 2026-06 on;
-\item \code{WFO.browse()} adds the accepted name of listed synonyms (\code{New.name});
-\item \code{WFO.family()} adds the order and higher classification of \link{vascular.families},
-which the backbone does not contain.
-}
-Equivalent queries, for a backbone \code{W} read with \code{\link[=WFO.read]{WFO.read()}} and a correctly spelled
-accepted name:
+\item the submitted taxon is first matched with \code{\link[=WFO.match]{WFO.match()}} and
+\code{\link[=WFO.one]{WFO.one()}}, so misspelled names and synonyms are accepted;
+\item ranks are compared in both the WFO conventions up to 2025 and from
+2026-06 on;
+\item \code{WFO.browse()} adds the accepted name of listed synonyms
+(\code{New.name});
+\item \code{WFO.family()} adds the order and higher classification of
+\link{vascular.families}, which the backbone does not contain.
+} Equivalent queries, for a backbone \code{W} read with \code{\link[=WFO.read]{WFO.read()}} and a
+correctly spelled accepted name:
 \preformatted{
 # WFO.synonyms("Gambeya boiviniana")
 id <- W[scientificName == "Gambeya boiviniana", taxonID]
@@ -89,7 +99,8 @@ W[taxonID == id | acceptedNameUsageID == id]
 W[genus == "Gambeya" & tolower(taxonRank) == "species"]
 
 # WFO.browse("Gambeya boiviniana"): infraspecific taxa of a species
-W[genus == "Gambeya" & specificEpithet == "boiviniana" & infraspecificEpithet != ""]
+W[genus == "Gambeya" & specificEpithet == "boiviniana" &
+    infraspecificEpithet != ""]
 
 # WFO.browse("Sapotaceae"): genera of a family
 W[family == "Sapotaceae" & tolower(taxonRank) == "genus"]
@@ -103,14 +114,25 @@ paste0("http://worldfloraonline.org/taxon/", W$taxonID[1])
 }
 }
 \examples{
-data(WFO.example2026)   # small extract of the WFO Plant List 2026-06
-WFO.synonyms("Gambeya boiviniana", WFO.data = WFO.example2026, verbose = FALSE)
-WFO.browse("Gambeya boiviniana", WFO.data = WFO.example2026, verbose = FALSE)   # varieties
-WFO.browse("Sapotaceae", WFO.data = WFO.example2026, verbose = FALSE)           # genera
+data(WFO.example2026) # small extract of the WFO Plant List 2026-06
+WFO.synonyms("Gambeya boiviniana",
+  WFO.data = WFO.example2026,
+  verbose = FALSE
+)
+# varieties of a species
+WFO.browse("Gambeya boiviniana",
+  WFO.data = WFO.example2026,
+  verbose = FALSE
+)
+# genera of a family
+WFO.browse("Sapotaceae", WFO.data = WFO.example2026, verbose = FALSE)
 WFO.family("Gambeya boiviniana", WFO.data = WFO.example2026, verbose = FALSE)
-WFO.url(WFO.match("Faidherbia albida", WFO.data = WFO.example2026, verbose = FALSE))
+WFO.url(WFO.match("Faidherbia albida",
+  WFO.data = WFO.example2026,
+  verbose = FALSE
+))
 \dontrun{
-WFO.remember()                         # backbone downloaded with WFO.download()
+WFO.remember() # backbone downloaded with WFO.download()
 WFO.browse("Fabaceae", WFO.data = WFO.data, accepted.only = TRUE)
 }
 }
