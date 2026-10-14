@@ -1,0 +1,9 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  WorldFloraFast: WorldFloraFast.html
+last_built: 2026-10-14T22:04Z
+urls:
+  reference: https://jeromechave.github.io/WorldFloraFast/reference
+  article: https://jeromechave.github.io/WorldFloraFast/articles
