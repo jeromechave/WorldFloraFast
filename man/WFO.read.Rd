@@ -25,7 +25,9 @@ WFO.remember(WFO.file = NULL, WFO.data = "WFO.data", WFO.pos = 1, ...)
 \arguments{
 \item{WFO.file, path}{Path to the backbone (\code{classification.csv} or
 \code{classification.txt}), or a directory that contains it. For \code{WFO.read()}
-and \code{WFO.remember()}, \code{NULL} uses the remembered location.}
+and \code{WFO.remember()}, \code{NULL} uses the remembered location, or, if that
+file no longer exists, the newest release in the data folder (see
+\code{\link[=WFO.releases]{WFO.releases()}}).}
 
 \item{select}{Names of columns to read (saves time and memory).}
 
@@ -63,7 +65,9 @@ columns that are not in the file are skipped with a warning.
 
 \code{WFO.remember()} saves the location in the user configuration directory
 (\code{\link[tools:userdir]{tools::R_user_dir()}}); a location saved by WorldFlora is also found. With
-\code{WFO.file = NULL}, the matching functions use the remembered backbone too.
+\code{WFO.file = NULL}, the matching functions use the remembered backbone too,
+or, if it no longer exists, the newest release in the data folder of
+\code{\link[=WFO.download]{WFO.download()}}. A message gives the file and the release used.
 
 \code{read_classification()} is deprecated: use \code{WFO.read()}. It used the argument
 names of the stand-alone download script, unlike the other functions.
@@ -80,5 +84,5 @@ WFO.remember() # in a later session
 }
 }
 \seealso{
-\code{\link[=WFO.download]{WFO.download()}}
+\code{\link[=WFO.download]{WFO.download()}}, \code{\link[=WFO.releases]{WFO.releases()}}
 }

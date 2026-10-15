@@ -29,6 +29,7 @@ reference:
   contents:
   - WFO.download
   - WFO.read
+  - WFO.releases
 - title: Other backbones
   contents:
   - WFO.backbone

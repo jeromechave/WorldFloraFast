@@ -1,3 +1,20 @@
+# WorldFloraFast 1.0.5 (pre-release)
+
+* `WFO.download()` saves the backbone by default in a per-user data folder,
+  `tools::R_user_dir("WorldFloraFast", "data")` (subfolder `wfo`), in a folder per
+  release (for example `wfo/2026-06/classification.csv`). The folder is the same in every
+  session and project, and is kept when the package or R are reinstalled, so the backbone
+  is downloaded only once. A newer release (`update = TRUE`) is saved next to the older
+  ones; a pinned release (`record.id`, `pinned = TRUE`) in its own folder.
+  WorldFlora saved the backbone in the working directory: `save.dir = getwd()` still does,
+  and any other `save.dir` behaves as before.
+* In a new session, `WFO.match()` without `WFO.data` or `WFO.file`, `WFO.read()` and
+  `WFO.remember()` use the backbone file remembered by the last download, or, if it no
+  longer exists, the newest release in the data folder. A message gives the file and the
+  release used.
+* New `WFO.releases()`: lists the releases in the data folder (version, Zenodo record and
+  DOI, date, size, which one is in use) and deletes old ones (`remove = "2025-12"`).
+
 # WorldFloraFast 1.0.4 (pre-release)
 
 * Website built with pkgdown: <https://jeromechave.github.io/WorldFloraFast/>, published

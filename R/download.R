@@ -11,6 +11,8 @@
 #   New in WorldFloraFast:
 #     - Arguments force, update, record.id and pinned; download_classification()
 #       (name of the stand-alone script; deprecated in 1.0.3).
+#     - Default save.dir = NULL: one folder per release in the per-user data
+#       folder (releases.R; 1.0.5). WorldFlora: save.dir = getwd().
 #   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 # ----------------------------------------------------------------------------
 
@@ -23,7 +25,11 @@
 #'
 #' @param WFO.url If given, download a zip archive from this address and extract
 #'   `classification.csv` (or `classification.txt`) instead of using Zenodo.
-#' @param save.dir,out_dir Directory for the backbone (created if needed).
+#' @param save.dir,out_dir Directory for the backbone (created if needed). With
+#'   `save.dir = NULL` (default), each release is saved in its own folder of the
+#'   per-user data folder of WorldFloraFast (see Details and [WFO.releases()]);
+#'   `save.dir = getwd()` gives the default of WorldFlora (the working
+#'   directory).
 #' @param WFO.remember If `TRUE`, remember the location of the file and load the
 #'   backbone as `WFO.data` with [WFO.remember()].
 #' @param timeout Minimum timeout in seconds for the download.
@@ -39,7 +45,25 @@
 #' @param ... Further arguments for [utils::download.file()] (with `WFO.url`
 #'   only).
 #'
-#' @details Next to the backbone, `classification_source.json` records the
+#' @details By default (`save.dir = NULL`), the backbone is saved in the
+#' per-user data folder of WorldFloraFast, given by [tools::R_user_dir()]
+#' (`R_user_dir("WorldFloraFast", "data")`, subfolder `wfo`), in a folder named
+#' after the release, such as `wfo/2026-06/classification.csv`. This folder is
+#' the same in every session and project, and is kept when the package or R
+#' are reinstalled; [WFO.releases()] lists the releases it holds and deletes old
+#' ones. Without `update` or `force`, an existing release is used and Zenodo is
+#' not contacted (unless `pinned = TRUE` asks for a given release, which is
+#' downloaded to its own folder if needed); with `update = TRUE`, a newer
+#' release is downloaded to a new
+#' folder and the older ones are kept. With `WFO.url`, the file is saved in the
+#' subfolder `from_url`. WorldFlora saved the backbone in the working
+#' directory, which `save.dir = getwd()` still does.
+#'
+#' In a new session, [WFO.match()] without `WFO.data` or `WFO.file`,
+#' [WFO.read()] and [WFO.remember()] use the backbone file of the last download,
+#' or else the newest release in the data folder.
+#'
+#' Next to the backbone, `classification_source.json` records the
 #' Zenodo record, version, DOI, source file, MD5 checksum and date of the
 #' download. A mirror can be used by setting the environment variable
 #' `ZENODO_BASE`; `ZENODO_RETRY_WAIT` sets the first waiting time (in seconds)
@@ -52,98 +76,122 @@
 #'
 #' @return The path of the backbone file (invisibly), with attributes `version`,
 #'   `record_id` and `doi` (`NA` when unknown).
-#' @seealso [WFO.read()], [WFO.remember()]
+#' @seealso [WFO.releases()], [WFO.read()], [WFO.remember()]
 #' @export
 #' @examples
 #' \dontrun{
-#' # download (or find) the backbone, remember it and load it as WFO.data
-#' WFO.download(save.dir = "wfo_data")
+#' # download (or find) the backbone in the data folder, remember it and load it
+#' # as WFO.data
+#' WFO.download()
 #'
-#' # later: look for a newer release
-#' WFO.download(save.dir = "wfo_data", update = TRUE)
+#' # in a later session: nothing to download, WFO.match() finds the backbone
+#' WFO.match("Faidherbia albida")
+#'
+#' # look for a newer release (kept next to the older ones)
+#' WFO.download(update = TRUE)
+#' WFO.releases()
 #'
 #' # a specific release: the WFO Plant List 2026-06
-#' WFO.download(save.dir = "wfo_2026_06", record.id = "20782718", pinned = TRUE)
+#' WFO.download(record.id = "20782718", pinned = TRUE)
+#'
+#' # another folder, such as a shared drive or the project folder (as in
+#' # WorldFlora)
+#' WFO.download(save.dir = "wfo_data")
 #' }
 WFO.download <- function(
-  WFO.url = NULL, save.dir = getwd(), WFO.remember = TRUE, timeout = 3600,
+  WFO.url = NULL, save.dir = NULL, WFO.remember = TRUE, timeout = 3600,
   force = FALSE, update = FALSE, record.id = "18007552", pinned = FALSE, ...
 ) {
-  dir.create(save.dir, showWarnings = FALSE, recursive = TRUE)
-
   if (!is.null(WFO.url)) {
+    if (is.null(save.dir)) save.dir <- file.path(.wfo.data.dir(), "from_url")
+    dir.create(save.dir, showWarnings = FALSE, recursive = TRUE)
     final <- .download.legacy(WFO.url, save.dir, timeout, ...)
+  } else if (is.null(save.dir)) {
+    final <- .download.release(force, update, record.id, pinned, timeout)
   } else {
-    final <- file.path(save.dir, .WFO.TARGET.FILE)
-    have.local <- .file.ok(final)
-    prev <- .read.source.info(save.dir)
-
-    if (have.local && !force && !update) {
-      # 1) already downloaded: decide locally, without touching the network
-      message(
-        "Already downloaded: ", normalizePath(final),
-        if (!is.null(prev)) {
-          sprintf(
-            " (WFO Plant List %s, downloaded %s)",
-            prev$version,
-            prev$downloaded
-          )
-        }
-      )
-      message(
-        "  Skipping the download. Use update = TRUE to look for a newer ",
-        "release, or force = TRUE to redo it."
-      )
-      final <- .with.source(final, prev)
-    } else {
-      message(
-        "Looking up the ",
-        if (pinned) "record " else "latest version of record ",
-        record.id,
-        " ..."
-      )
-      rec <- tryCatch(.resolve.record(record.id, pinned), error = function(e) {
-        if (have.local && !force) {
-          warning("Zenodo could not be reached (", conditionMessage(e),
-            "); keeping the local copy.",
-            call. = FALSE
-          )
-          return(NULL)
-        }
-        stop(e)
-      })
-      if (is.null(rec)) {
-        final <- .with.source(final, prev)
-      } else {
-        rec.id <- .record.id.chr(rec)
-        message(sprintf(
-          "  -> record %s, version %s (%s)", rec.id,
-          rec$metadata$version %||% NA,
-          rec$doi %||% rec$pids$doi$identifier %||% NA
-        ))
-        if (have.local && !force && !is.null(prev) && identical(
-          as.character(prev$record_id),
-          rec.id
-        )) {
-          # 2) update = TRUE and the local copy is from this release
-          message(
-            "Your local copy is already the newest release (",
-            prev$version,
-            "); nothing to do."
-          )
-          final <- .with.source(final, prev)
-        } else {
-          if (have.local && !force) {
-            message("A different release is available; downloading it ...")
-          }
-          final <- .zenodo.fetch(rec, save.dir, timeout)
-        }
-      }
-    }
+    dir.create(save.dir, showWarnings = FALSE, recursive = TRUE)
+    final <- .download.folder(
+      save.dir, force, update, record.id, pinned,
+      timeout
+    )
   }
 
   if (WFO.remember == TRUE) WFO.remember(WFO.file = final)
   invisible(final)
+}
+
+# Download to a given folder (save.dir), as in WorldFloraFast <= 1.0.4: the
+# backbone is kept in that folder, and replaced by a newer release when update
+# is TRUE
+.download.folder <- function(save.dir, force, update, record.id, pinned,
+                             timeout) {
+  final <- file.path(save.dir, .WFO.TARGET.FILE)
+  have.local <- .file.ok(final)
+  prev <- .read.source.info(save.dir)
+
+  if (have.local && !force && !update) {
+    # 1) already downloaded: decide locally, without touching the network
+    message(
+      "Already downloaded: ", normalizePath(final),
+      if (!is.null(prev)) {
+        sprintf(
+          " (WFO Plant List %s, downloaded %s)",
+          prev$version,
+          prev$downloaded
+        )
+      }
+    )
+    message(
+      "  Skipping the download. Use update = TRUE to look for a newer ",
+      "release, or force = TRUE to redo it."
+    )
+    final <- .with.source(final, prev)
+  } else {
+    message(
+      "Looking up the ",
+      if (pinned) "record " else "latest version of record ",
+      record.id,
+      " ..."
+    )
+    rec <- tryCatch(.resolve.record(record.id, pinned), error = function(e) {
+      if (have.local && !force) {
+        warning("Zenodo could not be reached (", conditionMessage(e),
+          "); keeping the local copy.",
+          call. = FALSE
+        )
+        return(NULL)
+      }
+      stop(e)
+    })
+    if (is.null(rec)) {
+      final <- .with.source(final, prev)
+    } else {
+      rec.id <- .record.id.chr(rec)
+      message(sprintf(
+        "  -> record %s, version %s (%s)", rec.id,
+        rec$metadata$version %||% NA,
+        rec$doi %||% rec$pids$doi$identifier %||% NA
+      ))
+      if (have.local && !force && !is.null(prev) && identical(
+        as.character(prev$record_id),
+        rec.id
+      )) {
+        # 2) update = TRUE and the local copy is from this release
+        message(
+          "Your local copy is already the newest release (",
+          prev$version,
+          "); nothing to do."
+        )
+        final <- .with.source(final, prev)
+      } else {
+        if (have.local && !force) {
+          message("A different release is available; downloading it ...")
+        }
+        final <- .zenodo.fetch(rec, save.dir, timeout)
+      }
+    }
+  }
+  final
 }
 
 #' @rdname WFO.download

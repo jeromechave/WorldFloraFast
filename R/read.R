@@ -14,6 +14,8 @@
 #       in each function.
 #     - read_classification(): from the download_classification.R script;
 #       deprecated in 1.0.3.
+#     - Without a file: the remembered file, or else the newest release in the
+#       data folder, with a message giving the file and release (1.0.5).
 #   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 # ----------------------------------------------------------------------------
 
@@ -25,7 +27,9 @@
 #'
 #' @param WFO.file,path Path to the backbone (`classification.csv` or
 #'   `classification.txt`), or a directory that contains it. For `WFO.read()`
-#'   and `WFO.remember()`, `NULL` uses the remembered location.
+#'   and `WFO.remember()`, `NULL` uses the remembered location, or, if that
+#'   file no longer exists, the newest release in the data folder (see
+#'   [WFO.releases()]).
 #' @param select Names of columns to read (saves time and memory).
 #' @param core.only If `TRUE`, read only the columns used by this package:
 #'   `taxonID`, `scientificName`, `scientificNameAuthorship`, `taxonRank`,
@@ -47,14 +51,16 @@
 #'
 #' `WFO.remember()` saves the location in the user configuration directory
 #' ([tools::R_user_dir()]); a location saved by WorldFlora is also found. With
-#' `WFO.file = NULL`, the matching functions use the remembered backbone too.
+#' `WFO.file = NULL`, the matching functions use the remembered backbone too,
+#' or, if it no longer exists, the newest release in the data folder of
+#' [WFO.download()]. A message gives the file and the release used.
 #'
 #' `read_classification()` is deprecated: use `WFO.read()`. It used the argument
 #' names of the stand-alone download script, unlike the other functions.
 #'
 #' @return `WFO.read()`: a data.table (or data.frame). `WFO.remember()`: the
 #'   path of the backbone (invisibly); the backbone is assigned to `WFO.data`.
-#' @seealso [WFO.download()]
+#' @seealso [WFO.download()], [WFO.releases()]
 #' @export
 #' @examples
 #' f <- tempfile(fileext = ".csv")
@@ -70,14 +76,16 @@ WFO.read <- function(
   WFO.file = NULL, select = NULL, core.only = FALSE, as.data.frame = FALSE
 ) {
   if (is.null(WFO.file)) {
-    WFO.file <- .remembered.file()
+    WFO.file <- .default.backbone.file()
     if (is.null(WFO.file)) {
       stop(
-        "No WFO.file given and no location remembered; use WFO.download() ",
-        "or WFO.remember(WFO.file=...)",
+        "No WFO.file given, no location remembered and no release in the ",
+        "data folder; use WFO.download()",
         call. = FALSE
       )
     }
+    .message.backbone(WFO.file)
+    WFO.file <- as.character(WFO.file)
   }
   if (dir.exists(WFO.file)) {
     cand <- file.path(WFO.file, c(.WFO.TARGET.FILE, "classification.txt"))
@@ -151,29 +159,17 @@ WFO.remember <- function(
       file = rem,
       sep = "|"
     )
+    .message.backbone(WFO.file1)
   } else {
-    WFO.file1 <- .remembered.file()
+    WFO.file1 <- .default.backbone.file()
     if (is.null(WFO.file1)) {
-      stop("Location of WFO data was not provided earlier")
+      stop(
+        "Location of WFO data was not provided earlier, and there is no ",
+        "release in the data folder; use WFO.download()"
+      )
     }
-    message(
-      "Data sourced from: ",
-      WFO.file1,
-      " (",
-      attr(WFO.file1, "date"),
-      ")"
-    )
+    .message.backbone(WFO.file1)
     WFO.file1 <- as.character(WFO.file1)
-  }
-  info <- .read.source.info(dirname(WFO.file1))
-  if (!is.null(info)) {
-    message(
-      "WFO Plant List version ",
-      info$version,
-      " (",
-      info$doi,
-      ")"
-    )
   }
 
   message("Reading WFO data")
@@ -205,4 +201,17 @@ WFO.remember <- function(
     }
   }
   NULL
+}
+
+# Message: which backbone file and release are used
+.message.backbone <- function(path) {
+  info <- .read.source.info(dirname(as.character(path)))
+  how <- attr(path, "how")
+  message(
+    "WFO backbone: ", as.character(path),
+    if (!is.null(info)) {
+      paste0(" (WFO Plant List ", info$version, ", ", info$doi, ")")
+    },
+    if (!is.null(how)) paste0(" [", how, "]")
+  )
 }

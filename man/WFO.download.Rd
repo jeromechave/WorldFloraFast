@@ -7,7 +7,7 @@
 \usage{
 WFO.download(
   WFO.url = NULL,
-  save.dir = getwd(),
+  save.dir = NULL,
   WFO.remember = TRUE,
   timeout = 3600,
   force = FALSE,
@@ -29,7 +29,11 @@ download_classification(
 \item{WFO.url}{If given, download a zip archive from this address and extract
 \code{classification.csv} (or \code{classification.txt}) instead of using Zenodo.}
 
-\item{save.dir, out_dir}{Directory for the backbone (created if needed).}
+\item{save.dir, out_dir}{Directory for the backbone (created if needed). With
+\code{save.dir = NULL} (default), each release is saved in its own folder of the
+per-user data folder of WorldFloraFast (see Details and \code{\link[=WFO.releases]{WFO.releases()}});
+\code{save.dir = getwd()} gives the default of WorldFlora (the working
+directory).}
 
 \item{WFO.remember}{If \code{TRUE}, remember the location of the file and load the
 backbone as \code{WFO.data} with \code{\link[=WFO.remember]{WFO.remember()}}.}
@@ -63,6 +67,24 @@ versions), unless a copy is already present. Downloads are verified with the
 published MD5 checksum and retried with exponential back-off.
 }
 \details{
+By default (\code{save.dir = NULL}), the backbone is saved in the
+per-user data folder of WorldFloraFast, given by \code{\link[tools:userdir]{tools::R_user_dir()}}
+(\code{R_user_dir("WorldFloraFast", "data")}, subfolder \code{wfo}), in a folder named
+after the release, such as \code{wfo/2026-06/classification.csv}. This folder is
+the same in every session and project, and is kept when the package or R
+are reinstalled; \code{\link[=WFO.releases]{WFO.releases()}} lists the releases it holds and deletes old
+ones. Without \code{update} or \code{force}, an existing release is used and Zenodo is
+not contacted (unless \code{pinned = TRUE} asks for a given release, which is
+downloaded to its own folder if needed); with \code{update = TRUE}, a newer
+release is downloaded to a new
+folder and the older ones are kept. With \code{WFO.url}, the file is saved in the
+subfolder \code{from_url}. WorldFlora saved the backbone in the working
+directory, which \code{save.dir = getwd()} still does.
+
+In a new session, \code{\link[=WFO.match]{WFO.match()}} without \code{WFO.data} or \code{WFO.file},
+\code{\link[=WFO.read]{WFO.read()}} and \code{\link[=WFO.remember]{WFO.remember()}} use the backbone file of the last download,
+or else the newest release in the data folder.
+
 Next to the backbone, \code{classification_source.json} records the
 Zenodo record, version, DOI, source file, MD5 checksum and date of the
 download. A mirror can be used by setting the environment variable
@@ -75,16 +97,25 @@ functions, and does not remember or load the backbone (\code{WFO.remember = FALS
 }
 \examples{
 \dontrun{
-# download (or find) the backbone, remember it and load it as WFO.data
-WFO.download(save.dir = "wfo_data")
+# download (or find) the backbone in the data folder, remember it and load it
+# as WFO.data
+WFO.download()
 
-# later: look for a newer release
-WFO.download(save.dir = "wfo_data", update = TRUE)
+# in a later session: nothing to download, WFO.match() finds the backbone
+WFO.match("Faidherbia albida")
+
+# look for a newer release (kept next to the older ones)
+WFO.download(update = TRUE)
+WFO.releases()
 
 # a specific release: the WFO Plant List 2026-06
-WFO.download(save.dir = "wfo_2026_06", record.id = "20782718", pinned = TRUE)
+WFO.download(record.id = "20782718", pinned = TRUE)
+
+# another folder, such as a shared drive or the project folder (as in
+# WorldFlora)
+WFO.download(save.dir = "wfo_data")
 }
 }
 \seealso{
-\code{\link[=WFO.read]{WFO.read()}}, \code{\link[=WFO.remember]{WFO.remember()}}
+\code{\link[=WFO.releases]{WFO.releases()}}, \code{\link[=WFO.read]{WFO.read()}}, \code{\link[=WFO.remember]{WFO.remember()}}
 }
