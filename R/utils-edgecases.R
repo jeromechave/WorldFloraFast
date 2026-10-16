@@ -14,6 +14,8 @@
 #       rejects fuzzy matches in unrelated genera and other families), the
 #       family of a genus from its accepted genus record (.genus.families()),
 #       and the alternatives listed in Fuzzy.alternatives.
+#     - Epithet check: 2 edits for epithets and genus names of 8 or more
+#       letters, an adjacent swap counting as one edit (1.0.6).
 #   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 # ----------------------------------------------------------------------------
 
@@ -351,7 +353,7 @@
   }
   e <- .norm.epithet(w[2])
   e.raw <- tolower(w[2])
-  ke <- max(1, .agrep.k(e.raw, Fuzzy))
+  ke <- .word.k(e.raw, Fuzzy)
   g <- w[1]
   fam <- if (!is.na(match(
     g,
@@ -374,10 +376,7 @@
     ce <- .norm.epithet(ce.raw)
     # raw or normalised spelling: a typo in the ending (obovatxm) prevents
     # normalisation
-    ok.ep <- min(
-      as.numeric(utils::adist(e, ce)),
-      as.numeric(utils::adist(e.raw, ce.raw))
-    ) <= ke ||
+    ok.ep <- min(.edit.dist(e, ce), .edit.dist(e.raw, ce.raw)) <= ke ||
       (nchar(w[2]) >= 4 && startsWith(
         tolower(sub(paste0("^", .HYBRID), "", cw[2])),
         tolower(w[2])
@@ -390,7 +389,7 @@
     # same family; otherwise it is a genus transfer, which has its own rules
     # ("Inga ferrea" is not Coumarouna ferrea, found within the name)
     related <- startsWith(cw[1], g) ||
-      as.numeric(utils::adist(g, cw[1])) <= .agrep.k(g, Fuzzy)
+      .edit.dist(g, cw[1]) <= .word.k(g, Fuzzy)
     same.family <- length(fam) == 0 || {
       f <- .genus.families(cw[1], ctx)
       length(f) > 0 && f %in% fam

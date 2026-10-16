@@ -14,7 +14,8 @@
 #     - WFO.preprepare() no longer fails when a name lacks trinomial.first (NEWS
 #       12).
 #   New in WorldFloraFast:
-#     - none
+#     - Morphospecies codes removed before parsing; argument spec.name.aff.genus
+#       (1.0.6).
 #   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 # ----------------------------------------------------------------------------
 
@@ -33,7 +34,10 @@
 #'   start and end of names ([stringr::str_squish()]).
 #' @param spec.name.nonumber If `TRUE`, names that contain numbers are
 #'   interpreted as genera (only the first word is kept, without trailing
-#'   digits).
+#'   digits). A morphospecies code at the end of a name (" sp.1",
+#'   " sp.1_ECOSUR1", " sp9", " sp. 2") is removed first, so that
+#'   "Aegiphila sp.1_ECOSUR1" gives *Aegiphila* (WorldFlora gave
+#'   "Aegiphila1_ECOSUR").
 #' @param spec.name.sub If `TRUE`, delete sections of names that match
 #'   `sub.pattern`.
 #' @param sub.pattern Regular expressions of sections to delete, such as `"
@@ -51,6 +55,12 @@
 #'   of the name.
 #' @param authors.ending.f Author abbreviations ending in `" f."` (filius),
 #'   which would otherwise be mistaken for the rank `"f."` (forma).
+#' @param spec.name.aff.genus If `TRUE`, names with "aff." (*affinis*, near
+#'   but not this species, as in "Drypetes aff. amazonica") are reduced to the
+#'   genus. `FALSE` (default) removes "aff." with `sub.pattern` and matches the
+#'   species, as in WorldFlora. Give the same value to [WFO.prepare()] and
+#'   [WFO.match()]: this function already removes "aff." from the names it
+#'   returns.
 #' @param verbose If `TRUE`, report the changes made to names.
 #' @param counter Progress is reported every `counter` distinct names.
 #' @param trinomial.first,trinomial.second First and second infraspecific rank
@@ -130,7 +140,8 @@ WFO.prepare <- function(
     "Occhioni f.", "Rchb. f.", "Schultes f.",
     "Schult. f.", "Stapf f."
   ),
-  verbose = TRUE, counter = 1000
+  verbose = TRUE, counter = 1000,
+  spec.name.aff.genus = FALSE
 ) {
   spec.data <- .as.spec.data(spec.data, default.name = spec.full)
   if (!spec.full %in% names(spec.data)) {
@@ -169,7 +180,8 @@ WFO.prepare <- function(
     if (j %% counter == 0) message("Reached record # ", j)
     .prepare.one(todo[j],
       squish = squish, spec.name.sub = spec.name.sub, sub.pattern = sub.pattern,
-      spec.name.nonumber = spec.name.nonumber, genus.2.flag = genus.2.flag,
+      spec.name.nonumber = spec.name.nonumber,
+      spec.name.aff.genus = spec.name.aff.genus, genus.2.flag = genus.2.flag,
       species.2.flag = species.2.flag, punctuation.flag = punctuation.flag,
       pointless.flag = pointless.flag, trinomial = trinomial, verbose = verbose
     )
@@ -216,7 +228,7 @@ WFO.prepare <- function(
   sub.pattern,
   spec.name.nonumber,
   genus.2.flag, species.2.flag, punctuation.flag, pointless.flag,
-  trinomial, verbose
+  trinomial, verbose, spec.name.aff.genus = FALSE
 ) {
   msg <- function(...) if (verbose) message(...)
   out <- c(
@@ -228,6 +240,15 @@ WFO.prepare <- function(
   if (squish) {
     s1 <- stringr::str_squish(spfull)
     if (s1 != spfull) msg(spfull, " was squished")
+    spfull <- s1
+  }
+  if (spec.name.aff.genus && .has.aff(spfull)) {
+    msg(spfull, " contains aff.: reduced to the genus")
+    spfull <- sub(" .*$", "", spfull)
+  }
+  if (spec.name.nonumber) {
+    s1 <- .drop.morphospecies(spfull)
+    if (s1 != spfull) msg("Removed a morphospecies code from ", spfull)
     spfull <- s1
   }
   if (spec.name.sub) {

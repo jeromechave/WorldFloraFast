@@ -31,7 +31,8 @@ WFO.prepare(
     "Koster f.", "Liou f.", "L. f.", "Ma f.", "Mikan f.", "Occhioni f.", "Rchb. f.",
     "Schultes f.", "Schult. f.", "Stapf f."),
   verbose = TRUE,
-  counter = 1000
+  counter = 1000,
+  spec.name.aff.genus = FALSE
 )
 
 WFO.preprepare(
@@ -52,7 +53,10 @@ start and end of names (\code{\link[stringr:str_trim]{stringr::str_squish()}}).}
 
 \item{spec.name.nonumber}{If \code{TRUE}, names that contain numbers are
 interpreted as genera (only the first word is kept, without trailing
-digits).}
+digits). A morphospecies code at the end of a name (" sp.1",
+" sp.1_ECOSUR1", " sp9", " sp. 2") is removed first, so that
+"Aegiphila sp.1_ECOSUR1" gives \emph{Aegiphila} (WorldFlora gave
+"Aegiphila1_ECOSUR").}
 
 \item{spec.name.sub}{If \code{TRUE}, delete sections of names that match
 \code{sub.pattern}.}
@@ -81,6 +85,13 @@ which would otherwise be mistaken for the rank \code{"f."} (forma).}
 \item{verbose}{If \code{TRUE}, report the changes made to names.}
 
 \item{counter}{Progress is reported every \code{counter} distinct names.}
+
+\item{spec.name.aff.genus}{If \code{TRUE}, names with "aff." (\emph{affinis}, near
+but not this species, as in "Drypetes aff. amazonica") are reduced to the
+genus. \code{FALSE} (default) removes "aff." with \code{sub.pattern} and matches the
+species, as in WorldFlora. Give the same value to \code{\link[=WFO.prepare]{WFO.prepare()}} and
+\code{\link[=WFO.match]{WFO.match()}}: this function already removes "aff." from the names it
+returns.}
 
 \item{trinomial.first, trinomial.second}{First and second infraspecific rank
 used by \code{WFO.preprepare()} to split names.}

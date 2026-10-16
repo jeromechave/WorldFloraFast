@@ -12,8 +12,11 @@
 #       enough to contain a match), stringdist hits with a length window
 #       (.stringdist.hits()), and distances for vectors of name pairs
 #       (.pair.adist(); WorldFlora called adist() per row).
-#     - .keep.genus(): a correctly spelled genus is kept (Fuzzy.keep.genus; #
+#     - .keep.genus(): a correctly spelled genus is kept (Fuzzy.keep.genus;
 #       1.0.1).
+#     - .edit.dist() (an adjacent swap counts as one edit) and .word.k() (2
+#       edits for words of 8 or more letters); .keep.genus() only for genera
+#       with species names (1.0.6).
 #   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 # ----------------------------------------------------------------------------
 
@@ -139,6 +142,11 @@
   if (length(ids) == 0 || g == s || is.na(match(g, index$u))) {
     return(ids)
   }
+  # only a genus with species names in the backbone: a genus name alone (such
+  # as "Hyeronima", a variant of Hieronyma) does not hold the species
+  if (!is.null(index$sp.genera) && !(g %in% index$sp.genera)) {
+    return(ids)
+  }
   cand.genus <- sub(
     " .*$",
     "",
@@ -154,4 +162,27 @@
     ids[same],
     dropped = dropped[order(as.numeric(utils::adist(s, dropped)))]
   )
+}
+
+# Edit distance between two words, a swap of two adjacent letters counting as
+# one edit ("seibertii" and "siebertii": 1, not 2)
+.edit.dist <- function(a, b) {
+  d <- as.numeric(utils::adist(a, b))
+  if (d == 2 && nchar(a) == nchar(b)) {
+    x <- strsplit(a, "", fixed = TRUE)[[1]]
+    y <- strsplit(b, "", fixed = TRUE)[[1]]
+    i <- which(x != y)
+    swapped <- length(i) == 2 && i[2] == i[1] + 1 &&
+      x[i[1]] == y[i[2]] && x[i[2]] == y[i[1]]
+    if (swapped) d <- 1
+  }
+  d
+}
+
+# Edits allowed between two words of a name (an epithet, or two genus names):
+# the agrep() distance, at least 1, and at least 2 for words of 8 or more
+# letters ("theaeoides" and "theoides"). Shorter words keep a limit of 1, so
+# that short epithets are not replaced ("Ocotea luis" is not Ocotea lucida).
+.word.k <- function(w, Fuzzy) {
+  max(if (nchar(w) >= 8) 2 else 1, .agrep.k(w, Fuzzy))
 }

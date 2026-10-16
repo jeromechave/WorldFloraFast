@@ -49,7 +49,8 @@ WFO.match(
   Fuzzy.one.strict = FALSE,
   Fuzzy.epithet.check = TRUE,
   Fuzzy.keep.genus = TRUE,
-  Fuzzy.skip.placeholder = TRUE
+  Fuzzy.skip.placeholder = TRUE,
+  spec.name.aff.genus = FALSE
 )
 }
 \arguments{
@@ -128,7 +129,10 @@ capital first letter.}
 
 \item{spec.name.nonumber}{If \code{TRUE}, names that contain numbers are
 interpreted as genera (only the first word is kept, without trailing
-digits).}
+digits). A morphospecies code at the end of a name (" sp.1",
+" sp.1_ECOSUR1", " sp9", " sp. 2") is removed first, so that
+"Aegiphila sp.1_ECOSUR1" gives \emph{Aegiphila} (WorldFlora gave
+"Aegiphila1_ECOSUR").}
 
 \item{spec.name.nobrackets}{If \code{TRUE}, remove the part of names from the
 first \code{"("} onwards (such as authors in brackets).}
@@ -201,7 +205,9 @@ listed in \code{Fuzzy.alternatives} ("Altingia fargesii": \emph{Liquidambar}).}
 \item{Fuzzy.epithet.check}{If \code{TRUE} (default), fuzzy matches found by
 \code{\link[=agrep]{agrep()}} for names of two or more words are kept only if (1) the epithet
 is within the \code{Fuzzy} distance of the submitted epithet, computed on the
-epithet alone (at least 1 edit; gender endings ignored), or the submitted
+epithet alone (at least 1 edit, and 2 for epithets of 8 or more letters; a
+swap of two adjacent letters counts as one edit; gender endings ignored),
+or the submitted
 epithet is the beginning of it ("Quercus cornelius" -> \emph{Quercus
 cornelius-mulleri}); and (2) its genus is the submitted genus, or a genus
 with a similar name in the same family. \code{\link[=agrep]{agrep()}} allows a distance
@@ -216,8 +222,10 @@ second word is a rank (genus and epithet written together,
 together with the next word ("australissubsp.") is accepted.}
 
 \item{Fuzzy.keep.genus}{If \code{TRUE} (default), a correctly spelled genus is
-kept: when the first word of a name of two or more words is a name in the
-backbone, fuzzy matches in other genera are not accepted. Matches in that
+kept: when the first word of a name of two or more words is a genus with
+species names in the backbone, fuzzy matches in other genera are not
+accepted. (A genus name without species, such as "Hyeronima", a variant
+of \emph{Hieronyma}, does not keep its genus.) Matches in that
 genus are kept; if there are none, the genus-only fall-back (\code{Fuzzy.one})
 gives the genus. "Ulmus parviflora" is matched with the genus \emph{Ulmus}, not
 with \emph{Tamus parviflora} (Dioscoreaceae); "Neea gigante" with the genus
@@ -231,6 +239,13 @@ placeholder words ("indet.", "sp.", "spp.", "cf.", "aff.", "unknown", and
 the words of \code{sub.pattern}) are not fuzzy-matched and remain unmatched.
 WorldFlora matched "indet." with \emph{Opuntia coindetti}, in which "indet"
 occurs; \code{FALSE} gives the results of WorldFlora. With \code{WFO.one(..., spec.name = "spec.name")}, such names keep the submitted text.}
+
+\item{spec.name.aff.genus}{If \code{TRUE}, names with "aff." (\emph{affinis}, near
+but not this species, as in "Drypetes aff. amazonica") are reduced to the
+genus. \code{FALSE} (default) removes "aff." with \code{sub.pattern} and matches the
+species, as in WorldFlora. Give the same value to \code{\link[=WFO.prepare]{WFO.prepare()}} and
+\code{\link[=WFO.match]{WFO.match()}}: \code{\link[=WFO.prepare]{WFO.prepare()}} already removes "aff." from the names it
+returns.}
 }
 \value{
 A data.frame with the columns of \code{spec.data}, followed by:

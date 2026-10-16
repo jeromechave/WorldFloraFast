@@ -579,3 +579,59 @@ test_that("WFO.one returns each submitted record once, in order", {
   o <- q(WFO.one(r, verbose = FALSE))
   expect_equal(o$OriSeq, 1:6)
 })
+
+# ---- 1.0.6: benchmark refinements ----
+
+test_that("edit distance counts an adjacent swap once; long words allow 2", {
+  ns <- asNamespace("WorldFloraFast")
+  expect_equal(ns$.edit.dist("seibertii", "siebertii"), 1)
+  expect_equal(ns$.edit.dist("abc", "acb"), 1)
+  expect_equal(ns$.edit.dist("theaeoides", "theoides"), 2)
+  expect_equal(ns$.word.k("theaeoides", 0.1), 2)
+  expect_equal(ns$.word.k("luis", 0.1), 1)
+})
+
+test_that("epithet check: swaps and 2 edits in long epithets are accepted", {
+  bk <- bb(
+    c("Appunia", "Appunia siebertii", "Cleyera", "Cleyera theoides"),
+    c("Rubiaceae", "Rubiaceae", "Pentaphylacaceae", "Pentaphylacaceae")
+  )
+  r <- q(WFO.match(c("Appunia seibertii", "Cleyera theaeoides"),
+    WFO.data = bk, verbose = FALSE
+  ))
+  expect_equal(r$scientificName, c("Appunia siebertii", "Cleyera theoides"))
+})
+
+test_that("a genus name without species does not keep its genus", {
+  bk <- bb(
+    c("Hyeronima", "Hieronyma", "Hieronyma alchorneoides"),
+    "Phyllanthaceae",
+    status = c("Unchecked", "Accepted", "Accepted")
+  )
+  r <- q(WFO.match("Hyeronima alchorneoides", WFO.data = bk, verbose = FALSE))
+  expect_equal(r$scientificName, "Hieronyma alchorneoides")
+})
+
+test_that("morphospecies codes leave the genus", {
+  bk <- bb(c("Aegiphila", "Aegiphila elata"), "Lamiaceae")
+  x <- c("Aegiphila sp.1_ECOSUR1", "Aegiphila sp9", "Aegiphila sp. 2")
+  r <- q(WFO.match(x, WFO.data = bk, verbose = FALSE))
+  expect_equal(r$scientificName, rep("Aegiphila", 3))
+  p <- q(WFO.prepare(x, spec.full = "spec.full", verbose = FALSE))
+  expect_equal(p$spec.name, rep("Aegiphila", 3))
+})
+
+test_that("spec.name.aff.genus reduces aff. names to the genus", {
+  bk <- bb(c("Drypetes", "Drypetes amazonica"), "Putranjivaceae")
+  x <- c("Drypetes aff. amazonica", "Drypetes sp. aff. amazonica")
+  r0 <- q(WFO.match(x, WFO.data = bk, verbose = FALSE))
+  expect_equal(r0$scientificName, rep("Drypetes amazonica", 2)) # WorldFlora
+  r <- q(WFO.match(x,
+    WFO.data = bk, spec.name.aff.genus = TRUE, verbose = FALSE
+  ))
+  expect_equal(r$scientificName, rep("Drypetes", 2))
+  p <- q(WFO.prepare("Annona lutescens Saff.",
+    spec.full = "spec.full", spec.name.aff.genus = TRUE, verbose = FALSE
+  ))
+  expect_equal(p$spec.name, "Annona lutescens") # Saff. is an author
+})

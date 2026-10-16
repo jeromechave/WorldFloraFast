@@ -20,6 +20,7 @@
 #     - Ranks and hybrid notation of WFO 2026-06 (utils-rank.R).
 #     - The argument no.dates is deprecated (it had no effect).
 #   New in WorldFloraFast:
+#     - Argument spec.name.aff.genus (1.0.6).
 #     - Arguments Fuzzy.keep.genus (1.0.1), Fuzzy.skip.placeholder and default
 #       TRUE of Fuzzy.epithet.check (1.0.2): corrections, on by default; failed
 #       parallel processes are recomputed (.parallel.lapply(), 1.0.2).
@@ -93,7 +94,10 @@
 #'   capital first letter.
 #' @param spec.name.nonumber If `TRUE`, names that contain numbers are
 #'   interpreted as genera (only the first word is kept, without trailing
-#'   digits).
+#'   digits). A morphospecies code at the end of a name (" sp.1",
+#'   " sp.1_ECOSUR1", " sp9", " sp. 2") is removed first, so that
+#'   "Aegiphila sp.1_ECOSUR1" gives *Aegiphila* (WorldFlora gave
+#'   "Aegiphila1_ECOSUR").
 #' @param spec.name.nobrackets If `TRUE`, remove the part of names from the
 #'   first `"("` onwards (such as authors in brackets).
 #' @param exclude.infraspecific If `TRUE`, remove matches with an infraspecific
@@ -111,8 +115,10 @@
 #' @param cores Number of cores for fuzzy matching ([parallel::mclapply()]; not
 #'   on Windows).
 #' @param Fuzzy.keep.genus If `TRUE` (default), a correctly spelled genus is
-#'   kept: when the first word of a name of two or more words is a name in the
-#'   backbone, fuzzy matches in other genera are not accepted. Matches in that
+#'   kept: when the first word of a name of two or more words is a genus with
+#'   species names in the backbone, fuzzy matches in other genera are not
+#'   accepted. (A genus name without species, such as "Hyeronima", a variant
+#'   of *Hieronyma*, does not keep its genus.) Matches in that
 #'   genus are kept; if there are none, the genus-only fall-back (`Fuzzy.one`)
 #'   gives the genus. "Ulmus parviflora" is matched with the genus *Ulmus*, not
 #'   with *Tamus parviflora* (Dioscoreaceae); "Neea gigante" with the genus
@@ -123,7 +129,9 @@
 #' @param Fuzzy.epithet.check If `TRUE` (default), fuzzy matches found by
 #'   [agrep()] for names of two or more words are kept only if (1) the epithet
 #'   is within the `Fuzzy` distance of the submitted epithet, computed on the
-#'   epithet alone (at least 1 edit; gender endings ignored), or the submitted
+#'   epithet alone (at least 1 edit, and 2 for epithets of 8 or more letters; a
+#'   swap of two adjacent letters counts as one edit; gender endings ignored),
+#'   or the submitted
 #'   epithet is the beginning of it ("Quercus cornelius" -> *Quercus
 #'   cornelius-mulleri*); and (2) its genus is the submitted genus, or a genus
 #'   with a similar name in the same family. [agrep()] allows a distance
@@ -136,6 +144,12 @@
 #'   second word is a rank (genus and epithet written together,
 #'   "Dichondramrepens var. sericea") are not checked, and an epithet written
 #'   together with the next word ("australissubsp.") is accepted.
+#' @param spec.name.aff.genus If `TRUE`, names with "aff." (*affinis*, near
+#'   but not this species, as in "Drypetes aff. amazonica") are reduced to the
+#'   genus. `FALSE` (default) removes "aff." with `sub.pattern` and matches the
+#'   species, as in WorldFlora. Give the same value to [WFO.prepare()] and
+#'   [WFO.match()]: [WFO.prepare()] already removes "aff." from the names it
+#'   returns.
 #' @param Fuzzy.skip.placeholder If `TRUE` (default), names made only of
 #'   placeholder words ("indet.", "sp.", "spp.", "cf.", "aff.", "unknown", and
 #'   the words of `sub.pattern`) are not fuzzy-matched and remain unmatched.
@@ -431,7 +445,8 @@ WFO.match <- function(
   Fuzzy.genus = FALSE, Fuzzy.transfer = FALSE, Fuzzy.one.strict = FALSE,
   Fuzzy.epithet.check = TRUE,
   Fuzzy.keep.genus = TRUE,
-  Fuzzy.skip.placeholder = TRUE
+  Fuzzy.skip.placeholder = TRUE,
+  spec.name.aff.genus = FALSE
 ) {
   if (!missing(no.dates)) .no.dates.deprecated()
   spec.data <- .as.spec.data(spec.data)
@@ -454,7 +469,8 @@ WFO.match <- function(
       spec.name.sub = spec.name.sub,
       sub.pattern = sub.pattern,
       spec.name.nobrackets = spec.name.nobrackets,
-      spec.name.nonumber = spec.name.nonumber
+      spec.name.nonumber = spec.name.nonumber,
+      spec.name.aff.genus = spec.name.aff.genus
     )
   }
   for (v in intersect(
@@ -502,6 +518,13 @@ WFO.match <- function(
       "index.name",
       function() .build.index(.hybrid.key(WFO.dt$scientificName))
     )
+    if (Fuzzy.keep.genus) {
+      # genera with species names in the backbone (Fuzzy.keep.genus)
+      index$sp.genera <- .cached(WFO.dt, "sp.genera", function() {
+        multi <- index$u[grepl(" ", index$u, fixed = TRUE)]
+        unique(sub(" .*$", "", sub(paste0("^", .HYBRID, " ?"), "", multi)))
+      })
+    }
     nm <- .hybrid.key(spec.data[[spec.name]])
 
     # 1. exact matches (one hash lookup for all records)

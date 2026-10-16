@@ -1,3 +1,29 @@
+# WorldFloraFast 1.0.6 (pre-release)
+
+Refinements from a benchmark of 275 plant names with verified names, matched against the
+WFO Plant List 2026-06. Correct answers (the verified name or its current accepted name)
+after `WFO.prepare()`: WorldFlora 1.14-5 81.7%, WorldFloraFast 1.0.5 80.2%, 1.0.6 89.5%
+(93.0% with `spec.name.aff.genus = TRUE`). On the earlier test sets, no result changes.
+
+* Epithet check (`Fuzzy.epithet.check`): epithets and genus names of 8 or more letters may
+  differ by 2 edits (1 before), and a swap of two adjacent letters counts as one edit.
+  "Appunia seibertii" is matched with *Appunia siebertii*, "Cleyera theaeoides" with
+  *Cleyera theoides*. Short epithets keep a limit of 1 edit ("Ocotea luis" is still not
+  *Ocotea lucida*).
+* `Fuzzy.keep.genus` applies only to genera with species names in the backbone: a genus
+  name alone, such as "Hyeronima" (a variant of *Hieronyma*, without species in WFO), does
+  not keep its genus. "Hyeronima alchorneoides" is matched with *Hieronyma alchorneoides*.
+* Morphospecies codes at the end of a name (" sp.1", " sp.1_ECOSUR1", " sp9", " sp. 2")
+  are removed before cleaning, in `WFO.match()` and `WFO.prepare()`, so that the genus is
+  matched: "Aegiphila sp.1_ECOSUR1" gives *Aegiphila*. WorldFlora removed " sp." and kept
+  the rest glued to the genus ("Aegiphila1_ECOSUR"), which matched nothing.
+  `Number.detected` is unchanged.
+* New argument `spec.name.aff.genus` of `WFO.match()` and `WFO.prepare()`, `FALSE` by
+  default: if `TRUE`, names with "aff." ("Drypetes aff. amazonica") are reduced to the
+  genus, since *affinis* means near, but not, the species. Give it to both functions.
+* Vignette: a section on the benchmark. README: computing times of WorldFlora and
+  WorldFloraFast on the benchmark.
+
 # WorldFloraFast 1.0.5 (pre-release)
 
 * `WFO.download()` saves the backbone by default in a per-user data folder,

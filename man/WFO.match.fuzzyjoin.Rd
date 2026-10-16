@@ -76,7 +76,10 @@ capital first letter.}
 
 \item{spec.name.nonumber}{If \code{TRUE}, names that contain numbers are
 interpreted as genera (only the first word is kept, without trailing
-digits).}
+digits). A morphospecies code at the end of a name (" sp.1",
+" sp.1_ECOSUR1", " sp9", " sp. 2") is removed first, so that
+"Aegiphila sp.1_ECOSUR1" gives \emph{Aegiphila} (WorldFlora gave
+"Aegiphila1_ECOSUR").}
 
 \item{spec.name.nobrackets}{If \code{TRUE}, remove the part of names from the
 first \code{"("} onwards (such as authors in brackets).}
