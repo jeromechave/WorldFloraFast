@@ -31,6 +31,8 @@ Download, read and remember the World Flora Online Plant List.
   [`read_classification()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.read.md)
   [`WFO.remember()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.read.md)
   : Read and remember the taxonomic backbone
+- [`WFO.releases()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.releases.md)
+  : Releases of the backbone in the data folder
 
 ## Other backbones
 

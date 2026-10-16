@@ -30,7 +30,9 @@ WFO.remember(WFO.file = NULL, WFO.data = "WFO.data", WFO.pos = 1, ...)
 
   Path to the backbone (`classification.csv` or `classification.txt`),
   or a directory that contains it. For `WFO.read()` and
-  `WFO.remember()`, `NULL` uses the remembered location.
+  `WFO.remember()`, `NULL` uses the remembered location, or, if that
+  file no longer exists, the newest release in the data folder (see
+  [`WFO.releases()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.releases.md)).
 
 - select:
 
@@ -80,7 +82,10 @@ skipped with a warning.
 `WFO.remember()` saves the location in the user configuration directory
 ([`tools::R_user_dir()`](https://rdrr.io/r/tools/userdir.html)); a
 location saved by WorldFlora is also found. With `WFO.file = NULL`, the
-matching functions use the remembered backbone too.
+matching functions use the remembered backbone too, or, if it no longer
+exists, the newest release in the data folder of
+[`WFO.download()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.download.md).
+A message gives the file and the release used.
 
 `read_classification()` is deprecated: use `WFO.read()`. It used the
 argument names of the stand-alone download script, unlike the other
@@ -88,7 +93,8 @@ functions.
 
 ## See also
 
-[`WFO.download()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.download.md)
+[`WFO.download()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.download.md),
+[`WFO.releases()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.releases.md)
 
 ## Examples
 
@@ -111,7 +117,7 @@ str(bb)
 #>  $ specificEpithet         : chr  "" "" "" "" ...
 #>  $ verbatimTaxonRank       : chr  "family" "genus" "genus" "family" ...
 #>  $ infraspecificEpithet    : chr  "" "" "" "" ...
-#>  - attr(*, ".internal.selfref")=<pointer: 0x55ae992c0a30> 
+#>  - attr(*, ".internal.selfref")=<pointer: 0x55c6de4b5a30> 
 if (FALSE) { # \dontrun{
 WFO.remember("wfo_data/classification.csv") # remember and load as WFO.data
 WFO.remember() # in a later session

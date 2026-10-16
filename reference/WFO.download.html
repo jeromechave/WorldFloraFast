@@ -13,7 +13,7 @@ published MD5 checksum and retried with exponential back-off."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ published MD5 checksum and retried with exponential back-off.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">WFO.download</span><span class="op">(</span></span>
 <span>  WFO.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  save.dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  save.dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  WFO.remember <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  timeout <span class="op">=</span> <span class="fl">3600</span>,</span>
 <span>  force <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -80,7 +80,11 @@ published MD5 checksum and retried with exponential back-off.</p>
 
 
 <dt id="arg-save-dir-out-dir">save.dir, out_dir<a class="anchor" aria-label="anchor" href="#arg-save-dir-out-dir"></a></dt>
-<dd><p>Directory for the backbone (created if needed).</p></dd>
+<dd><p>Directory for the backbone (created if needed). With
+<code>save.dir = NULL</code> (default), each release is saved in its own folder of the
+per-user data folder of WorldFloraFast (see Details and <code><a href="WFO.releases.html">WFO.releases()</a></code>);
+<code>save.dir = getwd()</code> gives the default of WorldFlora (the working
+directory).</p></dd>
 
 
 <dt id="arg-wfo-remember">WFO.remember<a class="anchor" aria-label="anchor" href="#arg-wfo-remember"></a></dt>
@@ -125,7 +129,23 @@ only).</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Next to the backbone, <code>classification_source.json</code> records the
+    <p>By default (<code>save.dir = NULL</code>), the backbone is saved in the
+per-user data folder of WorldFloraFast, given by <code><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">tools::R_user_dir()</a></code>
+(<code>R_user_dir("WorldFloraFast", "data")</code>, subfolder <code>wfo</code>), in a folder named
+after the release, such as <code>wfo/2026-06/classification.csv</code>. This folder is
+the same in every session and project, and is kept when the package or R
+are reinstalled; <code><a href="WFO.releases.html">WFO.releases()</a></code> lists the releases it holds and deletes old
+ones. Without <code>update</code> or <code>force</code>, an existing release is used and Zenodo is
+not contacted (unless <code>pinned = TRUE</code> asks for a given release, which is
+downloaded to its own folder if needed); with <code>update = TRUE</code>, a newer
+release is downloaded to a new
+folder and the older ones are kept. With <code>WFO.url</code>, the file is saved in the
+subfolder <code>from_url</code>. WorldFlora saved the backbone in the working
+directory, which <code>save.dir = getwd()</code> still does.</p>
+<p>In a new session, <code><a href="WFO.match.html">WFO.match()</a></code> without <code>WFO.data</code> or <code>WFO.file</code>,
+<code><a href="WFO.read.html">WFO.read()</a></code> and <code><a href="WFO.read.html">WFO.remember()</a></code> use the backbone file of the last download,
+or else the newest release in the data folder.</p>
+<p>Next to the backbone, <code>classification_source.json</code> records the
 Zenodo record, version, DOI, source file, MD5 checksum and date of the
 download. A mirror can be used by setting the environment variable
 <code>ZENODO_BASE</code>; <code>ZENODO_RETRY_WAIT</code> sets the first waiting time (in seconds)
@@ -136,20 +156,29 @@ functions, and does not remember or load the backbone (<code>WFO.remember = FALS
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="WFO.read.html">WFO.read()</a></code>, <code><a href="WFO.read.html">WFO.remember()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="WFO.releases.html">WFO.releases()</a></code>, <code><a href="WFO.read.html">WFO.read()</a></code>, <code><a href="WFO.read.html">WFO.remember()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># download (or find) the backbone, remember it and load it as WFO.data</span></span></span>
-<span class="r-in"><span><span class="fu">WFO.download</span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_data"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># download (or find) the backbone in the data folder, remember it and load it</span></span></span>
+<span class="r-in"><span><span class="co"># as WFO.data</span></span></span>
+<span class="r-in"><span><span class="fu">WFO.download</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># later: look for a newer release</span></span></span>
-<span class="r-in"><span><span class="fu">WFO.download</span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_data"</span>, update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># in a later session: nothing to download, WFO.match() finds the backbone</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="WFO.match.html">WFO.match</a></span><span class="op">(</span><span class="st">"Faidherbia albida"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># look for a newer release (kept next to the older ones)</span></span></span>
+<span class="r-in"><span><span class="fu">WFO.download</span><span class="op">(</span>update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="WFO.releases.html">WFO.releases</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># a specific release: the WFO Plant List 2026-06</span></span></span>
-<span class="r-in"><span><span class="fu">WFO.download</span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_2026_06"</span>, record.id <span class="op">=</span> <span class="st">"20782718"</span>, pinned <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">WFO.download</span><span class="op">(</span>record.id <span class="op">=</span> <span class="st">"20782718"</span>, pinned <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># another folder, such as a shared drive or the project folder (as in</span></span></span>
+<span class="r-in"><span><span class="co"># WorldFlora)</span></span></span>
+<span class="r-in"><span><span class="fu">WFO.download</span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

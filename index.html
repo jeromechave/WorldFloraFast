@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@
 <span>                        dependencies <span class="op">=</span> <span class="cn">TRUE</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jeromechave.github.io/WorldFloraFast/">WorldFloraFast</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/WFO.download.html">WFO.download</a></span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_data"</span><span class="op">)</span>        <span class="co"># latest WFO Plant List (2026-06) from Zenodo; loads WFO.data</span></span>
+<span><span class="fu"><a href="reference/WFO.download.html">WFO.download</a></span><span class="op">(</span><span class="op">)</span>        <span class="co"># latest WFO Plant List (2026-06) from Zenodo, to a per-user data folder; loads WFO.data</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/WFO.match.html">WFO.match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Faidherbia albida"</span>, <span class="st">"Acacia nilotca"</span>, <span class="st">"Compositae"</span><span class="op">)</span>, WFO.data <span class="op">=</span> <span class="va">WFO.data</span><span class="op">)</span></span>
 <span><span class="co"># optional matching steps for difficult names</span></span>
 <span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/WFO.match.html">WFO.match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reinwardtiod cinerum"</span>, <span class="st">"Palma colorada"</span><span class="op">)</span>, WFO.data <span class="op">=</span> <span class="va">WFO.data</span>,</span>
@@ -67,7 +67,8 @@
 <span></span>
 <span><span class="co"># later sessions</span></span>
 <span><span class="fu"><a href="reference/WFO.read.html">WFO.remember</a></span><span class="op">(</span><span class="op">)</span>                              <span class="co"># reload the remembered backbone as WFO.data</span></span>
-<span><span class="fu"><a href="reference/WFO.download.html">WFO.download</a></span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_data"</span>, update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>   <span class="co"># check for a newer release</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/WFO.download.html">WFO.download</a></span><span class="op">(</span>update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>   <span class="co"># check for a newer release</span></span>
+<span><span class="fu"><a href="reference/WFO.releases.html">WFO.releases</a></span><span class="op">(</span><span class="op">)</span>                <span class="co"># releases downloaded, and where</span></span></code></pre></div>
 <p>Works with the WFO Plant List 2026-06 and earlier releases. By default it behaves as WorldFlora (same arguments and result columns), with errors corrected: a correctly spelled genus is kept, short epithets are not replaced, and placeholders such as “indet.” are not matched. Optional matching steps (<code>Fuzzy.genus</code>, <code>Fuzzy.transfer</code>, <code>Fuzzy.one.strict</code>) handle truncated genera (“Reinwardtiod cinerum”), species moved to another genus (“Chrysophyllum madagascariensis” -&gt; <em>Gambeya boiviniana</em>), short epithets, and local names such as “Palma colorada”, which are then not given a scientific genus.</p>
 <div class="section level2">
 <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a>

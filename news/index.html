@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,13 @@
       <small>Source: <a href="https://github.com/jeromechave/WorldFloraFast/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.5" id="worldflorafast-105-pre-release">WorldFloraFast 1.0.5 (pre-release)<a class="anchor" aria-label="anchor" href="#worldflorafast-105-pre-release"></a></h2>
+<ul><li>
+<code><a href="../reference/WFO.download.html">WFO.download()</a></code> saves the backbone by default in a per-user data folder, <code>tools::R_user_dir("WorldFloraFast", "data")</code> (subfolder <code>wfo</code>), in a folder per release (for example <code>wfo/2026-06/classification.csv</code>). The folder is the same in every session and project, and is kept when the package or R are reinstalled, so the backbone is downloaded only once. A newer release (<code>update = TRUE</code>) is saved next to the older ones; a pinned release (<code>record.id</code>, <code>pinned = TRUE</code>) in its own folder. WorldFlora saved the backbone in the working directory: <code>save.dir = getwd()</code> still does, and any other <code>save.dir</code> behaves as before.</li>
+<li>In a new session, <code><a href="../reference/WFO.match.html">WFO.match()</a></code> without <code>WFO.data</code> or <code>WFO.file</code>, <code><a href="../reference/WFO.read.html">WFO.read()</a></code> and <code><a href="../reference/WFO.read.html">WFO.remember()</a></code> use the backbone file remembered by the last download, or, if it no longer exists, the newest release in the data folder. A message gives the file and the release used.</li>
+<li>New <code><a href="../reference/WFO.releases.html">WFO.releases()</a></code>: lists the releases in the data folder (version, Zenodo record and DOI, date, size, which one is in use) and deletes old ones (<code>remove = "2025-12"</code>).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.4" id="worldflorafast-104-pre-release">WorldFloraFast 1.0.4 (pre-release)<a class="anchor" aria-label="anchor" href="#worldflorafast-104-pre-release"></a></h2>
 <ul><li>Website built with pkgdown: <a href="https://jeromechave.github.io/WorldFloraFast/" class="uri">https://jeromechave.github.io/WorldFloraFast/</a>, published by a GitHub Actions workflow (<code>.github/workflows/pkgdown.yaml</code>) on every push to <code>main</code>. The reference is grouped by task: matching, preparing names, getting the backbone, other backbones, exploring, data, deprecated functions.</li>

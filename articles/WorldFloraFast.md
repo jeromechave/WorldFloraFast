@@ -11,16 +11,21 @@ WorldFlora package (Kindt 2020), with the same functions and arguments.
 The backbone (`classification.csv`, about 1.6 million names) is
 published on Zenodo.
 [`WFO.download()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.download.md)
-downloads the latest release, verifies its checksum, remembers where it
-is and loads it as `WFO.data`:
+downloads the latest release to a per-user data folder of
+WorldFloraFast, in a folder named after the release (such as
+`wfo/2026-06`), verifies its checksum, remembers where it is and loads
+it as `WFO.data`. The data folder is the same in every session and
+project, so the backbone is downloaded only once:
 
 ``` r
 
-WFO.download(save.dir = "wfo_data")              # first time: about 1 GB
-WFO.download(save.dir = "wfo_data", update = TRUE)  # later: newer release?
-# new session: load WFO.data again
-WFO.remember()
-WFO.data <- WFO.read("wfo_data", core.only = TRUE)  # or read fewer columns
+WFO.download() # first time: about 1 GB
+# new session: nothing to download; WFO.match() finds the backbone itself
+WFO.remember() # or load it as WFO.data
+WFO.data <- WFO.read(core.only = TRUE) # or read fewer columns
+WFO.download(update = TRUE) # later: newer release? (kept next to the older one)
+WFO.releases() # releases in the data folder; remove = "..." deletes one
+WFO.download(save.dir = "wfo_data") # elsewhere, such as the project folder
 ```
 
 This vignette uses `WFO.example2026`, a small extract of the WFO Plant

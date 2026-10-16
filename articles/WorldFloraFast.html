@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,14 +71,19 @@ arguments.</p>
 </h2>
 <p>The backbone (<code>classification.csv</code>, about 1.6 million
 names) is published on Zenodo. <code><a href="../reference/WFO.download.html">WFO.download()</a></code> downloads the
-latest release, verifies its checksum, remembers where it is and loads
-it as <code>WFO.data</code>:</p>
+latest release to a per-user data folder of WorldFloraFast, in a folder
+named after the release (such as <code>wfo/2026-06</code>), verifies its
+checksum, remembers where it is and loads it as <code>WFO.data</code>.
+The data folder is the same in every session and project, so the
+backbone is downloaded only once:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/WFO.download.html">WFO.download</a></span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_data"</span><span class="op">)</span>              <span class="co"># first time: about 1 GB</span></span>
-<span><span class="fu"><a href="../reference/WFO.download.html">WFO.download</a></span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_data"</span>, update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># later: newer release?</span></span>
-<span><span class="co"># new session: load WFO.data again</span></span>
-<span><span class="fu"><a href="../reference/WFO.read.html">WFO.remember</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">WFO.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WFO.read.html">WFO.read</a></span><span class="op">(</span><span class="st">"wfo_data"</span>, core.only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># or read fewer columns</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/WFO.download.html">WFO.download</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># first time: about 1 GB</span></span>
+<span><span class="co"># new session: nothing to download; WFO.match() finds the backbone itself</span></span>
+<span><span class="fu"><a href="../reference/WFO.read.html">WFO.remember</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># or load it as WFO.data</span></span>
+<span><span class="va">WFO.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WFO.read.html">WFO.read</a></span><span class="op">(</span>core.only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># or read fewer columns</span></span>
+<span><span class="fu"><a href="../reference/WFO.download.html">WFO.download</a></span><span class="op">(</span>update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># later: newer release? (kept next to the older one)</span></span>
+<span><span class="fu"><a href="../reference/WFO.releases.html">WFO.releases</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># releases in the data folder; remove = "..." deletes one</span></span>
+<span><span class="fu"><a href="../reference/WFO.download.html">WFO.download</a></span><span class="op">(</span>save.dir <span class="op">=</span> <span class="st">"wfo_data"</span><span class="op">)</span> <span class="co"># elsewhere, such as the project folder</span></span></code></pre></div>
 <p>This vignette uses <code>WFO.example2026</code>, a small extract of
 the WFO Plant List 2026-06 that is included in the package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">

@@ -16,7 +16,7 @@ remotes::install_github("jeromechave/WorldFloraFast",
                         dependencies = TRUE, build_vignettes = TRUE)
 library(WorldFloraFast)
 
-WFO.download(save.dir = "wfo_data")        # latest WFO Plant List (2026-06) from Zenodo; loads WFO.data
+WFO.download()        # latest WFO Plant List (2026-06) from Zenodo, to a per-user data folder; loads WFO.data
 res <- WFO.match(c("Faidherbia albida", "Acacia nilotca", "Compositae"), WFO.data = WFO.data)
 # optional matching steps for difficult names
 res2 <- WFO.match(c("Reinwardtiod cinerum", "Palma colorada"), WFO.data = WFO.data,
@@ -25,7 +25,8 @@ one <- WFO.one(res)                         # one row per submitted name
 
 # later sessions
 WFO.remember()                              # reload the remembered backbone as WFO.data
-WFO.download(save.dir = "wfo_data", update = TRUE)   # check for a newer release
+WFO.download(update = TRUE)   # check for a newer release
+WFO.releases()                # releases downloaded, and where
 ```
 
 Works with the WFO Plant List 2026-06 and earlier releases. By default
@@ -133,6 +134,8 @@ Download, read and remember the World Flora Online Plant List.
   [`read_classification()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.read.md)
   [`WFO.remember()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.read.md)
   : Read and remember the taxonomic backbone
+- [`WFO.releases()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.releases.md)
+  : Releases of the backbone in the data folder
 
 ## Other backbones
 

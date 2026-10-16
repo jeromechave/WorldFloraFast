@@ -15,13 +15,13 @@ Source:
 
 Chave J, Kindt R (2026). WorldFloraFast: Fast Standardization of Plant
 Names Against the World Flora Online Taxonomic Backbone. R package
-version 1.0.4.
+version 1.0.5.
 
     @Manual{,
       title = {WorldFloraFast: Fast Standardization of Plant Names Against the World Flora Online Taxonomic Backbone},
       author = {Jérôme Chave and Roeland Kindt},
       year = {2026},
-      note = {R package version 1.0.4},
+      note = {R package version 1.0.5},
     }
 
 Kindt R (2020). “WorldFlora: An R package for exact and fuzzy matching
