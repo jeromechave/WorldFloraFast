@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -198,23 +198,21 @@ returned, one row each:</p>
 <span>  <span class="st">"Subseq"</span>, <span class="st">"Fuzzy.dist"</span>, <span class="st">"scientificName"</span>, <span class="st">"taxonomicStatus"</span>, <span class="st">"Old.name"</span></span>
 <span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   Subseq Fuzzy.dist         scientificName taxonomicStatus</span></span>
-<span><span class="co">#&gt; 1      1          9 Homalanthus caloneurus        Accepted</span></span>
-<span><span class="co">#&gt; 2      2          2  Homalanthus populneus        Accepted</span></span>
-<span><span class="co">#&gt; 3      3          2  Homalanthus populneus       Unchecked</span></span>
-<span><span class="co">#&gt; 4      4         19 Homalanthus caloneurus        Accepted</span></span>
-<span><span class="co">#&gt; 5      5         16  Homalanthus populneus        Accepted</span></span>
-<span><span class="co">#&gt; 6      6         14  Homalanthus populneus        Accepted</span></span>
-<span><span class="co">#&gt; 7      7         13  Homalanthus populneus        Accepted</span></span>
-<span><span class="co">#&gt; 8      8         14        Alchornea sicca        Accepted</span></span>
+<span><span class="co">#&gt; 1      1          2  Homalanthus populneus        Accepted</span></span>
+<span><span class="co">#&gt; 2      2          2  Homalanthus populneus       Unchecked</span></span>
+<span><span class="co">#&gt; 3      3         19 Homalanthus caloneurus        Accepted</span></span>
+<span><span class="co">#&gt; 4      4         16  Homalanthus populneus        Accepted</span></span>
+<span><span class="co">#&gt; 5      5         14  Homalanthus populneus        Accepted</span></span>
+<span><span class="co">#&gt; 6      6         13  Homalanthus populneus        Accepted</span></span>
+<span><span class="co">#&gt; 7      7         14        Alchornea sicca        Accepted</span></span>
 <span><span class="co">#&gt;                                 Old.name</span></span>
 <span><span class="co">#&gt; 1                                       </span></span>
 <span><span class="co">#&gt; 2                                       </span></span>
-<span><span class="co">#&gt; 3                                       </span></span>
-<span><span class="co">#&gt; 4 Homalanthus populneus var. cordifolius</span></span>
-<span><span class="co">#&gt; 5    Homalanthus populneus var. genuinus</span></span>
-<span><span class="co">#&gt; 6      Homalanthus populneus var. laevis</span></span>
-<span><span class="co">#&gt; 7       Homalanthus populneus var. minor</span></span>
-<span><span class="co">#&gt; 8      Homalanthus populneus var. siccus</span></span></code></pre></div>
+<span><span class="co">#&gt; 3 Homalanthus populneus var. cordifolius</span></span>
+<span><span class="co">#&gt; 4    Homalanthus populneus var. genuinus</span></span>
+<span><span class="co">#&gt; 5      Homalanthus populneus var. laevis</span></span>
+<span><span class="co">#&gt; 6       Homalanthus populneus var. minor</span></span>
+<span><span class="co">#&gt; 7      Homalanthus populneus var. siccus</span></span></code></pre></div>
 <p><code>Fuzzy.dist</code> is the distance to the name that was matched,
 which for replaced synonyms is <code>Old.name</code> (here, varieties
 replaced by their species).</p>
@@ -330,6 +328,147 @@ identifiers can be used instead of the WFO:</p>
 <span><span class="va">m</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spec.name"</span>, <span class="st">"scientificName"</span>, <span class="st">"Old.name"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;         spec.name scientificName         Old.name</span></span>
 <span><span class="co">#&gt; 1 Felis domestica    Felis catus Felis domesticus</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="a-benchmark-of-real-names">8. A benchmark of real names<a class="anchor" aria-label="anchor" href="#a-benchmark-of-real-names"></a>
+</h2>
+<p>A benchmark of 275 plant names, each with a verified name, shows how
+WorldFloraFast handles names as they are found in real data: with
+authors, misspellings, variant spellings, morphospecies codes and
+qualifiers such as “aff.”. The code below uses the complete WFO Plant
+List 2026-06 (<code><a href="../reference/WFO.download.html">WFO.download()</a></code>), so it is not run when this
+vignette is built; its results are shown underneath.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Abarema adenophora (Ducke) Barneby &amp; J.W. Grimes"</span>, <span class="co"># with authors; a synonym</span></span>
+<span>  <span class="st">"Appunia seibertii"</span>, <span class="co"># two letters swapped</span></span>
+<span>  <span class="st">"Cleyera theaeoides ?"</span>, <span class="co"># variant spelling</span></span>
+<span>  <span class="st">"Hyeronima alchorneoides Allem_o"</span>, <span class="co"># variant spelling of the genus</span></span>
+<span>  <span class="st">"Sideroxylon sp.1_ECOSUR5"</span>, <span class="co"># morphospecies code</span></span>
+<span>  <span class="st">"Drypetes aff. amazonica"</span>, <span class="co"># near, but not, this species</span></span>
+<span>  <span class="st">"Annona lutescens Saff."</span> <span class="co"># Saff. is an author (Safford)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">prep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WFO.prepare.html">WFO.prepare</a></span><span class="op">(</span><span class="va">x</span>, spec.full <span class="op">=</span> <span class="st">"spec.full"</span>, spec.name.aff.genus <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WFO.match.html">WFO.match</a></span><span class="op">(</span><span class="va">prep</span>,</span>
+<span>  spec.name <span class="op">=</span> <span class="st">"spec.name"</span>, Authorship <span class="op">=</span> <span class="st">"Authorship"</span>,</span>
+<span>  WFO.data <span class="op">=</span> <span class="va">WFO.data</span>, spec.name.aff.genus <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/WFO.one.html">WFO.one</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">$</span><span class="va">scientificName</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr class="header">
+<th>Submitted</th>
+<th>Prepared (<code>spec.name</code>)</th>
+<th>WorldFloraFast 1.0.6</th>
+<th>Verified</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Abarema adenophora (Ducke) Barneby &amp; J.W. Grimes</td>
+<td>Abarema adenophora</td>
+<td><em>Jupunba adenophora</em></td>
+<td><em>Jupunba adenophora</em></td>
+</tr>
+<tr class="even">
+<td>Appunia seibertii</td>
+<td>Appunia seibertii</td>
+<td><em>Appunia siebertii</em></td>
+<td><em>Appunia siebertii</em></td>
+</tr>
+<tr class="odd">
+<td>Cleyera theaeoides ?</td>
+<td>Cleyera theaeoides</td>
+<td><em>Cleyera theoides</em></td>
+<td><em>Cleyera theoides</em></td>
+</tr>
+<tr class="even">
+<td>Hyeronima alchorneoides Allem_o</td>
+<td>Hyeronima alchorneoides</td>
+<td><em>Hieronyma alchorneoides</em></td>
+<td><em>Hieronyma alchorneoides</em></td>
+</tr>
+<tr class="odd">
+<td>Sideroxylon sp.1_ECOSUR5</td>
+<td>Sideroxylon</td>
+<td><em>Sideroxylon</em></td>
+<td><em>Sideroxylon</em></td>
+</tr>
+<tr class="even">
+<td>Drypetes aff. amazonica</td>
+<td>Drypetes</td>
+<td><em>Drypetes</em></td>
+<td><em>Drypetes</em></td>
+</tr>
+<tr class="odd">
+<td>Annona lutescens Saff.</td>
+<td>Annona lutescens</td>
+<td><em>Annona reticulata</em></td>
+<td><em>Annona</em></td>
+</tr>
+</tbody>
+</table>
+<p><em>Annona lutescens</em> is a synonym of <em>A. reticulata</em> in
+WFO; the verified name, the genus only, seems to have read the author
+“Saff.” as “aff.”. On the whole benchmark (257 names with a verified
+name), the share of correct answers, the verified name or its current
+accepted name, and the matching times on one core were:</p>
+<table class="table">
+<colgroup>
+<col width="15%">
+<col width="21%">
+<col width="21%">
+<col width="21%">
+<col width="21%">
+</colgroup>
+<thead><tr class="header">
+<th></th>
+<th align="right">Names as submitted</th>
+<th align="right"></th>
+<th align="right">After <code><a href="../reference/WFO.prepare.html">WFO.prepare()</a></code>
+</th>
+<th align="right"></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td align="right">correct</td>
+<td align="right">time</td>
+<td align="right">correct</td>
+<td align="right">time</td>
+</tr>
+<tr class="even">
+<td>WorldFlora 1.14-5</td>
+<td align="right">80.2%</td>
+<td align="right">1,479 s</td>
+<td align="right">81.7%</td>
+<td align="right">618 s</td>
+</tr>
+<tr class="odd">
+<td>WorldFloraFast 1.0.6</td>
+<td align="right">87.9%</td>
+<td align="right">73 s</td>
+<td align="right">89.5%</td>
+<td align="right">40 s</td>
+</tr>
+<tr class="even">
+<td>WorldFloraFast 1.0.6, <code>spec.name.aff.genus = TRUE</code>
+</td>
+<td align="right"></td>
+<td align="right"></td>
+<td align="right">93.0%</td>
+<td align="right">35 s</td>
+</tr>
+</tbody>
+</table>
+<p>Most of the remaining differences come from names the verified list
+resolves only to the genus while the backbone has the species (as
+above), and from names that are not plant names (“Alternate simple-lvd
+sp.”).</p>
 </div>
 <div class="section level2">
 <h2 id="performance">Performance<a class="anchor" aria-label="anchor" href="#performance"></a>

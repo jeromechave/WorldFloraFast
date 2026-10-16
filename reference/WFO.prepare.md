@@ -38,7 +38,8 @@ WFO.prepare(
     "Koster f.", "Liou f.", "L. f.", "Ma f.", "Mikan f.", "Occhioni f.", "Rchb. f.",
     "Schultes f.", "Schult. f.", "Stapf f."),
   verbose = TRUE,
-  counter = 1000
+  counter = 1000,
+  spec.name.aff.genus = FALSE
 )
 
 WFO.preprepare(
@@ -69,7 +70,10 @@ WFO.preprepare(
 - spec.name.nonumber:
 
   If `TRUE`, names that contain numbers are interpreted as genera (only
-  the first word is kept, without trailing digits).
+  the first word is kept, without trailing digits). A morphospecies code
+  at the end of a name (" sp.1", " sp.1_ECOSUR1", " sp9", " sp. 2") is
+  removed first, so that "Aegiphila sp.1_ECOSUR1" gives *Aegiphila*
+  (WorldFlora gave "Aegiphila1_ECOSUR").
 
 - spec.name.sub:
 
@@ -115,6 +119,15 @@ WFO.preprepare(
 - counter:
 
   Progress is reported every `counter` distinct names.
+
+- spec.name.aff.genus:
+
+  If `TRUE`, names with "aff." (*affinis*, near but not this species, as
+  in "Drypetes aff. amazonica") are reduced to the genus. `FALSE`
+  (default) removes "aff." with `sub.pattern` and matches the species,
+  as in WorldFlora. Give the same value to `WFO.prepare()` and
+  [`WFO.match()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.match.md):
+  this function already removes "aff." from the names it returns.
 
 - trinomial.first, trinomial.second:
 

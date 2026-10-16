@@ -67,11 +67,28 @@ On the WFO Plant List 2026-06 (1.66 million names), one core:
 | a further call on the same backbone, one name | under 0.5 s |
 
 The first call of a session also builds the index of the backbone (about
-5 s). Compared with WorldFlora 1.14-5 on a backbone of 1.37 million
-names: 600 correctly spelled names 51 s -\> under 3 s; misspelled names
-about 4 s -\> 0.3 s each. Use `cores = n` in
+5 s). Use `cores = n` in
 [`WFO.match()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.match.md)
 for large sets of misspelled names (Linux, macOS).
+
+### Compared with WorldFlora
+
+A benchmark of 275 plant names as found in real data (with authors,
+misspellings, morphospecies codes such as “sp.1_ABC”, and qualifiers
+such as “aff.”), each with a verified name, matched against the WFO
+Plant List 2026-06 on one core:
+
+|  | Names as submitted |  | After [`WFO.prepare()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.prepare.md) |  |
+|----|---:|---:|---:|---:|
+|  | time | correct | time | correct |
+| WorldFlora 1.14-5 | 1,479 s | 80.2% | 618 s | 81.7% |
+| WorldFloraFast 1.0.6 | 73 s | 87.9% | 40 s | 89.5% |
+| speed-up | 20 times |  | 15 times |  |
+
+“Correct” is the verified name or its current accepted name in WFO, for
+the 257 names with a verified name. With `spec.name.aff.genus = TRUE`,
+WorldFloraFast reaches 93.0%. The vignette shows examples
+([`vignette("WorldFloraFast")`](https://jeromechave.github.io/WorldFloraFast/articles/WorldFloraFast.md)).
 
 ## How it is faster without changing results
 

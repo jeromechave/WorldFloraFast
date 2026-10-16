@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -146,7 +146,53 @@
 </tr>
 </tbody>
 </table>
-<p>The first call of a session also builds the index of the backbone (about 5 s). Compared with WorldFlora 1.14-5 on a backbone of 1.37 million names: 600 correctly spelled names 51 s -&gt; under 3 s; misspelled names about 4 s -&gt; 0.3 s each. Use <code>cores = n</code> in <code><a href="reference/WFO.match.html">WFO.match()</a></code> for large sets of misspelled names (Linux, macOS).</p>
+<p>The first call of a session also builds the index of the backbone (about 5 s). Use <code>cores = n</code> in <code><a href="reference/WFO.match.html">WFO.match()</a></code> for large sets of misspelled names (Linux, macOS).</p>
+<div class="section level3">
+<h3 id="compared-with-worldflora">Compared with WorldFlora<a class="anchor" aria-label="anchor" href="#compared-with-worldflora"></a>
+</h3>
+<p>A benchmark of 275 plant names as found in real data (with authors, misspellings, morphospecies codes such as “sp.1_ABC”, and qualifiers such as “aff.”), each with a verified name, matched against the WFO Plant List 2026-06 on one core:</p>
+<table class="table">
+<thead><tr>
+<th></th>
+<th align="right">Names as submitted</th>
+<th align="right"></th>
+<th align="right">After <code><a href="reference/WFO.prepare.html">WFO.prepare()</a></code>
+</th>
+<th align="right"></th>
+</tr></thead>
+<tbody>
+<tr>
+<td></td>
+<td align="right">time</td>
+<td align="right">correct</td>
+<td align="right">time</td>
+<td align="right">correct</td>
+</tr>
+<tr>
+<td>WorldFlora 1.14-5</td>
+<td align="right">1,479 s</td>
+<td align="right">80.2%</td>
+<td align="right">618 s</td>
+<td align="right">81.7%</td>
+</tr>
+<tr>
+<td>WorldFloraFast 1.0.6</td>
+<td align="right">73 s</td>
+<td align="right">87.9%</td>
+<td align="right">40 s</td>
+<td align="right">89.5%</td>
+</tr>
+<tr>
+<td>speed-up</td>
+<td align="right">20 times</td>
+<td align="right"></td>
+<td align="right">15 times</td>
+<td align="right"></td>
+</tr>
+</tbody>
+</table>
+<p>“Correct” is the verified name or its current accepted name in WFO, for the 257 names with a verified name. With <code>spec.name.aff.genus = TRUE</code>, WorldFloraFast reaches 93.0%. The vignette shows examples (<code><a href="articles/WorldFloraFast.html">vignette("WorldFloraFast")</a></code>).</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="how-it-is-faster-without-changing-results">How it is faster without changing results<a class="anchor" aria-label="anchor" href="#how-it-is-faster-without-changing-results"></a>

@@ -15,7 +15,7 @@ and a second infraspecific rank, for names that contain two of them.'></head><bo
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,8 @@ and a second infraspecific rank, for names that contain two of them.</p>
 <span>    <span class="st">"Koster f."</span>, <span class="st">"Liou f."</span>, <span class="st">"L. f."</span>, <span class="st">"Ma f."</span>, <span class="st">"Mikan f."</span>, <span class="st">"Occhioni f."</span>, <span class="st">"Rchb. f."</span>,</span>
 <span>    <span class="st">"Schultes f."</span>, <span class="st">"Schult. f."</span>, <span class="st">"Stapf f."</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  counter <span class="op">=</span> <span class="fl">1000</span></span>
+<span>  counter <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  spec.name.aff.genus <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">WFO.preprepare</span><span class="op">(</span></span>
@@ -110,7 +111,10 @@ start and end of names (<code><a href="https://stringr.tidyverse.org/reference/s
 <dt id="arg-spec-name-nonumber">spec.name.nonumber<a class="anchor" aria-label="anchor" href="#arg-spec-name-nonumber"></a></dt>
 <dd><p>If <code>TRUE</code>, names that contain numbers are
 interpreted as genera (only the first word is kept, without trailing
-digits).</p></dd>
+digits). A morphospecies code at the end of a name (" sp.1",
+" sp.1_ECOSUR1", " sp9", " sp. 2") is removed first, so that
+"Aegiphila sp.1_ECOSUR1" gives <em>Aegiphila</em> (WorldFlora gave
+"Aegiphila1_ECOSUR").</p></dd>
 
 
 <dt id="arg-spec-name-sub">spec.name.sub<a class="anchor" aria-label="anchor" href="#arg-spec-name-sub"></a></dt>
@@ -159,6 +163,15 @@ which would otherwise be mistaken for the rank <code>"f."</code> (forma).</p></d
 
 <dt id="arg-counter">counter<a class="anchor" aria-label="anchor" href="#arg-counter"></a></dt>
 <dd><p>Progress is reported every <code>counter</code> distinct names.</p></dd>
+
+
+<dt id="arg-spec-name-aff-genus">spec.name.aff.genus<a class="anchor" aria-label="anchor" href="#arg-spec-name-aff-genus"></a></dt>
+<dd><p>If <code>TRUE</code>, names with "aff." (<em>affinis</em>, near
+but not this species, as in "Drypetes aff. amazonica") are reduced to the
+genus. <code>FALSE</code> (default) removes "aff." with <code>sub.pattern</code> and matches the
+species, as in WorldFlora. Give the same value to <code>WFO.prepare()</code> and
+<code><a href="WFO.match.html">WFO.match()</a></code>: this function already removes "aff." from the names it
+returns.</p></dd>
 
 
 <dt id="arg-trinomial-first-trinomial-second">trinomial.first, trinomial.second<a class="anchor" aria-label="anchor" href="#arg-trinomial-first-trinomial-second"></a></dt>

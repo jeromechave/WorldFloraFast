@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,16 @@
       <small>Source: <a href="https://github.com/jeromechave/WorldFloraFast/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.6" id="worldflorafast-106-pre-release">WorldFloraFast 1.0.6 (pre-release)<a class="anchor" aria-label="anchor" href="#worldflorafast-106-pre-release"></a></h2>
+<p>Refinements from a benchmark of 275 plant names with verified names, matched against the WFO Plant List 2026-06. Correct answers (the verified name or its current accepted name) after <code><a href="../reference/WFO.prepare.html">WFO.prepare()</a></code>: WorldFlora 1.14-5 81.7%, WorldFloraFast 1.0.5 80.2%, 1.0.6 89.5% (93.0% with <code>spec.name.aff.genus = TRUE</code>). On the earlier test sets, no result changes.</p>
+<ul><li>Epithet check (<code>Fuzzy.epithet.check</code>): epithets and genus names of 8 or more letters may differ by 2 edits (1 before), and a swap of two adjacent letters counts as one edit. “Appunia seibertii” is matched with <em>Appunia siebertii</em>, “Cleyera theaeoides” with <em>Cleyera theoides</em>. Short epithets keep a limit of 1 edit (“Ocotea luis” is still not <em>Ocotea lucida</em>).</li>
+<li>
+<code>Fuzzy.keep.genus</code> applies only to genera with species names in the backbone: a genus name alone, such as “Hyeronima” (a variant of <em>Hieronyma</em>, without species in WFO), does not keep its genus. “Hyeronima alchorneoides” is matched with <em>Hieronyma alchorneoides</em>.</li>
+<li>Morphospecies codes at the end of a name (” sp.1”, ” sp.1_ECOSUR1”, ” sp9”, ” sp. 2”) are removed before cleaning, in <code><a href="../reference/WFO.match.html">WFO.match()</a></code> and <code><a href="../reference/WFO.prepare.html">WFO.prepare()</a></code>, so that the genus is matched: “Aegiphila sp.1_ECOSUR1” gives <em>Aegiphila</em>. WorldFlora removed ” sp.” and kept the rest glued to the genus (“Aegiphila1_ECOSUR”), which matched nothing. <code>Number.detected</code> is unchanged.</li>
+<li>New argument <code>spec.name.aff.genus</code> of <code><a href="../reference/WFO.match.html">WFO.match()</a></code> and <code><a href="../reference/WFO.prepare.html">WFO.prepare()</a></code>, <code>FALSE</code> by default: if <code>TRUE</code>, names with “aff.” (“Drypetes aff. amazonica”) are reduced to the genus, since <em>affinis</em> means near, but not, the species. Give it to both functions.</li>
+<li>Vignette: a section on the benchmark. README: computing times of WorldFlora and WorldFloraFast on the benchmark.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.5" id="worldflorafast-105-pre-release">WorldFloraFast 1.0.5 (pre-release)<a class="anchor" aria-label="anchor" href="#worldflorafast-105-pre-release"></a></h2>
 <ul><li>

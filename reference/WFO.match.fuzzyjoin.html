@@ -17,7 +17,7 @@ Fuzzy.epithet.check). It will be removed in a later version."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -156,7 +156,10 @@ capital first letter.</p></dd>
 <dt id="arg-spec-name-nonumber">spec.name.nonumber<a class="anchor" aria-label="anchor" href="#arg-spec-name-nonumber"></a></dt>
 <dd><p>If <code>TRUE</code>, names that contain numbers are
 interpreted as genera (only the first word is kept, without trailing
-digits).</p></dd>
+digits). A morphospecies code at the end of a name (" sp.1",
+" sp.1_ECOSUR1", " sp9", " sp. 2") is removed first, so that
+"Aegiphila sp.1_ECOSUR1" gives <em>Aegiphila</em> (WorldFlora gave
+"Aegiphila1_ECOSUR").</p></dd>
 
 
 <dt id="arg-spec-name-nobrackets">spec.name.nobrackets<a class="anchor" aria-label="anchor" href="#arg-spec-name-nobrackets"></a></dt>

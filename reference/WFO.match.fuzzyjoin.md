@@ -118,7 +118,10 @@ WFO.match.fuzzyjoin(
 - spec.name.nonumber:
 
   If `TRUE`, names that contain numbers are interpreted as genera (only
-  the first word is kept, without trailing digits).
+  the first word is kept, without trailing digits). A morphospecies code
+  at the end of a name (" sp.1", " sp.1_ECOSUR1", " sp9", " sp. 2") is
+  removed first, so that "Aegiphila sp.1_ECOSUR1" gives *Aegiphila*
+  (WorldFlora gave "Aegiphila1_ECOSUR").
 
 - spec.name.nobrackets:
 

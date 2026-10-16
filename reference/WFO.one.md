@@ -97,22 +97,19 @@ m <- WFO.match(c("Omalanthus populneus", "World agroforestry"),
   Fuzzy.min = FALSE
 ) # non-default (of WFO.match): all fuzzy candidates
 #> Checking for fuzzy matches for 2 records
-#> Fuzzy matches for Omalanthus populneus rejected by the epithet check: Homalanthus populneus, Homalanthus populneus var. minor, Homalanthus populneus var. laevis, Homalanthus populneus var. siccus, Homalanthus populneus var. genuinus
-#> Fuzzy matches for Omalanthus populneus were only found for first term (Omalanthus)
-#> Fuzzy matches for Omalanthus populneus were: Homalanthus caloneurus, Homalanthus populneus, Homalanthus populneus var. cordifolius, Homalanthus populneus var. genuinus, Homalanthus populneus var. laevis, Homalanthus populneus var. minor, Homalanthus populneus var. siccus
+#> Fuzzy matches for Omalanthus populneus were: Homalanthus populneus, Homalanthus populneus var. cordifolius, Homalanthus populneus var. genuinus, Homalanthus populneus var. laevis, Homalanthus populneus var. minor, Homalanthus populneus var. siccus
 #> 
 #> Checking new accepted IDs
 nrow(m) # several candidates for the first name
-#> [1] 9
+#> [1] 8
 
 ## ---- default settings (those of WorldFlora) ----
 WFO.one(m)[, c("spec.name", "scientificName", "One.Reason")]
-#> Different candidates for original record # 1, including Homalanthus caloneurus
-#> Smallest ID candidates for 1 were: Homalanthus caloneurus, Homalanthus populneus
-#> Selected record with smallest ID for record # 1
-#>              spec.name         scientificName  One.Reason
-#> 1 Omalanthus populneus Homalanthus caloneurus smallest ID
-#> 9   World agroforestry                   <NA>            
+#> Different candidates for original record # 1, including Homalanthus populneus
+#> Found unique not a synonym case for record # 1
+#>              spec.name        scientificName    One.Reason
+#> 1 Omalanthus populneus Homalanthus populneus Not a synonym
+#> 8   World agroforestry                  <NA>              
 
 # homonyms of "Acacia albida": with the default settings, authors are not
 # used
@@ -149,11 +146,10 @@ o[, c("Authorship", "scientificName")]
 
 # unmatched names keep the submitted name
 o <- WFO.one(m, spec.name = "spec.name") # non-default
-#> Different candidates for original record # 1, including Homalanthus caloneurus
-#> Smallest ID candidates for 1 were: Homalanthus caloneurus, Homalanthus populneus
-#> Selected record with smallest ID for record # 1
+#> Different candidates for original record # 1, including Homalanthus populneus
+#> Found unique not a synonym case for record # 1
 o[, c("spec.name", "scientificName", "One.Reason")]
-#>              spec.name         scientificName     One.Reason
-#> 1 Omalanthus populneus Homalanthus caloneurus    smallest ID
-#> 9   World agroforestry     World agroforestry no match found
+#>              spec.name        scientificName     One.Reason
+#> 1 Omalanthus populneus Homalanthus populneus  Not a synonym
+#> 8   World agroforestry    World agroforestry no match found
 ```

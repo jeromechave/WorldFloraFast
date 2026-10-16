@@ -13,7 +13,7 @@ spec.name) or as separate genus, species and infraspecific columns."></head><bod
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,7 +94,8 @@ their accepted names. Names are given either as full names (column
 <span>  Fuzzy.one.strict <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  Fuzzy.epithet.check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  Fuzzy.keep.genus <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  Fuzzy.skip.placeholder <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  Fuzzy.skip.placeholder <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  spec.name.aff.genus <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -216,7 +217,10 @@ capital first letter.</p></dd>
 <dt id="arg-spec-name-nonumber">spec.name.nonumber<a class="anchor" aria-label="anchor" href="#arg-spec-name-nonumber"></a></dt>
 <dd><p>If <code>TRUE</code>, names that contain numbers are
 interpreted as genera (only the first word is kept, without trailing
-digits).</p></dd>
+digits). A morphospecies code at the end of a name (" sp.1",
+" sp.1_ECOSUR1", " sp9", " sp. 2") is removed first, so that
+"Aegiphila sp.1_ECOSUR1" gives <em>Aegiphila</em> (WorldFlora gave
+"Aegiphila1_ECOSUR").</p></dd>
 
 
 <dt id="arg-spec-name-nobrackets">spec.name.nobrackets<a class="anchor" aria-label="anchor" href="#arg-spec-name-nobrackets"></a></dt>
@@ -306,7 +310,9 @@ listed in <code>Fuzzy.alternatives</code> ("Altingia fargesii": <em>Liquidambar<
 <dd><p>If <code>TRUE</code> (default), fuzzy matches found by
 <code><a href="https://rdrr.io/r/base/agrep.html" class="external-link">agrep()</a></code> for names of two or more words are kept only if (1) the epithet
 is within the <code>Fuzzy</code> distance of the submitted epithet, computed on the
-epithet alone (at least 1 edit; gender endings ignored), or the submitted
+epithet alone (at least 1 edit, and 2 for epithets of 8 or more letters; a
+swap of two adjacent letters counts as one edit; gender endings ignored),
+or the submitted
 epithet is the beginning of it ("Quercus cornelius" -&gt; <em>Quercus
 cornelius-mulleri</em>); and (2) its genus is the submitted genus, or a genus
 with a similar name in the same family. <code><a href="https://rdrr.io/r/base/agrep.html" class="external-link">agrep()</a></code> allows a distance
@@ -323,8 +329,10 @@ together with the next word ("australissubsp.") is accepted.</p></dd>
 
 <dt id="arg-fuzzy-keep-genus">Fuzzy.keep.genus<a class="anchor" aria-label="anchor" href="#arg-fuzzy-keep-genus"></a></dt>
 <dd><p>If <code>TRUE</code> (default), a correctly spelled genus is
-kept: when the first word of a name of two or more words is a name in the
-backbone, fuzzy matches in other genera are not accepted. Matches in that
+kept: when the first word of a name of two or more words is a genus with
+species names in the backbone, fuzzy matches in other genera are not
+accepted. (A genus name without species, such as "Hyeronima", a variant
+of <em>Hieronyma</em>, does not keep its genus.) Matches in that
 genus are kept; if there are none, the genus-only fall-back (<code>Fuzzy.one</code>)
 gives the genus. "Ulmus parviflora" is matched with the genus <em>Ulmus</em>, not
 with <em>Tamus parviflora</em> (Dioscoreaceae); "Neea gigante" with the genus
@@ -340,6 +348,15 @@ placeholder words ("indet.", "sp.", "spp.", "cf.", "aff.", "unknown", and
 the words of <code>sub.pattern</code>) are not fuzzy-matched and remain unmatched.
 WorldFlora matched "indet." with <em>Opuntia coindetti</em>, in which "indet"
 occurs; <code>FALSE</code> gives the results of WorldFlora. With <code>WFO.one(..., spec.name = "spec.name")</code>, such names keep the submitted text.</p></dd>
+
+
+<dt id="arg-spec-name-aff-genus">spec.name.aff.genus<a class="anchor" aria-label="anchor" href="#arg-spec-name-aff-genus"></a></dt>
+<dd><p>If <code>TRUE</code>, names with "aff." (<em>affinis</em>, near
+but not this species, as in "Drypetes aff. amazonica") are reduced to the
+genus. <code>FALSE</code> (default) removes "aff." with <code>sub.pattern</code> and matches the
+species, as in WorldFlora. Give the same value to <code><a href="WFO.prepare.html">WFO.prepare()</a></code> and
+<code>WFO.match()</code>: <code><a href="WFO.prepare.html">WFO.prepare()</a></code> already removes "aff." from the names it
+returns.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -621,27 +638,25 @@ names and authors, <code><a href="WFO.spelling.check.html">WFO.spelling.check()<
 <span class="r-in"><span>  <span class="st">"Old.name"</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Subseq Fuzzy.dist         scientificName taxonomicStatus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1          9 Homalanthus caloneurus        Accepted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      2          2  Homalanthus populneus        Accepted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      3          2  Homalanthus populneus       Unchecked</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4      4         19 Homalanthus caloneurus        Accepted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5      5         16  Homalanthus populneus        Accepted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      6         14  Homalanthus populneus        Accepted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7      7         13  Homalanthus populneus        Accepted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8      8         14        Alchornea sicca        Accepted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1          2  Homalanthus populneus        Accepted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      2          2  Homalanthus populneus       Unchecked</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      3         19 Homalanthus caloneurus        Accepted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      4         16  Homalanthus populneus        Accepted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      5         14  Homalanthus populneus        Accepted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      6         13  Homalanthus populneus        Accepted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7      7         14        Alchornea sicca        Accepted</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 Old.name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Homalanthus populneus var. cordifolius</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    Homalanthus populneus var. genuinus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      Homalanthus populneus var. laevis</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       Homalanthus populneus var. minor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8      Homalanthus populneus var. siccus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Homalanthus populneus var. cordifolius</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    Homalanthus populneus var. genuinus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      Homalanthus populneus var. laevis</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       Homalanthus populneus var. minor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7      Homalanthus populneus var. siccus</span>
 <span class="r-in"><span><span class="va">o1</span> <span class="op">&lt;-</span> <span class="fu"><a href="WFO.one.html">WFO.one</a></span><span class="op">(</span><span class="va">e1</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">o1</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spec.name"</span>, <span class="st">"scientificName"</span>, <span class="st">"One.Reason"</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              spec.name         scientificName  One.Reason</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Omalanthus populneus Homalanthus caloneurus smallest ID</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              spec.name        scientificName    One.Reason</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Omalanthus populneus Homalanthus populneus Not a synonym</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># names in capitals</span></span></span>
 <span class="r-in"><span><span class="fu">WFO.match</span><span class="op">(</span><span class="st">"FAIDHERBIA ALBIDA"</span>,</span></span>

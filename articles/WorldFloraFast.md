@@ -149,23 +149,21 @@ all.cand[, c(
   "Subseq", "Fuzzy.dist", "scientificName", "taxonomicStatus", "Old.name"
 )]
 #>   Subseq Fuzzy.dist         scientificName taxonomicStatus
-#> 1      1          9 Homalanthus caloneurus        Accepted
-#> 2      2          2  Homalanthus populneus        Accepted
-#> 3      3          2  Homalanthus populneus       Unchecked
-#> 4      4         19 Homalanthus caloneurus        Accepted
-#> 5      5         16  Homalanthus populneus        Accepted
-#> 6      6         14  Homalanthus populneus        Accepted
-#> 7      7         13  Homalanthus populneus        Accepted
-#> 8      8         14        Alchornea sicca        Accepted
+#> 1      1          2  Homalanthus populneus        Accepted
+#> 2      2          2  Homalanthus populneus       Unchecked
+#> 3      3         19 Homalanthus caloneurus        Accepted
+#> 4      4         16  Homalanthus populneus        Accepted
+#> 5      5         14  Homalanthus populneus        Accepted
+#> 6      6         13  Homalanthus populneus        Accepted
+#> 7      7         14        Alchornea sicca        Accepted
 #>                                 Old.name
 #> 1                                       
 #> 2                                       
-#> 3                                       
-#> 4 Homalanthus populneus var. cordifolius
-#> 5    Homalanthus populneus var. genuinus
-#> 6      Homalanthus populneus var. laevis
-#> 7       Homalanthus populneus var. minor
-#> 8      Homalanthus populneus var. siccus
+#> 3 Homalanthus populneus var. cordifolius
+#> 4    Homalanthus populneus var. genuinus
+#> 5      Homalanthus populneus var. laevis
+#> 6       Homalanthus populneus var. minor
+#> 7      Homalanthus populneus var. siccus
 ```
 
 `Fuzzy.dist` is the distance to the name that was matched, which for
@@ -284,6 +282,64 @@ m[, c("spec.name", "scientificName", "Old.name")]
 #>         spec.name scientificName         Old.name
 #> 1 Felis domestica    Felis catus Felis domesticus
 ```
+
+## 8. A benchmark of real names
+
+A benchmark of 275 plant names, each with a verified name, shows how
+WorldFloraFast handles names as they are found in real data: with
+authors, misspellings, variant spellings, morphospecies codes and
+qualifiers such as “aff.”. The code below uses the complete WFO Plant
+List 2026-06
+([`WFO.download()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.download.md)),
+so it is not run when this vignette is built; its results are shown
+underneath.
+
+``` r
+
+x <- c(
+  "Abarema adenophora (Ducke) Barneby & J.W. Grimes", # with authors; a synonym
+  "Appunia seibertii", # two letters swapped
+  "Cleyera theaeoides ?", # variant spelling
+  "Hyeronima alchorneoides Allem_o", # variant spelling of the genus
+  "Sideroxylon sp.1_ECOSUR5", # morphospecies code
+  "Drypetes aff. amazonica", # near, but not, this species
+  "Annona lutescens Saff." # Saff. is an author (Safford)
+)
+prep <- WFO.prepare(x, spec.full = "spec.full", spec.name.aff.genus = TRUE)
+m <- WFO.match(prep,
+  spec.name = "spec.name", Authorship = "Authorship",
+  WFO.data = WFO.data, spec.name.aff.genus = TRUE
+)
+WFO.one(m)$scientificName
+```
+
+| Submitted | Prepared (`spec.name`) | WorldFloraFast 1.0.6 | Verified |
+|----|----|----|----|
+| Abarema adenophora (Ducke) Barneby & J.W. Grimes | Abarema adenophora | *Jupunba adenophora* | *Jupunba adenophora* |
+| Appunia seibertii | Appunia seibertii | *Appunia siebertii* | *Appunia siebertii* |
+| Cleyera theaeoides ? | Cleyera theaeoides | *Cleyera theoides* | *Cleyera theoides* |
+| Hyeronima alchorneoides Allem_o | Hyeronima alchorneoides | *Hieronyma alchorneoides* | *Hieronyma alchorneoides* |
+| Sideroxylon sp.1_ECOSUR5 | Sideroxylon | *Sideroxylon* | *Sideroxylon* |
+| Drypetes aff. amazonica | Drypetes | *Drypetes* | *Drypetes* |
+| Annona lutescens Saff. | Annona lutescens | *Annona reticulata* | *Annona* |
+
+*Annona lutescens* is a synonym of *A. reticulata* in WFO; the verified
+name, the genus only, seems to have read the author “Saff.” as “aff.”.
+On the whole benchmark (257 names with a verified name), the share of
+correct answers, the verified name or its current accepted name, and the
+matching times on one core were:
+
+|  | Names as submitted |  | After [`WFO.prepare()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.prepare.md) |  |
+|----|---:|---:|---:|---:|
+|  | correct | time | correct | time |
+| WorldFlora 1.14-5 | 80.2% | 1,479 s | 81.7% | 618 s |
+| WorldFloraFast 1.0.6 | 87.9% | 73 s | 89.5% | 40 s |
+| WorldFloraFast 1.0.6, `spec.name.aff.genus = TRUE` |  |  | 93.0% | 35 s |
+
+Most of the remaining differences come from names the verified list
+resolves only to the genus while the backbone has the species (as
+above), and from names that are not plant names (“Alternate simple-lvd
+sp.”).
 
 ## Performance
 

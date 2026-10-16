@@ -9,7 +9,7 @@ among several candidates with a fixed sequence of criteria."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -133,22 +133,19 @@ candidates; the chosen records were the same in our comparisons, but
 <span class="r-in"><span>  Fuzzy.min <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span> <span class="co"># non-default (of WFO.match): all fuzzy candidates</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Checking for fuzzy matches for 2 records</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Fuzzy matches for Omalanthus populneus rejected by the epithet check: Homalanthus populneus, Homalanthus populneus var. minor, Homalanthus populneus var. laevis, Homalanthus populneus var. siccus, Homalanthus populneus var. genuinus</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Fuzzy matches for Omalanthus populneus were only found for first term (Omalanthus)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Fuzzy matches for Omalanthus populneus were: Homalanthus caloneurus, Homalanthus populneus, Homalanthus populneus var. cordifolius, Homalanthus populneus var. genuinus, Homalanthus populneus var. laevis, Homalanthus populneus var. minor, Homalanthus populneus var. siccus</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fuzzy matches for Omalanthus populneus were: Homalanthus populneus, Homalanthus populneus var. cordifolius, Homalanthus populneus var. genuinus, Homalanthus populneus var. laevis, Homalanthus populneus var. minor, Homalanthus populneus var. siccus</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Checking new accepted IDs</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="co"># several candidates for the first name</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## ---- default settings (those of WorldFlora) ----</span></span></span>
 <span class="r-in"><span><span class="fu">WFO.one</span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spec.name"</span>, <span class="st">"scientificName"</span>, <span class="st">"One.Reason"</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Different candidates for original record # 1, including Homalanthus caloneurus</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Smallest ID candidates for 1 were: Homalanthus caloneurus, Homalanthus populneus</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Selected record with smallest ID for record # 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              spec.name         scientificName  One.Reason</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Omalanthus populneus Homalanthus caloneurus smallest ID</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   World agroforestry                   &lt;NA&gt;            </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Different candidates for original record # 1, including Homalanthus populneus</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found unique not a synonym case for record # 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              spec.name        scientificName    One.Reason</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Omalanthus populneus Homalanthus populneus Not a synonym</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   World agroforestry                  &lt;NA&gt;              </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># homonyms of "Acacia albida": with the default settings, authors are not</span></span></span>
 <span class="r-in"><span><span class="co"># used</span></span></span>
@@ -185,13 +182,12 @@ candidates; the chosen records were the same in our comparisons, but
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># unmatched names keep the submitted name</span></span></span>
 <span class="r-in"><span><span class="va">o</span> <span class="op">&lt;-</span> <span class="fu">WFO.one</span><span class="op">(</span><span class="va">m</span>, spec.name <span class="op">=</span> <span class="st">"spec.name"</span><span class="op">)</span> <span class="co"># non-default</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Different candidates for original record # 1, including Homalanthus caloneurus</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Smallest ID candidates for 1 were: Homalanthus caloneurus, Homalanthus populneus</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Selected record with smallest ID for record # 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Different candidates for original record # 1, including Homalanthus populneus</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found unique not a synonym case for record # 1</span>
 <span class="r-in"><span><span class="va">o</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spec.name"</span>, <span class="st">"scientificName"</span>, <span class="st">"One.Reason"</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              spec.name         scientificName     One.Reason</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Omalanthus populneus Homalanthus caloneurus    smallest ID</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   World agroforestry     World agroforestry no match found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              spec.name        scientificName     One.Reason</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Omalanthus populneus Homalanthus populneus  Not a synonym</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   World agroforestry    World agroforestry no match found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
