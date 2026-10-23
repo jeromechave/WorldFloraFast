@@ -59,6 +59,14 @@ of synonyms (\code{Old.author.dist}), authorship of current names (\code{Auth.di
 genus distance (\code{First.dist}), \code{priority}, and finally the smallest numeric
 part of \code{taxonID}. Column \code{One.Reason} gives the criterion that decided.
 
+Records with the same candidates (the same candidate rows, with the same
+values of the columns used by these criteria) get the same choice. The
+choice is therefore made once per distinct set of candidates and copied to
+the other records, which makes large inventories with repeated names much
+faster (113,432 records: 3.7 s in 1.0.7, 0.2 s). The result is unchanged:
+one row per submitted record. With \code{verbose = TRUE}, messages are given
+once per distinct set of candidates.
+
 Unlike WorldFlora 1.14-5, the authorship step compares the candidates that
 were not replaced by accepted names, rather than a recycled selection of all
 candidates; the chosen records were the same in our comparisons, but

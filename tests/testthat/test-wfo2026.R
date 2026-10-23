@@ -680,3 +680,31 @@ test_that("sp, spp and indet without a full stop leave the genus", {
   expect_equal(p$spec.name, rep("Albizia", 5))
   expect_equal(p$Authorship[5], "L.")
 })
+
+# ---- 1.0.8: WFO.one() chooses once per distinct set of candidates ----
+
+test_that("WFO.one: repeated names get the same choice, authors still decide", {
+  aa <- data.frame(
+    spec.name = "Acacia albida",
+    Authorship = c("Delile", "Lindl.", "Delile", "Lindl.", NA, "Delile")
+  )
+  m <- q(WFO.match(aa, WFO.data = ex, verbose = FALSE))
+  o <- q(WFO.one(m,
+    Auth.dist = "Auth.dist", Old.author.dist = "Old.author.dist",
+    verbose = FALSE
+  ))
+  expect_equal(o$OriSeq, 1:6)
+  # the same name with the same author gets the same choice; another author
+  # can give another choice
+  expect_equal(o$scientificName[c(1, 3, 6)], rep(o$scientificName[1], 3))
+  expect_equal(o$scientificName[2], o$scientificName[4])
+  expect_false(o$scientificName[1] == o$scientificName[2])
+  # without authors, all copies of a name get the same choice and reason
+  o2 <- q(WFO.one(m, verbose = FALSE))
+  expect_equal(length(unique(o2$scientificName)), 1)
+  expect_equal(length(unique(o2$One.Reason)), 1)
+  expect_message(
+    WFO.one(m, verbose = TRUE),
+    "had the same candidates as an earlier record"
+  )
+})

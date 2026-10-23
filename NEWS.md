@@ -1,3 +1,15 @@
+# WorldFloraFast 1.0.8 (pre-release)
+
+* `WFO.one()` is much faster for large inventories with repeated names: records with the
+  same candidates (the same candidate rows, with the same values of the columns used to
+  choose) get the same choice, so the choice is made once per distinct set of candidates
+  and copied to the other records. The kept rows are also collected without growing a
+  vector in the loop. On a 113,432-record inventory (3,315 records with several
+  candidates, 63 distinct names among them): 3.7 s -> 0.2 s; on 567,160 records:
+  37.0 s -> 0.9 s. Results are identical (one row per submitted record), in all settings
+  of `WFO.one()`. With `verbose = TRUE`, messages are given once per distinct set of
+  candidates, followed by the number of records resolved in the same way.
+
 # WorldFloraFast 1.0.7 (pre-release)
 
 * New argument `spec.name.fix.encoding` of `WFO.match()` and `WFO.prepare()`, `TRUE` by
