@@ -13,6 +13,8 @@
 #     - .is.placeholder(): names made only of placeholder words (1.0.2).
 #     - Morphospecies codes removed before cleaning (.drop.morphospecies());
 #       names with aff. reduced to the genus on request (.has.aff()) (1.0.6).
+#     - Repair of garbled text and look-alike letters (.fix.encoding());
+#       "sp", "spp", "indet" without a full stop at the end (1.0.7).
 #   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 # ----------------------------------------------------------------------------
 
@@ -27,7 +29,8 @@
                               sub.pattern,
                               spec.name.nobrackets = TRUE,
                               spec.name.nonumber = TRUE,
-                              spec.name.aff.genus = FALSE) {
+                              spec.name.aff.genus = FALSE,
+                              spec.name.fix.encoding = TRUE) {
   x <- as.character(spec.data[[spec.name]])
   x[is.na(x)] <- ""
   orig.name <- paste0(spec.name, ".ORIG")
@@ -36,6 +39,7 @@
   if (any.step) spec.data[[orig.name]] <- x
   orig <- x
 
+  if (spec.name.fix.encoding) x <- .fix.encoding(x)
   if (squish) {
     x <- .squish(x)
     spec.data$Squished <- nchar(orig) > 0 & orig != x
@@ -57,6 +61,7 @@
   }
   if (spec.name.sub) {
     for (p in sub.pattern) x <- gsub(pattern = p, replacement = "", x = x)
+    x <- .drop.trailing.placeholder(x)
   }
   if (spec.name.nobrackets) {
     br <- grepl("(", x, fixed = TRUE)
@@ -113,3 +118,65 @@
 
 # Names with "aff." (affinis: near, but not, this species)
 .has.aff <- function(x) grepl("(^|\\s)aff[.]?(\\s|$)", x, ignore.case = TRUE)
+
+# Placeholder words at the end of a name without a full stop (" sp", " spp",
+# " indet"): removed like " sp." and " spp." (sub.pattern), so that
+# "Albizia sp" gives Albizia, not a species whose epithet starts with "sp".
+.TRAILING.PLACEHOLDER <- "\\s+(spp?|indet)$"
+.drop.trailing.placeholder <- function(x) {
+  sub(.TRAILING.PLACEHOLDER, "", x, ignore.case = TRUE, perl = TRUE)
+}
+
+# Garbled text: UTF-8 read as Mac Roman or Windows-1252, possibly several
+# times. "Abies holoph\u201a\u00c4\u00f6\u221a\u00c4\u00f4lla" is "Abies
+# holophylla" garbled three times. Characters typical of such text: sqrt sign,
+# low quotation mark, A tilde, A circumflex, a circumflex, f with hook.
+.MOJIBAKE <- "[\u221a\u201a\u00c3\u00c2\u00e2\u0192]"
+
+# Undo up to `rounds` rounds of garbling. A round is kept only if the result
+# is valid UTF-8 and shorter, which never happens for ordinary accented text
+# ("Allem\u00e3o"), so such text is left unchanged.
+.fix.mojibake <- function(x, rounds = 4) {
+  todo <- which(!is.na(x) & grepl(.MOJIBAKE, x, perl = TRUE))
+  for (i in todo) {
+    s <- x[i]
+    for (r in seq_len(rounds)) {
+      fixed <- NULL
+      for (enc in c("macintosh", "CP1252")) {
+        raw <- tryCatch(iconv(s, "UTF-8", enc, toRaw = TRUE)[[1]],
+          error = function(e) NULL
+        )
+        if (is.null(raw)) next
+        y <- rawToChar(raw)
+        Encoding(y) <- "UTF-8"
+        if (validUTF8(y) && nchar(y) < nchar(s)) {
+          fixed <- y
+          break
+        }
+      }
+      if (is.null(fixed)) break
+      s <- fixed
+    }
+    x[i] <- s
+  }
+  x
+}
+
+# Cyrillic letters that look like Latin letters, replaced by these in names
+# that also contain Latin letters ("Abies holoph\u0443lla" with a Cyrillic u)
+.HOMOGLYPH.CYRILLIC <- paste0(
+  "\u0430\u0435\u043e\u0440\u0441\u0443\u0445\u0456\u0458\u0455\u04bb\u0501",
+  "\u0410\u0412\u0415\u041a\u041c\u041d\u041e\u0420\u0421\u0422\u0425",
+  "\u0406\u0408\u0405"
+)
+.HOMOGLYPH.LATIN <- "aeopcyxijshdABEKMHOPCTXIJS"
+.fix.homoglyphs <- function(x) {
+  mixed <- !is.na(x) & grepl("[A-Za-z]", x) & grepl("[\u0400-\u052f]", x)
+  if (any(mixed)) {
+    x[mixed] <- chartr(.HOMOGLYPH.CYRILLIC, .HOMOGLYPH.LATIN, x[mixed])
+  }
+  x
+}
+
+# Repair of garbled text and look-alike letters (spec.name.fix.encoding)
+.fix.encoding <- function(x) .fix.homoglyphs(.fix.mojibake(x))

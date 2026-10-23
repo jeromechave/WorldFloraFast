@@ -85,7 +85,9 @@ digits). A morphospecies code at the end of a name (" sp.1",
 first \code{"("} onwards (such as authors in brackets).}
 
 \item{spec.name.sub}{If \code{TRUE}, delete sections of names that match
-\code{sub.pattern}.}
+\code{sub.pattern}, and "sp", "spp" or "indet" without a full stop at the end of
+a name ("Albizia sp" gives \emph{Albizia}, not a species whose epithet starts
+with "sp").}
 
 \item{sub.pattern}{Regular expressions of sections to delete, such as \code{" sp[.]"}, \code{" cf[.]"} or \code{" nom[.] illeg[.]"}.}
 

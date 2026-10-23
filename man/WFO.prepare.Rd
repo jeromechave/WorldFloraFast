@@ -32,7 +32,8 @@ WFO.prepare(
     "Schultes f.", "Schult. f.", "Stapf f."),
   verbose = TRUE,
   counter = 1000,
-  spec.name.aff.genus = FALSE
+  spec.name.aff.genus = FALSE,
+  spec.name.fix.encoding = TRUE
 )
 
 WFO.preprepare(
@@ -59,7 +60,9 @@ digits). A morphospecies code at the end of a name (" sp.1",
 "Aegiphila1_ECOSUR").}
 
 \item{spec.name.sub}{If \code{TRUE}, delete sections of names that match
-\code{sub.pattern}.}
+\code{sub.pattern}, and "sp", "spp" or "indet" without a full stop at the end of
+a name ("Albizia sp" gives \emph{Albizia}, not a species whose epithet starts
+with "sp").}
 
 \item{sub.pattern}{Regular expressions of sections to delete, such as \code{" sp[.]"} or \code{" cf[.]"}.}
 
@@ -92,6 +95,14 @@ genus. \code{FALSE} (default) removes "aff." with \code{sub.pattern} and matches
 species, as in WorldFlora. Give the same value to \code{\link[=WFO.prepare]{WFO.prepare()}} and
 \code{\link[=WFO.match]{WFO.match()}}: this function already removes "aff." from the names it
 returns.}
+
+\item{spec.name.fix.encoding}{If \code{TRUE} (default), repair names garbled by
+a wrong character encoding (UTF-8 text read as Mac Roman or Windows-1252,
+up to four times: "Abies holoph‚Äö√..." gives "Abies
+holophylla", "Citrus √ó aurantium" gives "Citrus × aurantium"), and
+replace Cyrillic letters that look like Latin ones in names that also
+contain Latin letters. Accented text
+("Allemão") is not changed. \code{FALSE} gives the results of WorldFlora.}
 
 \item{trinomial.first, trinomial.second}{First and second infraspecific rank
 used by \code{WFO.preprepare()} to split names.}

@@ -635,3 +635,48 @@ test_that("spec.name.aff.genus reduces aff. names to the genus", {
   ))
   expect_equal(p$spec.name, "Annona lutescens") # Saff. is an author
 })
+
+# ---- 1.0.7: garbled text, look-alike letters, "sp" without a full stop ----
+
+test_that("garbled text and Cyrillic look-alike letters are repaired", {
+  ns <- asNamespace("WorldFloraFast")
+  bad <- paste0(
+    "Abies holoph\u201a\u00c4\u00f6\u221a\u00d1\u221a\u00c6\u201a",
+    "\u00e0\u00f6\u221a\u00a2lla"
+  )
+  expect_equal(ns$.fix.encoding(bad), "Abies holophylla")
+  expect_equal(ns$.fix.encoding("Abies holoph\u0443lla"), "Abies holophylla")
+  expect_equal(
+    ns$.fix.encoding("Citrus \u221a\u00f3 aurantium"),
+    "Citrus \u00d7 aurantium"
+  )
+  # left unchanged: accented text, all-Cyrillic text, ordinary names
+  expect_equal(ns$.fix.encoding("Allem\u00e3o"), "Allem\u00e3o")
+  cyrillic <- "\u041a\u043e\u043c\u0430\u0440\u043e\u0432"
+  expect_equal(ns$.fix.encoding(cyrillic), cyrillic)
+  expect_equal(ns$.fix.encoding("Abies alba"), "Abies alba")
+  bk <- bb(c("Abies", "Abies holophylla"), "Pinaceae")
+  r <- q(WFO.match(bad, WFO.data = bk, verbose = FALSE))
+  expect_equal(r$scientificName, "Abies holophylla")
+  expect_false(r$Fuzzy)
+  expect_equal(r$spec.name.ORIG, bad)
+  p <- q(WFO.prepare(bad, spec.full = "spec.full", verbose = FALSE))
+  expect_equal(p$spec.name, "Abies holophylla")
+  r0 <- q(WFO.match(bad,
+    WFO.data = bk, spec.name.fix.encoding = FALSE, verbose = FALSE
+  ))
+  expect_true(r0$Fuzzy) # WorldFlora behaviour: no repair
+})
+
+test_that("sp, spp and indet without a full stop leave the genus", {
+  bk <- bb(c("Albizia", "Albizia gummifera", "Albizia lebbeck"), "Fabaceae")
+  x <- c("Albizia sp", "Albizia spp", "Albizia indet", "Albizia sp.")
+  r <- q(WFO.match(x, WFO.data = bk, verbose = FALSE))
+  expect_equal(r$scientificName, rep("Albizia", 4))
+  expect_true(all(!r$Fuzzy))
+  p <- q(WFO.prepare(c(x, "Albizia sp L."),
+    spec.full = "spec.full", verbose = FALSE
+  ))
+  expect_equal(p$spec.name, rep("Albizia", 5))
+  expect_equal(p$Authorship[5], "L.")
+})

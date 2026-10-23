@@ -20,7 +20,7 @@
 #     - Ranks and hybrid notation of WFO 2026-06 (utils-rank.R).
 #     - The argument no.dates is deprecated (it had no effect).
 #   New in WorldFloraFast:
-#     - Argument spec.name.aff.genus (1.0.6).
+#     - Arguments spec.name.aff.genus (1.0.6), spec.name.fix.encoding (1.0.7).
 #     - Arguments Fuzzy.keep.genus (1.0.1), Fuzzy.skip.placeholder and default
 #       TRUE of Fuzzy.epithet.check (1.0.2): corrections, on by default; failed
 #       parallel processes are recomputed (.parallel.lapply(), 1.0.2).
@@ -106,7 +106,9 @@
 #' @param infraspecific.excluded Infraspecific ranks (column
 #'   `verbatimTaxonRank`) removed by `exclude.infraspecific`.
 #' @param spec.name.sub If `TRUE`, delete sections of names that match
-#'   `sub.pattern`.
+#'   `sub.pattern`, and "sp", "spp" or "indet" without a full stop at the end of
+#'   a name ("Albizia sp" gives *Albizia*, not a species whose epithet starts
+#'   with "sp").
 #' @param sub.pattern Regular expressions of sections to delete, such as `"
 #'   sp[.]"`, `" cf[.]"` or `" nom[.] illeg[.]"`.
 #' @param verbose If `TRUE`, report details of fuzzy matching.
@@ -144,6 +146,13 @@
 #'   second word is a rank (genus and epithet written together,
 #'   "Dichondramrepens var. sericea") are not checked, and an epithet written
 #'   together with the next word ("australissubsp.") is accepted.
+#' @param spec.name.fix.encoding If `TRUE` (default), repair names garbled by
+#'   a wrong character encoding (UTF-8 text read as Mac Roman or Windows-1252,
+#'   up to four times: "Abies holoph‚Äö√..." gives "Abies
+#'   holophylla", "Citrus √ó aurantium" gives "Citrus × aurantium"), and
+#'   replace Cyrillic letters that look like Latin ones in names that also
+#'   contain Latin letters. Accented text
+#'   ("Allemão") is not changed. `FALSE` gives the results of WorldFlora.
 #' @param spec.name.aff.genus If `TRUE`, names with "aff." (*affinis*, near
 #'   but not this species, as in "Drypetes aff. amazonica") are reduced to the
 #'   genus. `FALSE` (default) removes "aff." with `sub.pattern` and matches the
@@ -446,7 +455,8 @@ WFO.match <- function(
   Fuzzy.epithet.check = TRUE,
   Fuzzy.keep.genus = TRUE,
   Fuzzy.skip.placeholder = TRUE,
-  spec.name.aff.genus = FALSE
+  spec.name.aff.genus = FALSE,
+  spec.name.fix.encoding = TRUE
 ) {
   if (!missing(no.dates)) .no.dates.deprecated()
   spec.data <- .as.spec.data(spec.data)
@@ -470,7 +480,8 @@ WFO.match <- function(
       sub.pattern = sub.pattern,
       spec.name.nobrackets = spec.name.nobrackets,
       spec.name.nonumber = spec.name.nonumber,
-      spec.name.aff.genus = spec.name.aff.genus
+      spec.name.aff.genus = spec.name.aff.genus,
+      spec.name.fix.encoding = spec.name.fix.encoding
     )
   }
   for (v in intersect(

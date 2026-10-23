@@ -1,3 +1,19 @@
+# WorldFloraFast 1.0.7 (pre-release)
+
+* New argument `spec.name.fix.encoding` of `WFO.match()` and `WFO.prepare()`, `TRUE` by
+  default: names garbled by a wrong character encoding are repaired. UTF-8 text read as
+  Mac Roman or Windows-1252, up to four times over, is restored ("Abies
+  holoph‚Äö√Ñ√Æ‚àö√¢lla" gives "Abies holophylla"; "Citrus √ó aurantium" gives "Citrus × aurantium"),
+  and Cyrillic letters that look like Latin ones are replaced in names that also contain
+  Latin letters ("Abies holophуlla" with a Cyrillic "у"). Accented text such as
+  "Allemão", and text entirely in Cyrillic, are not changed. `FALSE` gives the results
+  of WorldFlora. The submitted names remain in `spec.name.ORIG`.
+* "sp", "spp" and "indet" without a full stop at the end of a name are removed like "sp."
+  and "spp." (with `spec.name.sub`), in `WFO.match()` and `WFO.prepare()`: "Albizia sp"
+  gives *Albizia*; it was matched with *Albizia gummifera*, whose epithet was the closest
+  to "sp". In `WFO.prepare()`, "Albizia sp L." gives the name "Albizia" and the author
+  "L.".
+
 # WorldFloraFast 1.0.6 (pre-release)
 
 Refinements from a benchmark of 275 plant names with verified names, matched against the

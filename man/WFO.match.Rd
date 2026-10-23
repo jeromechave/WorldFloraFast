@@ -50,7 +50,8 @@ WFO.match(
   Fuzzy.epithet.check = TRUE,
   Fuzzy.keep.genus = TRUE,
   Fuzzy.skip.placeholder = TRUE,
-  spec.name.aff.genus = FALSE
+  spec.name.aff.genus = FALSE,
+  spec.name.fix.encoding = TRUE
 )
 }
 \arguments{
@@ -145,7 +146,9 @@ names).}
 \code{verbatimTaxonRank}) removed by \code{exclude.infraspecific}.}
 
 \item{spec.name.sub}{If \code{TRUE}, delete sections of names that match
-\code{sub.pattern}.}
+\code{sub.pattern}, and "sp", "spp" or "indet" without a full stop at the end of
+a name ("Albizia sp" gives \emph{Albizia}, not a species whose epithet starts
+with "sp").}
 
 \item{sub.pattern}{Regular expressions of sections to delete, such as \code{" sp[.]"}, \code{" cf[.]"} or \code{" nom[.] illeg[.]"}.}
 
@@ -246,6 +249,14 @@ genus. \code{FALSE} (default) removes "aff." with \code{sub.pattern} and matches
 species, as in WorldFlora. Give the same value to \code{\link[=WFO.prepare]{WFO.prepare()}} and
 \code{\link[=WFO.match]{WFO.match()}}: \code{\link[=WFO.prepare]{WFO.prepare()}} already removes "aff." from the names it
 returns.}
+
+\item{spec.name.fix.encoding}{If \code{TRUE} (default), repair names garbled by
+a wrong character encoding (UTF-8 text read as Mac Roman or Windows-1252,
+up to four times: "Abies holoph‚Äö√..." gives "Abies
+holophylla", "Citrus √ó aurantium" gives "Citrus × aurantium"), and
+replace Cyrillic letters that look like Latin ones in names that also
+contain Latin letters. Accented text
+("Allemão") is not changed. \code{FALSE} gives the results of WorldFlora.}
 }
 \value{
 A data.frame with the columns of \code{spec.data}, followed by:

@@ -16,6 +16,7 @@
 #   New in WorldFloraFast:
 #     - Morphospecies codes removed before parsing; argument spec.name.aff.genus
 #       (1.0.6).
+#     - Argument spec.name.fix.encoding; "sp" without a full stop (1.0.7).
 #   ("NEWS n" refers to the numbered corrections of version 0.9.0 in NEWS.md.)
 # ----------------------------------------------------------------------------
 
@@ -39,7 +40,9 @@
 #'   "Aegiphila sp.1_ECOSUR1" gives *Aegiphila* (WorldFlora gave
 #'   "Aegiphila1_ECOSUR").
 #' @param spec.name.sub If `TRUE`, delete sections of names that match
-#'   `sub.pattern`.
+#'   `sub.pattern`, and "sp", "spp" or "indet" without a full stop at the end of
+#'   a name ("Albizia sp" gives *Albizia*, not a species whose epithet starts
+#'   with "sp").
 #' @param sub.pattern Regular expressions of sections to delete, such as `"
 #'   sp[.]"` or `" cf[.]"`.
 #' @param genus.2.flag Flag names of which the first word has fewer than 3
@@ -55,6 +58,13 @@
 #'   of the name.
 #' @param authors.ending.f Author abbreviations ending in `" f."` (filius),
 #'   which would otherwise be mistaken for the rank `"f."` (forma).
+#' @param spec.name.fix.encoding If `TRUE` (default), repair names garbled by
+#'   a wrong character encoding (UTF-8 text read as Mac Roman or Windows-1252,
+#'   up to four times: "Abies holoph‚Äö√..." gives "Abies
+#'   holophylla", "Citrus √ó aurantium" gives "Citrus × aurantium"), and
+#'   replace Cyrillic letters that look like Latin ones in names that also
+#'   contain Latin letters. Accented text
+#'   ("Allemão") is not changed. `FALSE` gives the results of WorldFlora.
 #' @param spec.name.aff.genus If `TRUE`, names with "aff." (*affinis*, near
 #'   but not this species, as in "Drypetes aff. amazonica") are reduced to the
 #'   genus. `FALSE` (default) removes "aff." with `sub.pattern` and matches the
@@ -141,7 +151,8 @@ WFO.prepare <- function(
     "Schult. f.", "Stapf f."
   ),
   verbose = TRUE, counter = 1000,
-  spec.name.aff.genus = FALSE
+  spec.name.aff.genus = FALSE,
+  spec.name.fix.encoding = TRUE
 ) {
   spec.data <- .as.spec.data(spec.data, default.name = spec.full)
   if (!spec.full %in% names(spec.data)) {
@@ -166,6 +177,7 @@ WFO.prepare <- function(
   # "f." (patterns are regular expressions, as in WorldFlora)
   protected <- gsub(" f.", " f_author", authors.ending.f, fixed = TRUE)
   full <- as.character(spec.data[[spec.full]])
+  if (spec.name.fix.encoding) full <- .fix.encoding(full)
   for (i in seq_along(authors.ending.f)) {
     full <- gsub(
       authors.ending.f[i],
@@ -210,6 +222,9 @@ WFO.prepare <- function(
   }
   spec.data[[spec.full]] <- restore(full)
   spec.data$spec.name <- restore(spec.data$spec.name)
+  if (spec.name.sub) {
+    spec.data$spec.name <- .drop.trailing.placeholder(spec.data$spec.name)
+  }
   spec.data$Authorship <- restore(spec.data$Authorship)
   # keep NA (not "NA") for missing full names
   spec.data[[spec.full]][is.na(spec.data[[spec.full]]) & is.na(full)] <- NA
