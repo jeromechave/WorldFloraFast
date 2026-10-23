@@ -79,6 +79,14 @@ authorship of synonyms (`Old.author.dist`), authorship of current names
 the smallest numeric part of `taxonID`. Column `One.Reason` gives the
 criterion that decided.
 
+Records with the same candidates (the same candidate rows, with the same
+values of the columns used by these criteria) get the same choice. The
+choice is therefore made once per distinct set of candidates and copied
+to the other records, which makes large inventories with repeated names
+much faster (113,432 records: 3.7 s in 1.0.7, 0.2 s). The result is
+unchanged: one row per submitted record. With `verbose = TRUE`, messages
+are given once per distinct set of candidates.
+
 Unlike WorldFlora 1.14-5, the authorship step compares the candidates
 that were not replaced by accepted names, rather than a recycled
 selection of all candidates; the chosen records were the same in our
@@ -126,8 +134,7 @@ WFO.one(m2)[, c(
 )]
 #> Different candidates for original record # 1, including Faidherbia albida
 #> Found unique not a synonym case for record # 1
-#> Different candidates for original record # 2, including Faidherbia albida
-#> Found unique not a synonym case for record # 2
+#> 1 of 2 records had the same candidates as an earlier record and were resolved in the same way
 #>   Authorship scientificName scientificNameAuthorship    One.Reason
 #> 3     Delile  Acacia albida             Rojas Acosta Not a synonym
 #> 6     Lindl.  Acacia albida             Rojas Acosta Not a synonym

@@ -9,7 +9,7 @@ among several candidates with a fixed sequence of criteria."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,6 +115,13 @@ applied in this order, each only while several candidates remain: authorship
 of synonyms (<code>Old.author.dist</code>), authorship of current names (<code>Auth.dist</code>),
 genus distance (<code>First.dist</code>), <code>priority</code>, and finally the smallest numeric
 part of <code>taxonID</code>. Column <code>One.Reason</code> gives the criterion that decided.</p>
+<p>Records with the same candidates (the same candidate rows, with the same
+values of the columns used by these criteria) get the same choice. The
+choice is therefore made once per distinct set of candidates and copied to
+the other records, which makes large inventories with repeated names much
+faster (113,432 records: 3.7 s in 1.0.7, 0.2 s). The result is unchanged:
+one row per submitted record. With <code>verbose = TRUE</code>, messages are given
+once per distinct set of candidates.</p>
 <p>Unlike WorldFlora 1.14-5, the authorship step compares the candidates that
 were not replaced by accepted names, rather than a recycled selection of all
 candidates; the chosen records were the same in our comparisons, but
@@ -162,8 +169,7 @@ candidates; the chosen records were the same in our comparisons, but
 <span class="r-in"><span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Different candidates for original record # 1, including Faidherbia albida</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Found unique not a synonym case for record # 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Different candidates for original record # 2, including Faidherbia albida</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Found unique not a synonym case for record # 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 of 2 records had the same candidates as an earlier record and were resolved in the same way</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Authorship scientificName scientificNameAuthorship    One.Reason</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3     Delile  Acacia albida             Rojas Acosta Not a synonym</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6     Lindl.  Acacia albida             Rojas Acosta Not a synonym</span>
