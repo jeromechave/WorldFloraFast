@@ -13,7 +13,7 @@ spec.name) or as separate genus, species and infraspecific columns."></head><bod
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,7 +95,8 @@ their accepted names. Names are given either as full names (column
 <span>  Fuzzy.epithet.check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  Fuzzy.keep.genus <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  Fuzzy.skip.placeholder <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  spec.name.aff.genus <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  spec.name.aff.genus <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  spec.name.fix.encoding <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -241,7 +242,9 @@ names).</p></dd>
 
 <dt id="arg-spec-name-sub">spec.name.sub<a class="anchor" aria-label="anchor" href="#arg-spec-name-sub"></a></dt>
 <dd><p>If <code>TRUE</code>, delete sections of names that match
-<code>sub.pattern</code>.</p></dd>
+<code>sub.pattern</code>, and "sp", "spp" or "indet" without a full stop at the end of
+a name ("Albizia sp" gives <em>Albizia</em>, not a species whose epithet starts
+with "sp").</p></dd>
 
 
 <dt id="arg-sub-pattern">sub.pattern<a class="anchor" aria-label="anchor" href="#arg-sub-pattern"></a></dt>
@@ -357,6 +360,16 @@ genus. <code>FALSE</code> (default) removes "aff." with <code>sub.pattern</code>
 species, as in WorldFlora. Give the same value to <code><a href="WFO.prepare.html">WFO.prepare()</a></code> and
 <code>WFO.match()</code>: <code><a href="WFO.prepare.html">WFO.prepare()</a></code> already removes "aff." from the names it
 returns.</p></dd>
+
+
+<dt id="arg-spec-name-fix-encoding">spec.name.fix.encoding<a class="anchor" aria-label="anchor" href="#arg-spec-name-fix-encoding"></a></dt>
+<dd><p>If <code>TRUE</code> (default), repair names garbled by
+a wrong character encoding (UTF-8 text read as Mac Roman or Windows-1252,
+up to four times: "Abies holoph‚Äö√..." gives "Abies
+holophylla", "Citrus √ó aurantium" gives "Citrus × aurantium"), and
+replace Cyrillic letters that look like Latin ones in names that also
+contain Latin letters. Accented text
+("Allemão") is not changed. <code>FALSE</code> gives the results of WorldFlora.</p></dd>
 
 </dl></div>
     <div class="section level2">

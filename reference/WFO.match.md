@@ -55,7 +55,8 @@ WFO.match(
   Fuzzy.epithet.check = TRUE,
   Fuzzy.keep.genus = TRUE,
   Fuzzy.skip.placeholder = TRUE,
-  spec.name.aff.genus = FALSE
+  spec.name.aff.genus = FALSE,
+  spec.name.fix.encoding = TRUE
 )
 ```
 
@@ -203,7 +204,10 @@ WFO.match(
 
 - spec.name.sub:
 
-  If `TRUE`, delete sections of names that match `sub.pattern`.
+  If `TRUE`, delete sections of names that match `sub.pattern`, and
+  "sp", "spp" or "indet" without a full stop at the end of a name
+  ("Albizia sp" gives *Albizia*, not a species whose epithet starts with
+  "sp").
 
 - sub.pattern:
 
@@ -334,6 +338,16 @@ WFO.match(
   and `WFO.match()`:
   [`WFO.prepare()`](https://jeromechave.github.io/WorldFloraFast/reference/WFO.prepare.md)
   already removes "aff." from the names it returns.
+
+- spec.name.fix.encoding:
+
+  If `TRUE` (default), repair names garbled by a wrong character
+  encoding (UTF-8 text read as Mac Roman or Windows-1252, up to four
+  times: "Abies holoph‚Äö√..." gives "Abies holophylla", "Citrus √ó
+  aurantium" gives "Citrus × aurantium"), and replace Cyrillic letters
+  that look like Latin ones in names that also contain Latin letters.
+  Accented text ("Allemão") is not changed. `FALSE` gives the results of
+  WorldFlora.
 
 ## Value
 

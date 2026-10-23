@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">WorldFloraFast</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,11 @@
       <small>Source: <a href="https://github.com/jeromechave/WorldFloraFast/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.7" id="worldflorafast-107-pre-release">WorldFloraFast 1.0.7 (pre-release)<a class="anchor" aria-label="anchor" href="#worldflorafast-107-pre-release"></a></h2>
+<ul><li>New argument <code>spec.name.fix.encoding</code> of <code><a href="../reference/WFO.match.html">WFO.match()</a></code> and <code><a href="../reference/WFO.prepare.html">WFO.prepare()</a></code>, <code>TRUE</code> by default: names garbled by a wrong character encoding are repaired. UTF-8 text read as Mac Roman or Windows-1252, up to four times over, is restored (“Abies holoph‚Äö√Ñ√Æ‚àö√¢lla” gives “Abies holophylla”; “Citrus √ó aurantium” gives “Citrus × aurantium”), and Cyrillic letters that look like Latin ones are replaced in names that also contain Latin letters (“Abies holophуlla” with a Cyrillic “у”). Accented text such as “Allemão”, and text entirely in Cyrillic, are not changed. <code>FALSE</code> gives the results of WorldFlora. The submitted names remain in <code>spec.name.ORIG</code>.</li>
+<li>“sp”, “spp” and “indet” without a full stop at the end of a name are removed like “sp.” and “spp.” (with <code>spec.name.sub</code>), in <code><a href="../reference/WFO.match.html">WFO.match()</a></code> and <code><a href="../reference/WFO.prepare.html">WFO.prepare()</a></code>: “Albizia sp” gives <em>Albizia</em>; it was matched with <em>Albizia gummifera</em>, whose epithet was the closest to “sp”. In <code><a href="../reference/WFO.prepare.html">WFO.prepare()</a></code>, “Albizia sp L.” gives the name “Albizia” and the author “L.”.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.6" id="worldflorafast-106-pre-release">WorldFloraFast 1.0.6 (pre-release)<a class="anchor" aria-label="anchor" href="#worldflorafast-106-pre-release"></a></h2>
 <p>Refinements from a benchmark of 275 plant names with verified names, matched against the WFO Plant List 2026-06. Correct answers (the verified name or its current accepted name) after <code><a href="../reference/WFO.prepare.html">WFO.prepare()</a></code>: WorldFlora 1.14-5 81.7%, WorldFloraFast 1.0.5 80.2%, 1.0.6 89.5% (93.0% with <code>spec.name.aff.genus = TRUE</code>). On the earlier test sets, no result changes.</p>

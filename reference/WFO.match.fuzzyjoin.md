@@ -130,7 +130,10 @@ WFO.match.fuzzyjoin(
 
 - spec.name.sub:
 
-  If `TRUE`, delete sections of names that match `sub.pattern`.
+  If `TRUE`, delete sections of names that match `sub.pattern`, and
+  "sp", "spp" or "indet" without a full stop at the end of a name
+  ("Albizia sp" gives *Albizia*, not a species whose epithet starts with
+  "sp").
 
 - sub.pattern:
 
